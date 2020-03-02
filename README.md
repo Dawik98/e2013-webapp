@@ -8,7 +8,7 @@ VS code extensions:
 URL til nettside: https://e2013-ntnu.azurewebsites.net/
 
 For å laste opp kode til azure:
-1. Build docker image
+1. Build docker image til: e2013.azurecr.io/e2013webapp:latest
 2. Push docker
 3. Restart azure app
 
