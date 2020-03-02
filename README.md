@@ -13,3 +13,7 @@ For å laste opp kode til azure:
 3. Restart azure app
 
 git guide: https://rogerdudler.github.io/git-guide/
+For å laste opp til git:
+1. stage changes
+2. commit changes
+3. push to branch
