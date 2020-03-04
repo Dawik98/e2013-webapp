@@ -1,13 +1,14 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, g
+from flask-mqtt import Mqtt
 
 import sqlite3
-from flask import g
 
 app = Flask(__name__)
 
-DATABASE = './app/database.db' # on local machine
-#DATABASE = './database.db' # on docker
+#DATABASE = './app/database.db' # on local machine
+DATABASE = './database.db' # on docker
 
+# connect to database
 def get_db():
   db = getattr(g, '_database', None)
   if db is None:
@@ -16,12 +17,14 @@ def get_db():
     db.row_factory = sqlite3.Row
   return db
 
+# close database when disconecting? 
 @app.teardown_appcontext
 def close_connection(exception):
   db = getattr(g, '_database', None)
   if db is not None:
     db.close()
 
+# main web page
 @app.route('/')
 def hello_world():
 
@@ -33,6 +36,7 @@ def hello_world():
 
   return render_template('index.html', val=val)
 
+# save data to database
 @app.route('/dataSave', methods=['POST'])
 def dataSave ():
   # print("At data save")
@@ -50,8 +54,6 @@ def dataSave ():
   c.execute("INSERT INTO messurments(timestamp, device_type, device_id, value) VALUES(?, ?, ?, ?);", (time, device_type, device_id, value))
   db.commit()
   db.close() #close db
-
-
 
   return 'JSON recieved'
 
