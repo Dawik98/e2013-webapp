@@ -1,9 +1,18 @@
 from flask import Flask, render_template, request, g
-from flask-mqtt import Mqtt
+from flask_mqtt import Mqtt
 
 import sqlite3
+import json
 
 app = Flask(__name__)
+
+# setup mqtt
+app.config['MQTT_BROKER_URL'] = '13.74.42.218'
+app.config['MQTT_BROKER_PORT'] = 9990
+app.config['MQTT_USERNAME'] = 'e2013'
+app.config['MQTT_PASSWORD'] = 'potet'
+app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
+mqtt = Mqtt(app)
 
 #DATABASE = './app/database.db' # on local machine
 DATABASE = './database.db' # on docker
@@ -23,6 +32,22 @@ def close_connection(exception):
   db = getattr(g, '_database', None)
   if db is not None:
     db.close()
+
+# run when connection with the broker
+@mqtt.on_connect()
+def handle_connect(client, userdata, flags, rc):
+    mqtt.subscribe('test')
+    print("Subscribed to test topic")
+
+# run when new message is published to the subscribed topic
+@mqtt.on_message()
+def handle_mqtt_message(client, userdata, message):
+    data = dict(
+        topic=message.topic,
+        payload=json.loads(message.payload.decode()) # get payload and convert it to a dictionary
+    )
+    print(data)
+
 
 # main web page
 @app.route('/')
