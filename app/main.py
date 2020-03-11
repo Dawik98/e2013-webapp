@@ -18,6 +18,7 @@ app = Flask(__name__)
 database_link = 'dbs/E2013'
 collection_link='dbs/E2013/colls/'
 
+# list of devices and by euid
 devices = {
     '70-b3-d5-80-a0-10-94-3a' : ['varmekabel_1', 'temperature'],
     '70-b3-d5-80-a0-10-94-46' : ['varmekabel_1', 'temperature'],
