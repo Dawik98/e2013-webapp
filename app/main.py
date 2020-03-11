@@ -13,7 +13,10 @@ import azure.cosmos.http_constants as http_constants
 app = Flask(__name__)
 
 # collection link in cosmosDB
+database_link = 'dbs/E2013'
 collection_link='dbs/E2013/colls/Messurments'
+
+devices = {'70-b3-d5-80-a0-10-94-3a' : ['varmekabel_1', 'temperature']}
 
 def connect_to_db():
     # setup cosmosDB
@@ -52,13 +55,26 @@ def handle_connect(client, userdata, flags, rc):
 def handle_mqtt_message(client, userdata, message):
     topic = message.topic
     data = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
+    
     print("New message recieved at topic " + topic + " :")
     print(data)
+
+    device_eui = data['device_eui']
+    device_placement = devices[device_eui][0]
+    device_type = devices[device_eui][1]
         
+    # add device data to database
+    data['device_placement'] = device_placement
+    data['device_type'] = device_type
+
+    #write data to database
     cosmos = connect_to_db()
+    print("Creating new container")
+    cosmos.CreateContainer(database_link, {'id' : device_placement})
     print("Uploading data to database")    
     cosmos.CreateItem(collection_link, data)
 
+    # send response to node-red
     print("Sending response to node red")
     mqtt.publish('response', 'Message recieved')
 
