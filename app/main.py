@@ -3,84 +3,81 @@ from flask_mqtt import Mqtt
 
 import sqlite3
 import json
+import os
+
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.errors as errors
+import azure.cosmos.http_constants as http_constants
+
 
 app = Flask(__name__)
 
-# setup mqtt
+# collection link in cosmosDB
+collection_link='dbs/E2013/colls/Messurments'
+
+def connect_to_db():
+    # setup cosmosDB
+    endpoint = 'https://e2013-db.documents.azure.com:443/'
+    key = '2bpbyU4kJfh4vgvis2GbDDOpYJmUOfrMTSaXZz4tSas0zPhVvnoLRGSlX5nwFmveFN2iIb1FUudq8kZPpBYDhw=='
+    return cosmos_client.CosmosClient(endpoint, {'masterKey': key})
+
+
+# setup mqtt for mosquitto on vm
 app.config['MQTT_BROKER_URL'] = '13.74.42.218'
 app.config['MQTT_BROKER_PORT'] = 9990
+app.config['MQTT_CLIENT_ID'] = 'Webb-App'
 app.config['MQTT_USERNAME'] = 'e2013'
 app.config['MQTT_PASSWORD'] = 'potet'
 app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 mqtt = Mqtt(app)
 
-#DATABASE = './app/database.db' # on local machine
-DATABASE = './database.db' # on docker
+#setup mqtt to send to iot-hub
+#app.config['MQTT_BROKER_URL'] = 'Bachelorgruppe-E2013.azure-devices.net'
+#app.config['MQTT_BROKER_PORT'] = 8883
+#app.config['MQTT_CLIENT_ID'] = 'Webb-App'
+#app.config['MQTT_USERNAME'] = ''
+#app.config['MQTT_PASSWORD'] = ''
+#app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
+#mqtt = Mqtt(app)
 
-# connect to database
-def get_db():
-  db = getattr(g, '_database', None)
-  if db is None:
-    db = g._database = sqlite3.connect(DATABASE)
-    print("Successfully Connected to SQLite")
-    db.row_factory = sqlite3.Row
-  return db
-
-# close database when disconecting? 
-@app.teardown_appcontext
-def close_connection(exception):
-  db = getattr(g, '_database', None)
-  if db is not None:
-    db.close()
 
 # run when connection with the broker
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
-    mqtt.subscribe('test')
-    print("Subscribed to test topic")
+    mqtt.subscribe('messurments/#')
+    print("Subscribed to topic")
 
 # run when new message is published to the subscribed topic
 @mqtt.on_message()
 def handle_mqtt_message(client, userdata, message):
-    data = dict(
-        topic=message.topic,
-        payload=json.loads(message.payload.decode()) # get payload and convert it to a dictionary
-    )
+    topic = message.topic
+    data = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
+    print("New message recieved at topic " + topic + " :")
     print(data)
+        
+    cosmos = connect_to_db()
+    print("Uploading data to database")    
+    cosmos.CreateItem(collection_link, data)
+
+    print("Sending response to node red")
+    mqtt.publish('response', 'Message recieved')
+
 
 
 # main web page
 @app.route('/')
 def hello_world():
 
-  c = get_db().cursor()
-  c.execute("SELECT * FROM messurments ORDER BY ROWID DESC LIMIT 1")
-  var = c.fetchone()
-  c.close() #close db
-  val = var['value']
+    #query data from database
+    query = "SELECT * FROM Messurments WHERE Messurments.sensor_type = 'temperature' ORDER BY Messurments.time DESC"
 
-  return render_template('index.html', val=val)
+    cosmos = connect_to_db()
+    items = cosmos.QueryItems(collection_link, query, {'enableCrossPartitionQuery':True})
+    items = list(items) # save result as list
+    val = items[0]['temperature']
 
-# save data to database
-@app.route('/dataSave', methods=['POST'])
-def dataSave ():
-  # print("At data save")
-  content = request.get_json()
-  print (content)
+    return render_template('index.html', val=val)
 
-  time = content['Time']
-  device_type = content['Messurment']
-  device_id = content['Sensors']
-  value = float(content['Value'])
-  print(type(value))
-
-  db = get_db()
-  c = db.cursor()
-  c.execute("INSERT INTO messurments(timestamp, device_type, device_id, value) VALUES(?, ?, ?, ?);", (time, device_type, device_id, value))
-  db.commit()
-  db.close() #close db
-
-  return 'JSON recieved'
 
 if __name__ == '__main__':
-  app.run()
+    app.run()
