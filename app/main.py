@@ -58,7 +58,8 @@ def handle_mqtt_message(client, userdata, message):
 
     print("\nNew message recieved at topic " + topic + " :")
     print(data)
-    print(type(data))
+    
+
 
     device_eui = data['device_eui']
     device_placement = devices[device_eui][0]
