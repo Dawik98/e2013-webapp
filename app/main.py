@@ -18,7 +18,13 @@ app = Flask(__name__)
 database_link = 'dbs/E2013'
 collection_link='dbs/E2013/colls/'
 
-devices = {'70-b3-d5-80-a0-10-94-3a' : ['varmekabel_1', 'temperature']}
+devices = {
+    '70-b3-d5-80-a0-10-94-3a' : ['varmekabel_1', 'temperature'],
+    '70-b3-d5-80-a0-10-94-46' : ['varmekabel_1', 'temperature'],
+    '70-b3-d5-8f-f1-00-1e-78' : ['varmekabel_1', 'power_switch'],
+    '70-b3-d5-8f-f1-00-1e-69' : ['varmekabel_2', 'power_switch'],
+    
+    }
 
 def connect_to_db():
     # setup cosmosDB
@@ -35,16 +41,6 @@ app.config['MQTT_USERNAME'] = 'e2013'
 app.config['MQTT_PASSWORD'] = 'potet'
 app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 mqtt = Mqtt(app)
-
-#setup mqtt to send to iot-hub
-#app.config['MQTT_BROKER_URL'] = 'Bachelorgruppe-E2013.azure-devices.net'
-#app.config['MQTT_BROKER_PORT'] = 8883
-#app.config['MQTT_CLIENT_ID'] = 'Webb-App'
-#app.config['MQTT_USERNAME'] = ''
-#app.config['MQTT_PASSWORD'] = ''
-#app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
-#mqtt = Mqtt(app)
-
 
 # run when connection with the broker
 @mqtt.on_connect()
@@ -98,12 +94,24 @@ def handle_mqtt_message(client, userdata, message):
     mqtt.publish('response', 'Message recieved')
 
 # return containers from cosmos db
-def get_colls_from_db():
-    cosmos = connect_to_db()
+def get_containers():
+    list_of_containers = []
+
+    for i in devices:
+        container = devices[i][0]
+        # add container to list if it isn't added alleready
+        if container in list_of_containers:
+            pass
+        else:
+            list_of_containers.append(container)
+
+    return list_of_containers
 
 # main web page
 @app.route('/')
 def hello_world():
+
+    # print(get_containers()) 
 
     #query data from database
     query = "SELECT * FROM varmekabel_1 WHERE varmekabel_1.device_type = 'temperature' ORDER BY varmekabel_1.time DESC"
