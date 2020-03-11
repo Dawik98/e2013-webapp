@@ -54,29 +54,33 @@ def handle_connect(client, userdata, flags, rc):
 @mqtt.on_message()
 def handle_mqtt_message(client, userdata, message):
     topic = message.topic
-    data = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
+    data = bytes(message.payload)
+    print(data[23:25])
+    voltage = int.from_bytes(data[23:25], byteorder='little', signed=False)/10
+    print(voltage)
     
     print("New message recieved at topic " + topic + " :")
     print(data)
+    print(type(data))
 
-    device_eui = data['device_eui']
-    device_placement = devices[device_eui][0]
-    device_type = devices[device_eui][1]
-        
-    # add device data to database
-    data['device_placement'] = device_placement
-    data['device_type'] = device_type
+    #device_eui = data['device_eui']
+    #device_placement = devices[device_eui][0]
+    #device_type = devices[device_eui][1]
+    #    
+    ## add device data to database
+    #data['device_placement'] = device_placement
+    #data['device_type'] = device_type
 
-    #write data to database
-    cosmos = connect_to_db()
-    print("Creating new container")
-    cosmos.CreateContainer(database_link, {'id' : device_placement})
-    print("Uploading data to database")    
-    cosmos.CreateItem(collection_link, data)
+    ##write data to database
+    #cosmos = connect_to_db()
+    #print("Creating new container")
+    #cosmos.CreateContainer(database_link, {'id' : device_placement})
+    #print("Uploading data to database")    
+    #cosmos.CreateItem(collection_link, data)
 
-    # send response to node-red
-    print("Sending response to node red")
-    mqtt.publish('response', 'Message recieved')
+    ## send response to node-red
+    #print("Sending response to node red")
+    #mqtt.publish('response', 'Message recieved')
 
 
 
