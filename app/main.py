@@ -14,7 +14,7 @@ import azure.cosmos.documents as documents
 
 app = Flask(__name__)
 
-# collection link in cosmosDB
+# links in cosmosDB
 database_link = 'dbs/E2013'
 collection_link='dbs/E2013/colls/'
 
@@ -49,7 +49,7 @@ mqtt = Mqtt(app)
 # run when connection with the broker
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
-    mqtt.subscribe('messurments')
+    mqtt.subscribe('varmekabel_1')
     print("Subscribed to topic")
 
 # run when new message is published to the subscribed topic
@@ -97,17 +97,19 @@ def handle_mqtt_message(client, userdata, message):
     print("Sending response to node red")
     mqtt.publish('response', 'Message recieved')
 
-
+# return containers from cosmos db
+def get_colls_from_db():
+    cosmos = connect_to_db()
 
 # main web page
 @app.route('/')
 def hello_world():
 
     #query data from database
-    query = "SELECT * FROM Messurments WHERE Messurments.sensor_type = 'temperature' ORDER BY Messurments.time DESC"
+    query = "SELECT * FROM varmekabel_1 WHERE varmekabel_1.device_type = 'temperature' ORDER BY varmekabel_1.time DESC"
 
     cosmos = connect_to_db()
-    items = cosmos.QueryItems(collection_link, query, {'enableCrossPartitionQuery':True})
+    items = cosmos.QueryItems(collection_link+'varmekabel_1', query, {'enableCrossPartitionQuery':True})
     items = list(items) # save result as list
     val = items[0]['temperature']
 
