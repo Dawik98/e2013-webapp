@@ -5,10 +5,12 @@ from forms import RegistrationForm, LoginForm
 import sqlite3
 import json
 import os
+import io
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
 import azure.cosmos.http_constants as http_constants
+import azure.cosmos.documents as documents
 
 
 app = Flask(__name__)
@@ -43,7 +45,7 @@ mqtt = Mqtt(app)
 # run when connection with the broker
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
-    mqtt.subscribe('messurments/#')
+    mqtt.subscribe('varmekabel_1')
     print("Subscribed to topic")
 
 # run when new message is published to the subscribed topic
@@ -51,8 +53,9 @@ def handle_connect(client, userdata, flags, rc):
 def handle_mqtt_message(client, userdata, message):
     topic = message.topic
     data = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
-    
-    print("New message recieved at topic " + topic + " :")
+    #data = message.payload
+
+    print("\nNew message recieved at topic " + topic + " :")
     print(data)
 
     device_eui = data['device_eui']
@@ -63,18 +66,45 @@ def handle_mqtt_message(client, userdata, message):
     data['device_placement'] = device_placement
     data['device_type'] = device_type
 
+    print(devices)
+
     #write data to database
+    container_name = device_placement
     cosmos = connect_to_db()
-    print("Creating new container")
-    cosmos.CreateContainer(database_link, {'id' : device_placement})
-    print("Uploading data to database")    
-    cosmos.CreateItem(collection_link, data)
+    print("Connected to databse")
+
+    # create container if it doesn't exist
+    try:
+        container_definition = {'id': container_name, 'partitionKey': {'paths': ['/'+container_name], 'kind': documents.PartitionKind.Hash}}
+        cosmos.CreateContainer(database_link, container_definition, options={'indexingMode': 'none'})
+        print("Created container")    
+    except errors.HTTPFailure as e:
+        if e.status_code == http_constants.StatusCodes.CONFLICT:
+            pass
+        else:
+            raise e
+
+
+    cosmos.CreateItem(collection_link + container_name, data)
+    print("Created new Item")
 
     # send response to node-red
     print("Sending response to node red")
     mqtt.publish('response', 'Message recieved')
 
+# return containers from cosmos db
+def get_containers():
+    list_of_containers = []
 
+    for i in devices:
+        container = devices[i][0]
+        # add container to list if it isn't added alleready
+        if container in list_of_containers:
+            pass
+        else:
+            list_of_containers.append(container)
+
+    return list_of_containers
 
 # main web page
 målinger=[
@@ -97,10 +127,12 @@ målinger=[
 @app.route('/Home')
 def Home():
 
+    # print(get_containers()) 
+
     #query data from database
     query = "SELECT * FROM heatTrace1 WHERE heatTrace1.deviceType = 'tempSensor' ORDER BY heatTrace1._ts DESC"
     cosmos = connect_to_db()
-    items = cosmos.QueryItems(collection_link, query, {'enableCrossPartitionQuery':True})
+    items = cosmos.QueryItems(collection_link+'varmekabel_1', query, {'enableCrossPartitionQuery':True})
     items = list(items) # save result as list
     print(items)
     val = items[0]['temperature']
