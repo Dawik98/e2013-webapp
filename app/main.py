@@ -11,7 +11,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
 import azure.cosmos.http_constants as http_constants
 import azure.cosmos.documents as documents
-
+from decoder import decoder
 
 app = Flask(__name__)
 
@@ -19,9 +19,7 @@ app.config['SECRET_KEY']='019a82e56daaa961957770fc73e383e4'
 
 # collection link in cosmosDB
 database_link = 'dbs/E2013'
-collection_link='dbs/E2013/colls/heatTrace1'
-
-devices = {'70-b3-d5-80-a0-10-94-3a' : ['varmekabel_1', 'temperature']}
+collection_link='dbs/E2013/colls/'
 
 def connect_to_db():
     # setup cosmosDB
@@ -45,33 +43,24 @@ mqtt = Mqtt(app)
 # run when connection with the broker
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
-    mqtt.subscribe('varmekabel_1')
+    mqtt.subscribe('measurement')
     print("Subscribed to topic")
 
 # run when new message is published to the subscribed topic
 @mqtt.on_message()
 def handle_mqtt_message(client, userdata, message):
     topic = message.topic
-    data = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
-    #data = message.payload
+    payload = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
 
     print("\nNew message recieved at topic " + topic + " :")
-    print(data)
-
-    device_eui = data['device_eui']
-    device_placement = devices[device_eui][0]
-    device_type = devices[device_eui][1]
-        
-    # add device data to database
-    data['device_placement'] = device_placement
-    data['device_type'] = device_type
-
-    print(devices)
+    print(payload)
+    packetData = decoder(payload)
+    print(packetData)
 
     #write data to database
-    container_name = device_placement
+    container_name = packetData['devicePlacement']
     cosmos = connect_to_db()
-    print("Connected to databse")
+    print("Connected to database")
 
     # create container if it doesn't exist
     try:
@@ -85,26 +74,34 @@ def handle_mqtt_message(client, userdata, message):
             raise e
 
 
-    cosmos.CreateItem(collection_link + container_name, data)
+    cosmos.CreateItem(collection_link + container_name, packetData)
     print("Created new Item")
 
-    # send response to node-red
-    print("Sending response to node red")
-    mqtt.publish('response', 'Message recieved')
+@app.route('/claimMeterdata')
+def claimMeterdata():
+    mqtt.publish('powerSwitch', bytes([4, 2, 0]))
+
+@app.route('/activateHeatTrace')
+def activateHeatTrace():
+    mqtt.publish('powerSwitch', bytes([4, 0, 0, 0, 0, 0, 1, 0, 0, 0]))
+
+@app.route('/deactivateHeatTrace')
+def deactivateHeatTrace():
+    mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
 
 # return containers from cosmos db
-def get_containers():
-    list_of_containers = []
+#def get_containers():
+#    list_of_containers = []
+#
+#    for i in devices:
+#        container = devices[i][0]
+#        # add container to list if it isn't added alleready
+#        if container in list_of_containers:
+#            pass
+#        else:
+#            list_of_containers.append(container)
 
-    for i in devices:
-        container = devices[i][0]
-        # add container to list if it isn't added alleready
-        if container in list_of_containers:
-            pass
-        else:
-            list_of_containers.append(container)
-
-    return list_of_containers
+#    return list_of_containers
 
 # main web page
 målinger=[
@@ -130,9 +127,10 @@ def Home():
     # print(get_containers()) 
 
     #query data from database
-    query = "SELECT * FROM heatTrace1 WHERE heatTrace1.deviceType = 'tempSensor' ORDER BY heatTrace1._ts DESC"
+    query = "SELECT * FROM heatTrace1 WHERE heatTrace1.deviceType = 'tempSensor' ORDER BY heatTrace1.timeReceived DESC"
+
     cosmos = connect_to_db()
-    items = cosmos.QueryItems(collection_link+'varmekabel_1', query, {'enableCrossPartitionQuery':True})
+    items = cosmos.QueryItems(collection_link+'heatTrace1', query, {'enableCrossPartitionQuery':True})
     items = list(items) # save result as list
     print(items)
     val = items[0]['temperature']
