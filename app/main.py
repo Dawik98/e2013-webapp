@@ -37,14 +37,7 @@ app.config['MQTT_PASSWORD'] = 'potet'
 app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 mqtt = Mqtt(app)
 
-#setup mqtt to send to iot-hub
-#app.config['MQTT_BROKER_URL'] = 'Bachelorgruppe-E2013.azure-devices.net'
-#app.config['MQTT_BROKER_PORT'] = 8883
-#app.config['MQTT_CLIENT_ID'] = 'Webb-App'
-#app.config['MQTT_USERNAME'] = ''
-#app.config['MQTT_PASSWORD'] = ''
-#app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
-#mqtt = Mqtt(app)
+
 
 
 # run when connection with the broker
