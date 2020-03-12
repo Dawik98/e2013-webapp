@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytz
 
-def decoder(payload, topic):
+def decoder(payload):
     devices = {
         '70-b3-d5-80-a0-10-94-3a': ['heatTrace1', 'tempSensor'],
         '70-b3-d5-80-a0-10-94-46': ['heatTrace1', 'tempSensor'],
@@ -31,7 +31,7 @@ def decoder(payload, topic):
         timeSent = {
             'year': 2000 + (data[4] >> 1),
             'month': ((data[4] & 0x01) << 3) | (data[3] >> 5),
-            'dayOfMonth': data[3] & 0x1f,
+            'day': data[3] & 0x1f,
             'hours': data[2] >> 3,
             'minutes': ((data[2] & 0x7) << 3) | (data[1] >> 5),
             'seconds': (data[1] & 0x1f) * 2,
