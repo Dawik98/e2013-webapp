@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request, g, url_for, flash, redirect
 from flask_mqtt import Mqtt
+from forms import RegistrationForm, LoginForm
 
 import sqlite3
 import json
@@ -12,9 +13,11 @@ import azure.cosmos.http_constants as http_constants
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY']='019a82e56daaa961957770fc73e383e4'
+
 # collection link in cosmosDB
 database_link = 'dbs/E2013'
-collection_link='dbs/E2013/colls/Messurments'
+collection_link='dbs/E2013/colls/heatTrace1'
 
 devices = {'70-b3-d5-80-a0-10-94-3a' : ['varmekabel_1', 'temperature']}
 
@@ -81,19 +84,54 @@ def handle_mqtt_message(client, userdata, message):
 
 
 # main web page
+målinger=[
+    {
+        'Enhet': 'Temperatur sensor 1',
+        'Temperatur': '31',
+        'Batteritilstand':'93.7%',
+        'Tidspunkt':'12:32:27'
+    },
+    {
+        'Enhet': 'Temperatur sensor 2',
+        'Temperatur': '30',
+        'Batteritilstand':'92.7%',
+        'Tidspunkt':'12:32:29'
+    }
+]
+
+
 @app.route('/')
-def hello_world():
+@app.route('/Home')
+def Home():
 
     #query data from database
-    query = "SELECT * FROM Messurments WHERE Messurments.sensor_type = 'temperature' ORDER BY Messurments.time DESC"
-
+    query = "SELECT * FROM heatTrace1 WHERE heatTrace1.deviceType = 'tempSensor' ORDER BY heatTrace1._ts DESC"
     cosmos = connect_to_db()
     items = cosmos.QueryItems(collection_link, query, {'enableCrossPartitionQuery':True})
     items = list(items) # save result as list
+    print(items)
     val = items[0]['temperature']
 
-    return render_template('index.html', val=val)
+    return render_template('index.html',målinger=målinger, val=val)
+
+@app.route('/SensorData')
+def about():
+    return render_template('SensorData.html', title='Målinger')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.username.data}!', 'success')
+        return redirect(url_for('Home'))
+    return render_template('register.html', title="Register", form=form)
+
+@app.route('/login')
+def login():
+    form = LoginForm()
+    return render_template('login.html', title="Login", form=form)
+
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
