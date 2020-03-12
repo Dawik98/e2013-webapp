@@ -42,7 +42,7 @@ app.config['MQTT_USERNAME'] = 'e2013'
 app.config['MQTT_PASSWORD'] = 'potet'
 app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 mqtt = Mqtt(app)
-
+#Testforandring
 # run when connection with the broker
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
