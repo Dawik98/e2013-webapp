@@ -52,10 +52,10 @@ def handle_mqtt_message(client, userdata, message):
     topic = message.topic
     payload = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
 
-    print("\nNew message recieved at topic " + topic + " :")
-    print(payload)
+    print("\nNew message recieved at topic " + topic + ":\n")
     packetData = decoder(payload)
     print(packetData)
+    print("\n")
 
     #write data to database
     container_name = packetData['devicePlacement']
@@ -79,15 +79,21 @@ def handle_mqtt_message(client, userdata, message):
 
 @app.route('/claimMeterdata')
 def claimMeterdata():
+    print("Sending meterdata-request")
     mqtt.publish('powerSwitch', bytes([4, 2, 0]))
+    return "Requesting data"
 
 @app.route('/activateHeatTrace')
 def activateHeatTrace():
+    print("Sending acivation message")
     mqtt.publish('powerSwitch', bytes([4, 0, 0, 0, 0, 0, 1, 0, 0, 0]))
+    return "Sending activation message"
 
 @app.route('/deactivateHeatTrace')
 def deactivateHeatTrace():
+    print("Sending deactivation message")
     mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
+    return "Sending deactivation message"
 
 # return containers from cosmos db
 #def get_containers():
@@ -157,4 +163,4 @@ def login():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
