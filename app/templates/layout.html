@@ -13,7 +13,7 @@
             <title>E2013 - {{ title }}</title>
         {% else %}
             <title>E2013</title>
-        {% endif %}
+    {% endif %}
 
     
     </head>
@@ -27,13 +27,13 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                   <div class="navbar-nav mr-auto">
-                    <a class="nav-item nav-link" href="/">Home</a>
-                    <a class="nav-item nav-link" href="/SensorData">Sensor Data</a>
+                    <a class="nav-item nav-link" href="{{ url_for('Home') }}">Home</a>
+                    <a class="nav-item nav-link" href="{{ url_for('SensorData') }}">Sensor Data</a>
                   </div>
                   <!-- Navbar Right Side -->
                   <div class="navbar-nav">
-                    <a class="nav-item nav-link" href="/login">Login</a>
-                    <a class="nav-item nav-link" href="/register">Register</a>
+                    <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
+                    <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
                   </div>
                 </div>
               </div>

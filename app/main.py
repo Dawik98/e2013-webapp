@@ -138,7 +138,7 @@ def Home():
     return render_template('index.html',målinger=målinger, val=val)
 
 @app.route('/SensorData')
-def about():
+def SensorData():
     return render_template('SensorData.html', title='Målinger')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -149,12 +149,18 @@ def register():
         return redirect(url_for('Home'))
     return render_template('register.html', title="Register", form=form)
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data =='admin@blog.com' and form.password.data == 'password':
+            flash('You have been logged in!','success')
+            return redirect(url_for('Home'))
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', title="Login", form=form)
 
 
-
+ 
 if __name__ == '__main__':
     app.run(debug=True)
