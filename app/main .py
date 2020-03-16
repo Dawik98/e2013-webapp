@@ -14,7 +14,7 @@ def create_server():
     server.config['MQTT_BROKER_PORT'] = 9990
     server.config['MQTT_USERNAME'] = 'e2013'
     server.config['MQTT_PASSWORD'] = 'potet'
-    #server.config['MQTT_CLIENT_ID'] = 'Webb-App'
+    server.config['MQTT_CLIENT_ID'] = "Webb-App"
     server.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 
     # legg til mqtt funksjoner
