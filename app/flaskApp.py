@@ -8,19 +8,18 @@ import json
 import os
 import io
 
+from mqtt import claimMeterdata, activateHeatTrace, deactivateHeatTrace
+
 app=Blueprint('app', __name__)
 
 @app.route('/claimMeterdata')
-def claimMeterdata():
-    mqtt.publish('powerSwitch', bytes([4, 2, 0]))
+claimMeterdata()
 
 @app.route('/activateHeatTrace')
-def activateHeatTrace():
-    mqtt.publish('powerSwitch', bytes([4, 0, 0, 0, 0, 0, 1, 0, 0, 0]))
+activateHeatTrace()
 
 @app.route('/deactivateHeatTrace')
-def deactivateHeatTrace():
-    mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
+deactivateHeatTrace()
 
 
 målinger=[

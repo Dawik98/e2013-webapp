@@ -8,4 +8,4 @@ def powerControl(actuation, dutycycle):
         Timer(actuation/100 * dutycycle)
         # Skru av varmekabel
         deactivateHeatTrace()
-        Timer((1 - pådrag/100%) * 1 min)
+        Timer((1 - actuation/100) * dutycycle)

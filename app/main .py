@@ -1,4 +1,3 @@
-
 from flask import Flask
 from flask_mqtt import Mqtt
 import dash

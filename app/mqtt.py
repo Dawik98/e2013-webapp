@@ -39,9 +39,6 @@ def activateHeatTrace():
 def claimMeterdata():
     mqtt.publish('powerSwitch', bytes([4, 2, 0]))
     
-
-    
-    
     
     
     
