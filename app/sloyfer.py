@@ -7,12 +7,11 @@ import plotly
 import random
 import plotly.graph_objs as go
 from collections import deque
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-app.layout = html.Div([
+#app = dash.Dash(__name__)
 
+layout = html.Div([
     html.Label('Regulerings-sløyfe'),
     dcc.Dropdown(
         options=[
@@ -28,6 +27,9 @@ app.layout = html.Div([
             {'label': 'Temperatur', 'value': 'temp'},
             {'label': u'Jordfeil', 'value': 'jordfeil'},
             {'label': 'Aktiv effekt', 'value': 'aktiv_effekt'}
+            {'label': 'Aktiv effekt', 'value': 'aktiv_effekt'}
+            {'label': 'Aktiv effekt', 'value': 'aktiv_effekt'}
+            {'label': 'Aktiv effekt', 'value': 'aktiv_effekt'}
         ],
         value=['temp', 'aktiv_effekt'],
         multi=True
@@ -36,12 +38,11 @@ app.layout = html.Div([
         dcc.Interval(
             id='graph-update',
             interval=1000,
-            n_intervals = 0
+            n_intervals = 1
         ),
    
-],
-style={'columnCount': 1})
-
+]
+)
 
 def callbacks(app):
     X = deque(maxlen=20)
@@ -66,5 +67,5 @@ def callbacks(app):
                                                     yaxis=dict(range=[min(Y),max(Y)]),)}
 
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+#if __name__ == '__main__':
+ #   app.run_server(debug=True)

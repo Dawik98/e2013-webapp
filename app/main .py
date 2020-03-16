@@ -29,7 +29,8 @@ def createServer():
     addDashApp(server, '/test2/', 'test2', layout2, callbacks2)
 
     from sloyfer import layout as layout_sloyfer
-    addDashApp(server, '/sløyfer/', 'sloyfer', layout_sloyfer, callbacks2)
+    from sloyfer import callbacks as callbacks_sloyfer
+    addDashApp(server, '/sløyfer/', 'sloyfer', layout_sloyfer, callbacks_sloyfer)
 
 
     from flaskApp import app
