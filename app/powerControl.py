@@ -194,9 +194,9 @@ class PID_controller:
         self.run = True
 
 
-def commands(reg):
+def change_value(reg):
     while(True):
-        command = input(">> ")
+        command = input("")
         reg.update_value(float(command))
 
 reg_1 = PID_controller("regulator 1", duty_cycle=10.0/60)
@@ -204,7 +204,7 @@ reg_1.set_dutycycle(10.0/60)
 reg_1.update_parameters(1.0, 1.0)
 reg_1.update_setpoint(2.0)
 
-prompt  = Thread(target=commands, args=(reg_1,))
+prompt  = Thread(target=change_value, args=(reg_1,))
 prompt.start()
 
 #ac = Thread(target=actuationControl)
