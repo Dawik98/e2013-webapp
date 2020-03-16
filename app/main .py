@@ -1,5 +1,3 @@
-
-
 from flask import Flask
 from flask_mqtt import Mqtt
 import dash
@@ -29,6 +27,10 @@ def createServer():
     from test2 import layout as layout2
     from test2 import callbacks as callbacks2
     addDashApp(server, '/test2/', 'test2', layout2, callbacks2)
+
+    from sloyfer import layout as layout_sloyfer
+    addDashApp(server, '/sløyfer/', 'sloyfer', layout_sloyfer, callbacks2)
+
 
     from flaskApp import app
     server.register_blueprint(app)
