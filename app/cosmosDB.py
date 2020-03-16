@@ -31,7 +31,6 @@ def write_to_db(container_name, data):
         else:
             raise e
 
-
     cosmos.CreateItem(collection_link + container_name, data)
     print("Created new Item")
 

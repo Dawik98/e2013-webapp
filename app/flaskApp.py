@@ -8,8 +8,6 @@ import json
 import os
 import io
 
-from mqtt import mqtt, connect_to_db
-
 app=Blueprint('app', __name__)
 
 @app.route('/claimMeterdata')
@@ -44,9 +42,6 @@ målinger=[
 @app.route('/')
 @app.route('/Home')
 def Home():
-
-    # print(get_containers()) 
-
     #query data from database
     query = "SELECT * FROM heatTrace1 WHERE heatTrace1.deviceType = 'tempSensor' ORDER BY heatTrace1.timeReceived DESC"
     container_name = "heatTrace1"
