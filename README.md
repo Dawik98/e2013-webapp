@@ -18,3 +18,6 @@ For å laste opp til git:
 1. stage changes
 2. commit changes
 3. push to branch
+
+Setup for flask og dash basert på:
+https://github.com/okomarov/dash_on_flask/tree/feature/multiple_dash_apps
