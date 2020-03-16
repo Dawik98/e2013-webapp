@@ -30,6 +30,14 @@ def connect_mosquitto(server):
     
         write_to_db(container_name, packetData)
     
+def deactivateHeatTrace():
+    mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
+
+def activateHeatTrace():
+    mqtt.publish('powerSwitch', bytes([4, 0, 0, 0, 0, 0, 1, 0, 0, 0]))
+
+def claimMeterdata():
+    mqtt.publish('powerSwitch', bytes([4, 2, 0]))
     
 
     
