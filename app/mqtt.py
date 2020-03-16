@@ -30,7 +30,6 @@ def handle_mqtt_message(client, userdata, message):
 
     write_to_db(container_name, packetData)
     
-    
 
     
     
