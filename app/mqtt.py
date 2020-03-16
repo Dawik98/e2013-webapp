@@ -4,8 +4,10 @@ from flask_mqtt import Mqtt
 from cosmosDB import connect_to_db, write_to_db
 import json
 
+mqtt = None
 
 def connect_mosquitto(server):
+    global mqtt
     mqtt = Mqtt(server)
 
     # run when connection with the broker
