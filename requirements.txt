@@ -14,7 +14,4 @@ WTForms==2.2.1
 Flask-WTF==0.14.3
 dash==1.9.1
 pandas==1.0.1
-<<<<<<< HEAD
-=======
-pytz==2019.3
->>>>>>> 8e056217dc3fd7426139aa2f7e60ee8c818d756b
+dash_bootstrap_components==0.9.1
