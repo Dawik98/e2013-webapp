@@ -6,8 +6,15 @@ MarkupSafe==1.0
 Werkzeug==0.14.1
 flask-mqtt==1.1.0
 azure-cosmos==3.1.2
+<<<<<<< HEAD
 pytz==2019.3
+=======
+>>>>>>> 8e056217dc3fd7426139aa2f7e60ee8c818d756b
 WTForms==2.2.1
 Flask-WTF==0.14.3
 dash==1.9.1
 pandas==1.0.1
+<<<<<<< HEAD
+=======
+pytz==2019.3
+>>>>>>> 8e056217dc3fd7426139aa2f7e60ee8c818d756b

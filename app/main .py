@@ -1,10 +1,13 @@
-
 from flask import Flask
 from flask_mqtt import Mqtt
 import dash
 
-def create_server():
-    # SETUP WEBAPP
+import sys
+sys.path.append("./dashApps")
+
+
+def createServer():
+
     server = Flask(__name__)
 
     server.config['SECRET_KEY']='019a82e56daaa961957770fc73e383e4'
@@ -17,9 +20,6 @@ def create_server():
     server.config['MQTT_CLIENT_ID'] = "Webb-App"
     server.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 
-    # legg til mqtt funksjoner
-    from mqtt import connect_mosquitto
-    connect_mosquitto(server)
 
     # legg til dashboard apper
     from test1 import layout as layout1
@@ -30,8 +30,11 @@ def create_server():
     from test2 import callbacks as callbacks2
     addDashApp(server, '/test2/', 'test2', layout2, callbacks2)
 
+    from sloyfer import layout as layout_sloyfer
+    from sloyfer import callbacks as callbacks_sloyfer
+    addDashApp(server, '/sløyfer/', 'sloyfer', layout_sloyfer, callbacks_sloyfer)
 
-    # legg til flask sider
+
     from flaskApp import app
     server.register_blueprint(app)
 
@@ -39,7 +42,36 @@ def create_server():
 
 
 def addDashApp(server, path, title, layout, callbacks):
-    dashApp = dash.Dash(__name__, server=server, url_base_pathname=path)
+
+    external_stylesheets = [{
+        "href" : "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
+        "rel" : "stylesheet",
+        "integrity" : "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh",
+        "crossorigin" : "anonymous"
+        
+    }]
+
+    external_scripts = [{
+        "href" : "https://code.jquery.com/jquery-3.4.1.slim.min.js",
+        "integrity" : "sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n",
+        "crossorigin" : "anonymous"
+        },{
+        "href" : "https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js",
+        "integrity" : "sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo",
+        "crossorigin" : "anonymous"
+        },{
+        "href" : "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js",
+        "integrity" : "sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6",
+        "crossorigin" : "anonymous"
+        }
+    ]
+
+    dashApp = dash.Dash(__name__, 
+                        server=server,
+                        url_base_pathname=path, 
+                        external_scripts=external_scripts, 
+                        external_stylesheets=external_stylesheets)
+
     
     with server.app_context():
         dashApp.title = title
@@ -49,6 +81,6 @@ def addDashApp(server, path, title, layout, callbacks):
 
 
 if __name__ == '__main__':
-    server = create_server()
+    server = createServer()
 
     server.run()

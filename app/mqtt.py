@@ -38,8 +38,12 @@ def deactivateHeatTrace():
 def activateHeatTrace():
     mqtt.publish('powerSwitch', bytes([4, 0, 0, 0, 0, 0, 1, 0, 0, 0]))
 
+<<<<<<< HEAD
 def claimMeterdata():
     mqtt.publish('powerSwitch', bytes([4, 2, 0]))
+=======
+    write_to_db(container_name, packetData)
+>>>>>>> 8e056217dc3fd7426139aa2f7e60ee8c818d756b
     
 
     
