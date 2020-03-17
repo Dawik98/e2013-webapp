@@ -2,6 +2,14 @@ from flask import Flask
 from flask_mqtt import Mqtt
 import dash
 
+import sys
+sys.path.append("./dashApps")
+
+import os
+cwd = os.getcwd()
+print(cwd)
+
+
 
 def createServer():
 
@@ -16,8 +24,6 @@ def createServer():
     server.config['MQTT_USERNAME'] = 'e2013'
     server.config['MQTT_PASSWORD'] = 'potet'
     server.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
-
-    #mqtt = Mqtt(app_bp)
 
 
     from test1 import layout as layout1
@@ -41,7 +47,15 @@ def createServer():
 
 def addDashApp(server, path, title, layout, callbacks):
 
-    dashApp = dash.Dash(__name__, server=server, url_base_pathname=path)
+    external_stylesheets = [{
+        "href" : "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
+        "rel" : "stylesheet",
+        "integrity" : "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh",
+        "crossorigin" : "anonymous"
+        
+    }]
+
+    dashApp = dash.Dash(__name__, server=server, url_base_pathname=path, external_stylesheets=external_stylesheets)
 
     
     with server.app_context():

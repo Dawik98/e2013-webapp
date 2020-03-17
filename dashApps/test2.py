@@ -10,18 +10,17 @@ import random
 import plotly.graph_objs as go
 from collections import deque
 
+from layout import header
 
-
-layout = html.Div(
-    [
-        dcc.Graph(id='live-graph', animate=True),
-        dcc.Interval(
-            id='graph-update',
-            interval=1000,
-            n_intervals = 0
-        ),
-    ]
-)
+layout = html.Div([
+    header,
+    dcc.Graph(id='live-graph', className='media-body', animate=True),
+    dcc.Interval(
+        id='graph-update',
+        interval=1000,
+        n_intervals = 0
+    ),
+    ])
 def callbacks(app):
     X = deque(maxlen=20)
     X.append(1)
