@@ -27,9 +27,6 @@ layout = html.Div([
             {'label': 'Temperatur', 'value': 'temp'},
             {'label': u'Jordfeil', 'value': 'jordfeil'},
             {'label': 'Aktiv effekt', 'value': 'aktiv_effekt'}
-            {'label': 'Aktiv effekt', 'value': 'aktiv_effekt'}
-            {'label': 'Aktiv effekt', 'value': 'aktiv_effekt'}
-            {'label': 'Aktiv effekt', 'value': 'aktiv_effekt'}
         ],
         value=['temp', 'aktiv_effekt'],
         multi=True
