@@ -11,41 +11,29 @@ from datetime import datetime
 from collections import deque
 from cosmosDB import read_from_db
 
-
-
 #app = dash.Dash(__name__)
-
-max_length = 50
-temp_ht1=[]
-actPwr_ht1=[]
-ts_ht1=[]
-målinger_dict={"Temperatur":temp_ht1,
-"Aktiv effekt":actPwr_ht1,
-
-}
 
 #timeStamp1_dict={"Temeratur sensor:":}
 
 #temp data, MÅ gjøres modulært
+ts_ht1=[]
+temp_ht1=[]
+
 def update_tempData():
     query = "SELECT * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY heatTrace1.timeReceived DESC"
     container_name = "heatTrace1"
     items = read_from_db(container_name, query)
-    ts_ht1=[]
-    #temp_ht1=[]
+    
     for i in items:
         temp_ht1.append(i['temperature'])
-    
+
     for i in items:
         ts_ht1.append(i['_ts'])
     ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
-    ts_ht1OSLO = ts_ht1UTC
-    #ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
-    
-    return  (ts_ht1OSLO,temp_ht1)
+    #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
+    return  ts_ht1UTC,temp_ht1
 
-
-(ts_ht1OSLO, temp_ht1) = update_tempData()
+ts_ht1UTC, temp_ht1 = update_tempData()
 
 
 
@@ -78,10 +66,14 @@ for i in items:
 ts_ht1Ps=[]
 for i in items:
     ts_ht1Ps.append(i['_ts'])
-ts_ht1Ps= pd.to_datetime(ts_ht1, unit='s')
+ts_ht1Ps= pd.to_datetime(ts_ht1Ps, unit='s')
 
 #print(items)
 
+
+målinger_dict={"Temperatur":temp_ht1,
+"Aktiv effekt":actPwr_ht1,
+}
 
 layout = html.Div([
     html.Label('Regulerings-sløyfe'),
@@ -114,7 +106,6 @@ layout = html.Div([
     ),
     
 ])
-#ts_ht1OSLO, temp_ht1 = update_tempData()
 def callbacks(app):
     
     @app.callback(Output('live-graph', 'figure'),
@@ -138,8 +129,9 @@ def callbacks(app):
         try:
             #print(ts_ht1OSLO)
             #print(temp_ht1)
-            X=ts_ht1OSLO[:int(AntallMålinger)]
-            Y=temp_ht1[:int(AntallMålinger)]
+            #ts_ht1UTC, temp_ht1 = update_tempData()
+            X=ts_ht1UTC[:int(antall_målinger)]
+            Y=temp_ht1[:int(antall_målinger)]
 
             data = plotly.graph_objs.Scatter(
                     y=Y,
@@ -148,6 +140,7 @@ def callbacks(app):
                     mode= 'lines+markers'
                     )
             return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]), yaxis=dict(range=[0,100]),)}
+            
             #Graf med flere målinger
             """
             for valg in måle_valg:
@@ -181,6 +174,7 @@ def callbacks(app):
                 name='Scatter',
                 mode= 'lines+markers'
                 )
+            return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]), yaxis=dict(range=[0,100]),)}
             """
         except Exception as e:
             with open('errors.txt','a') as f:
