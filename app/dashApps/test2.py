@@ -10,7 +10,7 @@ import random
 import plotly.graph_objs as go
 from collections import deque
 
-from layout import header
+from dashApps.layout import header
 
 layout = html.Div([
     header,
