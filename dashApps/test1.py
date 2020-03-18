@@ -1,17 +1,26 @@
-# testing input/ output
-
 import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc 
 import dash_html_components as html 
 
+#import standard layout
+from layout import header
 
-#app = dash.Dash(__name__, server=server, requests_pathname_prefix='/test1/')
 
-layout = html.Div(children=[
-    dcc.Input(id='input', value='Enter something', type='text'),
-    html.Div(id='output')
+main_body = html.Main(role='main', className='container', children=
+    html.Div(className='row', children=
+    html.Article(className = "media content-section", children =
+    html.Div(className="media-body", children=[
+        dcc.Input(id='input', value='Enter something', type='text'),
+        html.Div(id='output'),
+    ])#div
+    )#article
+    )#div
+    )#main
 
+layout = html.Div(children = [
+    header,
+    main_body
 ])
 
 def callbacks(app):
