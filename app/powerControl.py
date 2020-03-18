@@ -1,18 +1,18 @@
-from mqtt import *
+from mqtt import activateHeatTrace, deactivateHeatTrace
 from threading import Timer, Thread, Lock
 from time import time, ctime, sleep
 
 
-class PID_controller:
+class PI_controller:
 
     def __init__(self, reg_name, mode="Auto", duty_cycle=1.0, log_results=False):
 
         self.name = reg_name
         self.log_results = log_results
 
-        self.Kp = 0.0 #proportional gain
-        self.Ti = 0.0 #integral gain
-        self.Ts = 0.0 #samplings time
+        self.Kp = 0.0 # Proportional forsterkning
+        self.Ti = 0.0 # Integraltid
+        self.Ts = 0.0 # Samplingstid
 
         self.setpoint = 0
         self.error = 0
@@ -21,7 +21,7 @@ class PID_controller:
         self.u_i = 0
         self.u_tot = 0
 
-        # feedback value:
+        # Tilbakekoblingsverdi:
         self.value = 0
         self.value_prev = 0
 
@@ -29,7 +29,7 @@ class PID_controller:
         self.time_prev = 0
 
         self.dutycycle = duty_cycle # min
-        self.lock = Lock() # lock for u_tot and dutycycle
+        self.lock = Lock() # Lock for u_tot and dutycycle
 
         self.mode = mode
         self.run_thread = True
@@ -53,8 +53,8 @@ class PID_controller:
 
 
     def update_parameters(self, Kp, Ti):
-        self.Kp = Kp #proportional gain
-        self.Ti = Ti #integral gain
+        self.Kp = Kp # Proportional forsterkning
+        self.Ti = Ti # Integraltid
     
     def update_value(self, value):
         self.value_prev = self.value
@@ -71,19 +71,19 @@ class PID_controller:
 
         self.Ts = self.time_now - self.time_prev
 
-    # proportional part
+    # Proporsjonalbidrag
     def proportional(self):
         u_p = self.Kp * self.error
         u_p = round(u_p,2)
         self.u_p = u_p
 
-    # intagral part
+    # Intagralbidrag
     def integral(self):
         try:
             u_i = self.Kp * self.Ts / self.Ti * self.error + self.u_i
             self.u_i = round(u_i,2)
 
-            # anti windup:
+            # Anti windup:
             if u_i > 100.0:
                 self.u_i = 100.0
             elif u_i < 0.0:
@@ -93,29 +93,27 @@ class PID_controller:
             self.u_i = 0.00
 
     def bumpless(self, u_tot):
-        # kjør denne hvis det byttes til regulatorstyring etter å ha brukt manuell pådrag
-        # "reset" tida og bruk integralvirkning som det gamle pådraget
+        # Kjør denne funksjonen hvis det byttes til regulatorstyring etter å ha brukt manuelt pådrag
+        # "Reset" tida og bruk integralvirkning som det gamle pådraget
         self.u_i = u_tot
         self.get_sample_time()
             
-    # calculate error
+    # Kalkuler avvik
     def get_error(self):
         error = self.setpoint - self.value
-        error = round(error,2)
-        self.error = error
+        self.error = round(error,2)
 
     def calculate_u_tot(self):
-        if self.mode == "Auto":
+        if self.mode == 'Auto':
             self.get_sample_time()
             self.get_error()
 
-            #calculate proportional, integral and derivative "pådrag"
+            # Kalkuler proporsjonal-, integralbidraget til pådraget.
             self.proportional()
             self.integral()
-
             u_tot = self.u_p + self.u_i
 
-            # anti windup:
+            # Anti windup:
             if u_tot > 100.0:
                 self.set_u_tot(100.0)
             elif u_tot < 0.0:
@@ -125,13 +123,11 @@ class PID_controller:
 
             results = [ctime(), self.value, self.setpoint, self.u_tot, self.u_p, self.u_i, self.Kp, self.Ti]
 
-            # log results if the optiion is on - default = FALSE
+            # Logg resulateter hvis dette er aktivert (default = FALSE)
             if self.log_results:
                 self.writer(results)
 
-            #return results
-
-    # duty cycle i minutter
+    # Duty cycle i minutter
     def actuationControl(self):
         dutycycle = None
         actuation = None
@@ -143,7 +139,7 @@ class PID_controller:
             else:
                 try:
                     print("Lock acquired")
-                    dutycycle = self.dutycycle*60 # gjør om til sekund
+                    dutycycle = self.dutycycle*60 # Konverterer til sekunder
                     actuation = self.u_tot
 
                 finally:
@@ -154,12 +150,12 @@ class PID_controller:
                     t_off = dutycycle - t_on
 
                     # Skru varmekabel på
-                    #activateHeatTrace()
+                    activateHeatTrace()
                     print("on - {}s".format(t_on))
                     sleep(t_on)
 
                     # Skru av varmekabel
-                    #deactivateHeatTrace()
+                    deactivateHeatTrace()
                     print("off - {}s".format(t_off))
                     sleep(t_off)
 
@@ -178,12 +174,12 @@ class PID_controller:
             self.lock.release()
 
     def change_mode(self, mode, actuation=0.0):
-        if mode == "Auto":
+        if mode == 'Auto':
             self.bumpless(actuation)
-            self.mode = "Auto"
-        elif mode == "Manual":
+            self.mode = 'Auto'
+        elif mode == 'Manual':
             self.u_tot = actuation
-            self.mode = "Manual"
+            self.mode = 'Manual'
         else:
             print("Invalid controller mode ...")
 
@@ -194,18 +190,18 @@ class PID_controller:
         self.run = True
 
 
-def change_value(reg):
-    while(True):
-        command = input("")
-        reg.update_value(float(command))
+# def change_value(reg):
+#     while(True):
+#         command = input("")
+#         reg.update_value(float(command))
 
-reg_1 = PID_controller("regulator 1", duty_cycle=10.0/60)
-reg_1.set_dutycycle(10.0/60)
-reg_1.update_parameters(1.0, 1.0)
-reg_1.update_setpoint(2.0)
+# reg_1 = PID_controller("regulator 1", duty_cycle=10.0/60)
+# reg_1.set_dutycycle(10.0/60)
+# reg_1.update_parameters(1.0, 1.0)
+# reg_1.update_setpoint(2.0)
 
-prompt  = Thread(target=change_value, args=(reg_1,))
-prompt.start()
+# prompt  = Thread(target=change_value, args=(reg_1,))
+# prompt.start()
 
 #ac = Thread(target=actuationControl)
 #ac.start()
