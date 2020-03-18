@@ -7,7 +7,6 @@ import plotly
 import random
 import pytz
 import plotly.graph_objs as go
-import threading
 from datetime import datetime
 from collections import deque
 from cosmosDB import read_from_db
@@ -38,8 +37,6 @@ def update_tempData():
         ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
         #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
     return  ts_ht1UTC,temp_ht1
-
-#Thread_Read = threading.Thread(target=tupdate_tempData, args=(0,))
 
 ts_ht1UTC, temp_ht1 = update_tempData()
 
