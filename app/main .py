@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_mqtt import Mqtt
 import dash
+import dash_bootstrap_components as dbc
 
 import sys
 sys.path.append("./dashApps")
@@ -22,16 +23,16 @@ def createServer():
 
 
     # legg til dashboard apper
-    from test1 import layout as layout1
-    from test1 import callbacks as callbacks1
+    from dashApps.test1 import layout as layout1
+    from dashApps.test1 import callbacks as callbacks1
     addDashApp(server, '/test1/', 'test1', layout1, callbacks1)
 
-    from test2 import layout as layout2
-    from test2 import callbacks as callbacks2
+    from dashApps.test2 import layout as layout2
+    from dashApps.test2 import callbacks as callbacks2
     addDashApp(server, '/test2/', 'test2', layout2, callbacks2)
 
-    from sloyfer import layout as layout_sloyfer
-    from sloyfer import callbacks as callbacks_sloyfer
+    from dashApps.sloyfer import layout as layout_sloyfer
+    from dashApps.sloyfer import callbacks as callbacks_sloyfer
     addDashApp(server, '/sløyfer/', 'sloyfer', layout_sloyfer, callbacks_sloyfer)
 
 
@@ -71,6 +72,7 @@ def addDashApp(server, path, title, layout, callbacks):
                         url_base_pathname=path, 
                         external_scripts=external_scripts, 
                         external_stylesheets=external_stylesheets)
+                        #external_stylesheets=[dbc.themes.SUPERHERO])
 
     
     with server.app_context():
@@ -83,4 +85,4 @@ def addDashApp(server, path, title, layout, callbacks):
 if __name__ == '__main__':
     server = createServer()
 
-    server.run()
+    server.run(debug=True)

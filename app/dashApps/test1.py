@@ -4,7 +4,8 @@ import dash_core_components as dcc
 import dash_html_components as html 
 
 #import standard layout
-from layout import header
+from dashApps.layout import header
+from dashApps.layout import callbacks as layout_callbacks
 
 
 main_body = html.Main(role='main', className='container', children=
@@ -24,6 +25,9 @@ layout = html.Div(children = [
 ])
 
 def callbacks(app):
+
+    layout_callbacks(app)
+
     @app.callback(
         Output(component_id='output', component_property='children'),
         [Input(component_id='input', component_property='value')]
