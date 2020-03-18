@@ -8,7 +8,7 @@ import json
 import os
 import io
 
-from mqtt import claimMeterdata, activateHeatTrace, deactivateHeatTrace
+from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace
 
 app=Blueprint('app', __name__)
 

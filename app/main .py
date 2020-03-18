@@ -22,19 +22,19 @@ def createServer():
     server.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 
     # Koble til Mosquitto
-    from mqtt import connect_mosquitto
+    from mqttCommunication import connect_mosquitto
     connect_mosquitto(server)
 
-    from test1 import layout as layout1
-    from test1 import callbacks as callbacks1
+    from dashApps.test1 import layout as layout1
+    from dashApps.test1 import callbacks as callbacks1
     addDashApp(server, '/test1/', 'test1', layout1, callbacks1)
 
-    from test2 import layout as layout2
-    from test2 import callbacks as callbacks2
+    from dashApps.test2 import layout as layout2
+    from dashApps.test2 import callbacks as callbacks2
     addDashApp(server, '/test2/', 'test2', layout2, callbacks2)
 
-    from sloyfer import layout as layout_sloyfer
-    from sloyfer import callbacks as callbacks_sloyfer
+    from dashApps.sloyfer import layout as layout_sloyfer
+    from dashApps.sloyfer import callbacks as callbacks_sloyfer
     addDashApp(server, '/sløyfer/', 'sloyfer', layout_sloyfer, callbacks_sloyfer)
 
 
