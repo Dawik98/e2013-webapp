@@ -40,9 +40,21 @@ def activateHeatTrace():
     mqtt.publish('powerSwitch', bytes([4, 0, 0, 0, 0, 0, 1, 0, 0, 0]))
     return "Activation message has been sent to gateway."
 
+<<<<<<< HEAD
 def deactivateHeatTrace():
     mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
     return "Deactivation message has been sent to gateway."
+=======
+<<<<<<< HEAD
+def claimMeterdata():
+    mqtt.publish('powerSwitch', bytes([4, 2, 0]))
+=======
+    write_to_db(container_name, packetData)
+>>>>>>> 8e056217dc3fd7426139aa2f7e60ee8c818d756b
+    
+
+    
+>>>>>>> 2c1f2d3265f0c9cbba3f847dce37d1d9cb064013
     
     
     

@@ -5,11 +5,6 @@ import dash
 import sys
 sys.path.append("./dashApps")
 
-import os
-cwd = os.getcwd()
-print(cwd)
-
-
 
 def createServer():
 
@@ -23,6 +18,7 @@ def createServer():
     server.config['MQTT_CLIENT_ID'] = 'Webb-App'
     server.config['MQTT_USERNAME'] = 'e2013'
     server.config['MQTT_PASSWORD'] = 'potet'
+    server.config['MQTT_CLIENT_ID'] = "Webb-App"
     server.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 
 
@@ -55,7 +51,26 @@ def addDashApp(server, path, title, layout, callbacks):
         
     }]
 
-    dashApp = dash.Dash(__name__, server=server, url_base_pathname=path, external_stylesheets=external_stylesheets)
+    external_scripts = [{
+        "href" : "https://code.jquery.com/jquery-3.4.1.slim.min.js",
+        "integrity" : "sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n",
+        "crossorigin" : "anonymous"
+        },{
+        "href" : "https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js",
+        "integrity" : "sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo",
+        "crossorigin" : "anonymous"
+        },{
+        "href" : "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js",
+        "integrity" : "sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6",
+        "crossorigin" : "anonymous"
+        }
+    ]
+
+    dashApp = dash.Dash(__name__, 
+                        server=server,
+                        url_base_pathname=path, 
+                        external_scripts=external_scripts, 
+                        external_stylesheets=external_stylesheets)
 
     
     with server.app_context():
