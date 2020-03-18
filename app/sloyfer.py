@@ -7,6 +7,7 @@ import plotly
 import random
 import pytz
 import plotly.graph_objs as go
+import threading
 from datetime import datetime
 from collections import deque
 from cosmosDB import read_from_db
@@ -19,19 +20,26 @@ from cosmosDB import read_from_db
 ts_ht1=[]
 temp_ht1=[]
 
+
 def update_tempData():
     query = "SELECT * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY heatTrace1.timeReceived DESC"
     container_name = "heatTrace1"
-    items = read_from_db(container_name, query)
-    
-    for i in items:
-        temp_ht1.append(i['temperature'])
+    items = read_from_db(container_name, query) 
+    if  len(temp_ht1) == 0 or\
+        items[0]['temperature'] != temp_ht1[0]:
+        for i in items:
+            temp_ht1.append(i['temperature'])
 
-    for i in items:
-        ts_ht1.append(i['_ts'])
-    ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
-    #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
+        print(temp_ht1[0])
+        print(items[0]['temperature'])
+
+        for i in items:
+            ts_ht1.append(i['_ts'])
+        ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
+        #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
     return  ts_ht1UTC,temp_ht1
+
+#Thread_Read = threading.Thread(target=tupdate_tempData, args=(0,))
 
 ts_ht1UTC, temp_ht1 = update_tempData()
 
@@ -96,7 +104,7 @@ layout = html.Div([
     ),
     
     html.Label('Antall målinger'),
-    dcc.Input(id='AntallMålinger', value='40', type='text'),
+    dcc.Input(id='AntallMålinger', value='30', type='text'),
     
     dcc.Graph(id='live-graph', animate=False),
         dcc.Interval(
