@@ -20,13 +20,12 @@ header = dbc.Navbar(
             dbc.NavbarToggler(id="navbar-toggler"),
             dbc.Collapse(
                 dbc.Nav(
-                    navbar_items, navbar=True, fill=True 
+                    navbar_items, className="mr-auto", navbar=True,
                 ),
                 id="navbar-collapse",
                 navbar=True,
             ),
-        ]
-    ),
+        ]),
     className="mb-5",
     color="primary",
     dark=True,

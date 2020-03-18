@@ -13,11 +13,12 @@ from collections import deque
 import dash_bootstrap_components as dbc
 
 from dashApps.layout import header
+from dashApps.layout import callbacks as layout_callbacks
 
 layout = html.Div([
     header,
     dbc.Container(
-    dbc.Row(dcc.Graph(id='live-graph', className='media-body', animate=True)),
+    dcc.Graph(id='live-graph', className='media-body', animate=True),
     ),# Container
     dcc.Interval(
         id='graph-update',
@@ -29,6 +30,8 @@ layout = html.Div([
 
 # CALLBACKS:
 def callbacks(app):
+    layout_callbacks(app)
+
     X = deque(maxlen=20)
     X.append(1)
     Y = deque(maxlen=20)
