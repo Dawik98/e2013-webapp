@@ -16,11 +16,11 @@ def create_server():
     server.config['MQTT_CLIENT_ID'] = "Webb-App"
     server.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 
-    # legg til mqtt funksjoner
+    # Koble til Mosquitto
     from mqtt import connect_mosquitto
     connect_mosquitto(server)
 
-    # legg til dashboard apper
+    # Legg til dashboard apper
     from test1 import layout as layout1
     from test1 import callbacks as callbacks1
     addDashApp(server, '/test1/', 'test1', layout1, callbacks1)
