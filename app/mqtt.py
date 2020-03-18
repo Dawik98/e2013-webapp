@@ -32,14 +32,17 @@ def connect_mosquitto(server):
     
         write_to_db(container_name, packetData)
     
-def deactivateHeatTrace():
-    mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
+def claimMeterdata():
+    mqtt.publish('powerSwitch', bytes([4, 2, 0]))
+    return "Meterdata request has been sent to gateway."
 
 def activateHeatTrace():
     mqtt.publish('powerSwitch', bytes([4, 0, 0, 0, 0, 0, 1, 0, 0, 0]))
+    return "Activation message has been sent to gateway."
 
-def claimMeterdata():
-    mqtt.publish('powerSwitch', bytes([4, 2, 0]))
+def deactivateHeatTrace():
+    mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
+    return "Deactivation message has been sent to gateway."
     
     
     

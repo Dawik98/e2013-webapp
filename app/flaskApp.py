@@ -13,13 +13,16 @@ from mqtt import claimMeterdata, activateHeatTrace, deactivateHeatTrace
 app=Blueprint('app', __name__)
 
 @app.route('/claimMeterdata')
-claimMeterdata()
+def runClaimDataFunction():
+    return claimMeterdata()
 
 @app.route('/activateHeatTrace')
-activateHeatTrace()
+def runActivationFunction():
+    return activateHeatTrace()
 
 @app.route('/deactivateHeatTrace')
-deactivateHeatTrace()
+def runDeactivationFunction():
+    return deactivateHeatTrace()
 
 
 målinger=[
