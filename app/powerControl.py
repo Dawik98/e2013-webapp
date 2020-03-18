@@ -40,7 +40,7 @@ class PI_controller:
     def get_reg_name(self):
         return self.name
 
-    # Write a log with results from the regulator
+    # Skriv til loggen
     def writer(self, data):
          file = open(self.name+'_log.txt', 'a')
 
@@ -53,7 +53,7 @@ class PI_controller:
 
 
     def update_parameters(self, Kp, Ti):
-        self.Kp = Kp # Proportional forsterkning
+        self.Kp = Kp # Proporsjonal forsterkning
         self.Ti = Ti # Integraltid
     
     def update_value(self, value):
