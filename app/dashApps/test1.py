@@ -4,7 +4,7 @@ import dash_core_components as dcc
 import dash_html_components as html 
 
 #import standard layout
-from layout import header
+from dashApps.layout import header
 
 
 main_body = html.Main(role='main', className='container', children=
