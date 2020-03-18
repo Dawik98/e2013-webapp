@@ -71,8 +71,8 @@ def addDashApp(server, path, title, layout, callbacks):
                         server=server,
                         url_base_pathname=path, 
                         external_scripts=external_scripts, 
-                        external_stylesheets=external_stylesheets)
-                        #external_stylesheets=[dbc.themes.SUPERHERO])
+                        #external_stylesheets=external_stylesheets)
+                        external_stylesheets=[dbc.themes.SANDSTONE])
 
     
     with server.app_context():

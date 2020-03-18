@@ -1,5 +1,4 @@
 from mqtt import *
-<<<<<<< HEAD
 from threading import Timer, Thread, Lock
 from time import time, ctime, sleep
 
@@ -210,15 +209,3 @@ def change_value(reg):
 
 #ac = Thread(target=actuationControl)
 #ac.start()
-=======
-from threading import Timer
-
-def powerControl(actuation, dutycycle):
-    while (regMode == High):
-        # Skru varmekabel på
-        activateHeatTrace()
-        Timer(actuation/100 * dutycycle)
-        # Skru av varmekabel
-        deactivateHeatTrace()
-        Timer((1 - actuation/100) * dutycycle)
->>>>>>> 8e056217dc3fd7426139aa2f7e60ee8c818d756b

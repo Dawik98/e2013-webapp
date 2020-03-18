@@ -3,26 +3,24 @@ from dash.dependencies import Input, Output
 import dash_core_components as dcc 
 import dash_html_components as html 
 
+import dash_bootstrap_components as dbc
+
 #import standard layout
 from dashApps.layout import header
 from dashApps.layout import callbacks as layout_callbacks
 
-
-main_body = html.Main(role='main', className='container', children=
-    html.Div(className='row', children=
-    html.Article(className = "media content-section", children =
-    html.Div(className="media-body", children=[
-        dcc.Input(id='input', value='Enter something', type='text'),
-        html.Div(id='output'),
-    ])#div
-    )#article
-    )#div
-    )#main
-
-layout = html.Div(children = [
+layout = html.Div([
     header,
-    main_body
-])
+    dbc.Container(
+        html.Article(className="jumbotron", children =
+        html.Div(className="media-body", children=[
+            dcc.Input(id='input', value='Enter something', type='text'),
+            html.Div(id='output'),
+        ])#Div
+        )#Article
+    ),# Container
+    ])# Div
+
 
 def callbacks(app):
 

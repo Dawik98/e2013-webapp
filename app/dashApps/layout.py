@@ -5,24 +5,22 @@ from dash.dependencies import Input, Output, State
 
 import dash_bootstrap_components as dbc
 
-from dash_dangerously_set_inner_html import DangerouslySetInnerHTML
-
 
 navbar_items = [
-    dbc.NavItem(dbc.NavLink("Home", href="/Home")),
-    dbc.NavLink("Sensor Data", href="/SensorData/"),
-    dbc.NavLink("test1", href="/test1/"),
-    dbc.NavLink("test2", href="/test2/"),
+    dbc.NavLink("Home", href="/Home", external_link=True),
+    dbc.NavLink("Sensor Data", href="/SensorData", external_link=True),
+    dbc.NavLink("test1", href="/test1", external_link=True),
+    dbc.NavLink("test2", href="/test2", external_link=True),
 ]
 
 header = dbc.Navbar(
     dbc.Container(
         [
-            dbc.NavbarBrand("E2013", href="/"),
+            dbc.NavbarBrand("E2013", href="/", external_link=True),
             dbc.NavbarToggler(id="navbar-toggler"),
             dbc.Collapse(
                 dbc.Nav(
-                    navbar_items, navbar=True, fill=True, horizontal="start"
+                    navbar_items, navbar=True, fill=True 
                 ),
                 id="navbar-collapse",
                 navbar=True,
@@ -30,7 +28,9 @@ header = dbc.Navbar(
         ]
     ),
     className="mb-5",
-    fixed="top"
+    color="primary",
+    dark=True,
+    sticky="top"
 )
 
 def callbacks(app):

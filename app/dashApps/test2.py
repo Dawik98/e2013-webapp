@@ -10,17 +10,24 @@ import random
 import plotly.graph_objs as go
 from collections import deque
 
+import dash_bootstrap_components as dbc
+
 from dashApps.layout import header
 
 layout = html.Div([
     header,
-    dcc.Graph(id='live-graph', className='media-body', animate=True),
+    dbc.Container(
+    dbc.Row(dcc.Graph(id='live-graph', className='media-body', animate=True)),
+    ),# Container
     dcc.Interval(
         id='graph-update',
         interval=1000,
         n_intervals = 0
     ),
-    ])
+    ])# Div
+
+
+# CALLBACKS:
 def callbacks(app):
     X = deque(maxlen=20)
     X.append(1)
