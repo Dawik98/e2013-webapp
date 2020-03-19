@@ -115,8 +115,8 @@ def callbacks(app):
             [Input('sløyfe-valg'), 'value'])
 
     def update_tempData(sløyfe_valg):
-        query = "SELECT * FROM sløyfe_valg WHERE (heatTrace1.deviceType = 'tempSensor' AND sløyfe_valg.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY sløyfe_valg.timeReceived DESC"
-        container_name = sløyfe_valg
+        query = "SELECT * FROM {} WHERE ({}.deviceType = 'tempSensor' AND {}.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY {}.timeReceived DESC".format(sløyfe_valg)
+        container_name = {}.format(sløyfe_valg)
         items = read_from_db(container_name, query) 
         if  len(temp_ht1) == 0 or\
             items[0]['temperature'] != temp_ht1[0]:
