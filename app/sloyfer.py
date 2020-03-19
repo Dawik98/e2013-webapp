@@ -18,31 +18,36 @@ from cosmosDB import read_from_db
 #temp data, MÅ gjøres modulært
 ts_ht1=[]
 temp_ht1=[]
+ts_ht1UTC=[]
+antall_målinger=5
+antall_målinger_pre=0
 
-
-def update_tempData():
-    query = "SELECT * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY heatTrace1.timeReceived DESC"
-    container_name = "heatTrace1"
-    items = read_from_db(container_name, query) 
-    if  len(temp_ht1) == 0 or\
-        items[0]['temperature'] != temp_ht1[0]:
+def update_tempData(antall_målinger):
+    global antall_målinger_pre
+    print("Kjører ikke if")
+    print(antall_målinger)
+    print(antall_målinger_pre)
+    if  antall_målinger_pre != antall_målinger or\
+        :
+        print("Kjører funksjon")
+        query = "SELECT TOP {} * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY heatTrace1.timeReceived DESC".format(antall_målinger)
+        container_name = "heatTrace1"
+        items = read_from_db(container_name, query)
         for i in items:
             temp_ht1.append(i['temperature'])
-
-        print(temp_ht1[0])
-        print(items[0]['temperature'])
-
         for i in items:
             ts_ht1.append(i['_ts'])
         ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
+        antall_målinger_pre=antall_målinger
         #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
     return  ts_ht1UTC,temp_ht1
 
-ts_ht1UTC, temp_ht1 = update_tempData()
+#ts_ht1UTC, temp_ht1 = update_tempData(antall_målinger)
 
 
 
 #Powerwitch data Må gjøres modulært
+"""
 query = "SELECT * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'powerSwitch' AND heatTrace1.deviceEui = '70-b3-d5-8f-f1-00-1e-78' AND heatTrace1.messageType ='powerData') ORDER BY heatTrace1.timeReceived DESC"
 container_name = "heatTrace1"
 items = read_from_db(container_name, query)
@@ -72,12 +77,12 @@ ts_ht1Ps=[]
 for i in items:
     ts_ht1Ps.append(i['_ts'])
 ts_ht1Ps= pd.to_datetime(ts_ht1Ps, unit='s')
-
+"""
 #print(items)
 
 
 målinger_dict={"Temperatur":temp_ht1,
-"Aktiv effekt":actPwr_ht1,
+#"Aktiv effekt":actPwr_ht1,
 }
 
 layout = html.Div([
@@ -101,12 +106,12 @@ layout = html.Div([
     ),
     
     html.Label('Antall målinger'),
-    dcc.Input(id='AntallMålinger', value='30', type='text'),
+    dcc.Input(id='AntallMålinger', value='3', type='text'),
     
     dcc.Graph(id='live-graph', animate=False),
         dcc.Interval(
             id='graph-update',
-            interval=1000,
+            interval=10*1000,
             n_intervals = 1
     ),
     
@@ -134,7 +139,7 @@ def callbacks(app):
         try:
             #print(ts_ht1OSLO)
             #print(temp_ht1)
-            #ts_ht1UTC, temp_ht1 = update_tempData()
+            ts_ht1UTC, temp_ht1 = update_tempData(antall_målinger)
             X=ts_ht1UTC[:int(antall_målinger)]
             Y=temp_ht1[:int(antall_målinger)]
 
