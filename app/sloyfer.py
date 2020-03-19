@@ -66,8 +66,6 @@ layout = html.Div([
         options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
         value='Sløyfe 1'
     ),    
-    
-    html.H3('Temperatur Plot'),
 
     html.Label('Antall målinger'),
     dcc.Input(id='AntallMålinger', value='60', type='text'),
@@ -78,7 +76,6 @@ layout = html.Div([
             interval=15*1000,
             n_intervals = 1
     ),
-    html.H3('Diverse målinger'),
     html.Label('Målinger'),
     dcc.Dropdown(
         id='måle-valg',
@@ -86,11 +83,33 @@ layout = html.Div([
         value=['Aktiv effekt'],
         multi=True
     ),
-    dcc.Graph(id='live-graph2', animate=False),
-        dcc.Interval(
-            id='graph-update2',
-            interval=15*1000,
-            n_intervals = 1
+     dcc.Graph(
+        id='basic-interactions',
+        figure={
+            'data': [
+                {
+                    'x': [1, 2, 3, 4],
+                    'y': [4, 1, 3, 5],
+                    'text': ['a', 'b', 'c', 'd'],
+                    'customdata': ['c.a', 'c.b', 'c.c', 'c.d'],
+                    'name': 'Trace 1',
+                    'mode': 'markers',
+                    'marker': {'size': 12}
+                },
+                {
+                    'x': [1, 2, 3, 4],
+                    'y': [9, 4, 1, 4],
+                    'text': ['w', 'x', 'y', 'z'],
+                    'customdata': ['c.w', 'c.x', 'c.y', 'c.z'],
+                    'name': 'Trace 2',
+                    'mode': 'markers',
+                    'marker': {'size': 12}
+                }
+            ],
+            'layout': {
+                'clickmode': 'event+select'
+            }
+        }
     ),
 ])
 def callbacks(app):
@@ -113,7 +132,11 @@ def callbacks(app):
                     name='Scatter',
                     mode= 'lines+markers'
                     )
-            return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]), yaxis=dict(range=[0,100]),)}
+            return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
+                                                         yaxis=dict(range=[0,120]),
+                                                         title='Temperatur Måling'),
+                                                         'margin': {'l': 20, 'b': 20, 'r': 20, 't': 20},
+                                                         }
 
         except Exception as e:
             with open('errors.txt','a') as f:
