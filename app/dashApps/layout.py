@@ -8,7 +8,8 @@ import dash_bootstrap_components as dbc
 
 navbar_items = [
     dbc.NavLink("Home", href="/Home", external_link=True),
-    dbc.NavLink("Sensor Data", href="/SensorData", external_link=True),
+    dbc.NavLink("Sløyfer", href="/sløyfer", external_link=True),
+    dbc.NavLink("Alarmer", href="/alarmer", external_link=True),
     dbc.NavLink("test1", href="/test1", external_link=True),
     dbc.NavLink("test2", href="/test2", external_link=True),
 ]

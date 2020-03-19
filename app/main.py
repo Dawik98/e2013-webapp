@@ -3,6 +3,8 @@ from flask_mqtt import Mqtt
 import dash
 import dash_bootstrap_components as dbc
 
+import logging
+
 import sys
 sys.path.append("./dashApps")
 
@@ -23,6 +25,18 @@ def createServer():
 
 
     # legg til dashboard apper
+    from dashApps.home import layout as layout_home
+    from dashApps.home import callbacks as callbacks_home
+    addDashApp(server, '/', 'Home', layout_home, callbacks_home)
+
+    from dashApps.sloyfer import layout as layout_sloyfer
+    from dashApps.sloyfer import callbacks as callbacks_sloyfer
+    addDashApp(server, '/sløyfer/', 'Sløyfer', layout_sloyfer, callbacks_sloyfer)
+    
+    from dashApps.alarmer import layout as layout_alarmer
+    from dashApps.alarmer import callbacks as callbacks_alarmer
+    addDashApp(server, '/alarmer/', 'Alarmer', layout_alarmer, callbacks_alarmer)
+    
     from dashApps.test1 import layout as layout1
     from dashApps.test1 import callbacks as callbacks1
     addDashApp(server, '/test1/', 'test1', layout1, callbacks1)
@@ -31,9 +45,6 @@ def createServer():
     from dashApps.test2 import callbacks as callbacks2
     addDashApp(server, '/test2/', 'test2', layout2, callbacks2)
 
-    from dashApps.sloyfer import layout as layout_sloyfer
-    from dashApps.sloyfer import callbacks as callbacks_sloyfer
-    addDashApp(server, '/sløyfer/', 'sloyfer', layout_sloyfer, callbacks_sloyfer)
 
 
     from flaskApp import app

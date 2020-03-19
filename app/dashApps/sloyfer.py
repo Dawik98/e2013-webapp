@@ -8,10 +8,14 @@ import random
 import plotly.graph_objs as go
 from collections import deque
 
+#import standard layout
+from dashApps.layout import header
+from dashApps.layout import callbacks as layout_callbacks
 
 #app = dash.Dash(__name__)
 
 layout = html.Div([
+    header,
     html.Label('Regulerings-sløyfe'),
     dcc.Dropdown(
         options=[
@@ -42,6 +46,8 @@ layout = html.Div([
 )
 
 def callbacks(app):
+    layout_callbacks(app)
+
     X = deque(maxlen=20)
     X.append(1)
     Y = deque(maxlen=20)
