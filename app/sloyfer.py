@@ -19,65 +19,19 @@ from cosmosDB import read_from_db
 ts_ht1=[]
 temp_ht1=[]
 ts_ht1UTC=[]
-"""
-def update_tempData():
-    query = "SELECT * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY heatTrace1.timeReceived DESC"
-    container_name = "heatTrace1"
-    items = read_from_db(container_name, query) 
-    if  len(temp_ht1) == 0 or\
-        items[0]['temperature'] != temp_ht1[0]:
-        for i in items:
-            temp_ht1.append(i['temperature'])
 
-        print(temp_ht1[0])
-        print(items[0]['temperature'])
-
-        for i in items:
-            ts_ht1.append(i['_ts'])
-        ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
-        #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
-    return  ts_ht1UTC,temp_ht1
-"""
-#ts_ht1UTC, temp_ht1 = update_tempData()
-
-
-
-#Powerwitch data Må gjøres modulært
-query = "SELECT * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'powerSwitch' AND heatTrace1.deviceEui = '70-b3-d5-8f-f1-00-1e-78' AND heatTrace1.messageType ='powerData') ORDER BY heatTrace1.timeReceived DESC"
+query = "SELECT * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY heatTrace1.timeReceived DESC"
 container_name = "heatTrace1"
-items = read_from_db(container_name, query)
-
-
-actPwr_ht1=[]
+items = read_from_db(container_name, query) 
 for i in items:
-    actPwr_ht1.append(i['activePower'])
-
-rctPwr_ht1=[]
+    temp_ht1.append(i['temperature'])
 for i in items:
-    rctPwr_ht1.append(i['reactivePower'])
-
-appPwr_ht1=[]
-for i in items:
-    appPwr_ht1.append(i['apparentPower'])
-
-volt_ht1=[]
-for i in items:
-    volt_ht1.append(i['voltage'])
-    
-freq_ht1 = []
-for i in items:
-    freq_ht1.append(i['frequency'])
-
-ts_ht1Ps=[]
-for i in items:
-    ts_ht1Ps.append(i['_ts'])
-ts_ht1Ps= pd.to_datetime(ts_ht1Ps, unit='s')
-
-#print(items)
+     ts_ht1.append(i['_ts'])
+ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
+#ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
 
 
-målinger_dict={"Temperatur":temp_ht1,
-"Aktiv effekt":actPwr_ht1,
+målinger_dict={"Temperatur":temp_ht1
 }
 
 layout = html.Div([
@@ -111,23 +65,21 @@ layout = html.Div([
     
 ])
 def callbacks(app):
-    @app.callback(Output('target', 'children'),
-            [Input('sløyfe-valg'), 'value'])
+    @app.callback(
+            [Output('ts_ht1UTC','number'),
+            Output('temp_ht1', 'number')]
+            [Input('sløyfe-valg', 'value')
+            ])
 
     def update_tempData(sløyfe_valg):
-        query = "SELECT * FROM {} WHERE ({}.deviceType = 'tempSensor' AND {}.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY {}.timeReceived DESC".format(sløyfe_valg)
+        query = "SELECT TOP 100 * FROM {} WHERE ({}.deviceType = 'tempSensor' AND {}.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY {}.timeReceived DESC".format(sløyfe_valg)
         container_name = {}.format(sløyfe_valg)
         items = read_from_db(container_name, query) 
-        if  len(temp_ht1) == 0 or\
-            items[0]['temperature'] != temp_ht1[0]:
-            for i in items:
-                temp_ht1.append(i['temperature'])
-
-            print(temp_ht1[0])
-            print(items[0]['temperature'])
-
-            for i in items:
-                ts_ht1.append(i['_ts'])
+        items[0]['temperature']
+        for i in items:
+            temp_ht1.append(i['temperature'])
+        for i in items:
+            ts_ht1.append(i['_ts'])
             ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
             #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
         return  ts_ht1UTC,temp_ht1
@@ -137,28 +89,16 @@ def callbacks(app):
 
     @app.callback(Output('live-graph', 'figure'),
             [Input('graph-update', 'n_intervals'),
-            Input('sløyfe-valg', 'value'),
-            Input('måle-valg', 'value'),
+            Input('ts_ht1UTC', 'value'),
+            Input('temp_ht1', 'value'),
             Input('AntallMålinger','value')
             ])
 
          
-    def update_graph_scatter(n,sløyfe_valg,måle_valg,antall_målinger):
-        """ Graf med flere målinger
-        graphs = []
-        if len(måle_valg)>2:
-            class_choice = 'col s12 m6 l4'
-        elif len(måle_valg) == 2:
-            class_choice = 'col s12 m6 l6'
-        else:
-            class_choice = 'col s12'
-        """
+    def update_graph_scatter(n,ts,temp,antall_målinger):
         try:
-            #print(ts_ht1OSLO)
-            #print(temp_ht1)
-            #ts_ht1UTC, temp_ht1 = update_tempData() 
-            X=ts_ht1UTC[:int(antall_målinger)]
-            Y=temp_ht1[:int(antall_målinger)]
+            X=ts_ht1[:int(antall_målinger)]
+            Y=temp[:int(antall_målinger)]
 
             data = plotly.graph_objs.Scatter(
                     y=Y,
@@ -167,48 +107,10 @@ def callbacks(app):
                     mode= 'lines+markers'
                     )
             return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]), yaxis=dict(range=[0,100]),)}
-          
-            #Graf med flere målinger
-            """
-            for valg in måle_valg:
-
-                data = go.Scatter(
-                x=list(ts_ht1),
-                y=list(målinger_dict[måle_valg]),
-                name='Scatter',
-                fill="tozeroy",
-                fillcolor="#6897bb"
-                )
-
-                graphs.append(html.Div(dcc.Graph(
-                id=måle_valg,
-                animate=True,
-                figure={'data': [data],'layout' : go.Layout(xaxis=dict(range=[min(ts_ht1),max(ts_ht1)]),
-                                                            yaxis=dict(range=[min(målinger_dict[måle_valg]),max(målinger_dict[måle_valg])]),
-                                                            margin={'l':50,'r':1,'t':45,'b':1},
-                                                            title='{}'.format(måle_valg))}
-                ), className=class_choice))
-
-            return graphs
-            """
-            """
-            X=ts_ht1Ps[:-20]
-            Y=actPwr_ht1[:-20]
-
-            data = plotly.graph_objs.Scatter(
-                y=Y,
-                x=X,
-                name='Scatter',
-                mode= 'lines+markers'
-                )
-            return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]), yaxis=dict(range=[0,100]),)}
-            """
+    
         except Exception as e:
             with open('errors.txt','a') as f:
                 f.write(str(e))
                 f.write('\n')                                               
 
 
-
-#if __name__ == '__main__':
- #   app.run_server(debug=True)
