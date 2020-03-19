@@ -18,8 +18,8 @@ from cosmosDB import read_from_db
 #temp data, MÅ gjøres modulært
 ts_ht1=[]
 temp_ht1=[]
-
-
+ts_ht1UTC=[]
+"""
 def update_tempData():
     query = "SELECT * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY heatTrace1.timeReceived DESC"
     container_name = "heatTrace1"
@@ -37,8 +37,8 @@ def update_tempData():
         ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
         #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
     return  ts_ht1UTC,temp_ht1
-
-ts_ht1UTC, temp_ht1 = update_tempData()
+"""
+#ts_ht1UTC, temp_ht1 = update_tempData()
 
 
 
@@ -86,10 +86,10 @@ layout = html.Div([
         id='sløyfe-valg',
         #options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
         options=[
-            {'label': 'Sløyfe 1', 'value': 'ht1'},
+            {'label': 'Sløyfe 1', 'value': 'heatTrace1'},
             {'label': u'Sløyfe 2', 'value': 'ht2'},
         ],
-        value='ht1'
+        value='heatTrace1'
     ),    
 
     html.Label('Målinger'),
@@ -106,13 +106,35 @@ layout = html.Div([
     dcc.Graph(id='live-graph', animate=False),
         dcc.Interval(
             id='graph-update',
-            interval=1000,
-            n_intervals = 1
+            n_intervals = 5*1000
     ),
     
 ])
 def callbacks(app):
-    
+    @app.callback(Output('target', 'children'),
+            [Input('sløyfe-valg'), 'value'])
+
+    def update_tempData(sløyfe_valg):
+        query = "SELECT * FROM sløyfe_valg WHERE (heatTrace1.deviceType = 'tempSensor' AND sløyfe_valg.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY sløyfe_valg.timeReceived DESC"
+        container_name = sløyfe_valg
+        items = read_from_db(container_name, query) 
+        if  len(temp_ht1) == 0 or\
+            items[0]['temperature'] != temp_ht1[0]:
+            for i in items:
+                temp_ht1.append(i['temperature'])
+
+            print(temp_ht1[0])
+            print(items[0]['temperature'])
+
+            for i in items:
+                ts_ht1.append(i['_ts'])
+            ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
+            #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
+        return  ts_ht1UTC,temp_ht1
+
+
+   
+
     @app.callback(Output('live-graph', 'figure'),
             [Input('graph-update', 'n_intervals'),
             Input('sløyfe-valg', 'value'),
@@ -120,7 +142,7 @@ def callbacks(app):
             Input('AntallMålinger','value')
             ])
 
-            
+         
     def update_graph_scatter(n,sløyfe_valg,måle_valg,antall_målinger):
         """ Graf med flere målinger
         graphs = []
@@ -134,7 +156,7 @@ def callbacks(app):
         try:
             #print(ts_ht1OSLO)
             #print(temp_ht1)
-            #ts_ht1UTC, temp_ht1 = update_tempData()
+            #ts_ht1UTC, temp_ht1 = update_tempData() 
             X=ts_ht1UTC[:int(antall_målinger)]
             Y=temp_ht1[:int(antall_målinger)]
 
@@ -145,7 +167,7 @@ def callbacks(app):
                     mode= 'lines+markers'
                     )
             return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]), yaxis=dict(range=[0,100]),)}
-            
+          
             #Graf med flere målinger
             """
             for valg in måle_valg:
