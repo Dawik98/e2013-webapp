@@ -22,24 +22,23 @@ ts_ht1UTC=[]
 antall_målinger=5
 antall_målinger_pre=0
 
-def update_tempData(antall_målinger):
-    global antall_målinger_pre
-    print("Kjører ikke if")
-    print(antall_målinger)
-    print(antall_målinger_pre)
-    if  antall_målinger_pre != antall_målinger or\
-        :
-        print("Kjører funksjon")
-        query = "SELECT TOP {} * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY heatTrace1.timeReceived DESC".format(antall_målinger)
-        container_name = "heatTrace1"
-        items = read_from_db(container_name, query)
-        for i in items:
-            temp_ht1.append(i['temperature'])
-        for i in items:
-            ts_ht1.append(i['_ts'])
-        ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
-        antall_målinger_pre=antall_målinger
-        #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
+def update_tempData(antall_målinger, antall_målinger_pre):
+    #if  antall_målinger_pre != antall_målinger:
+    print("Kjører funksjon")
+    query = "SELECT TOP {} * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY heatTrace1.timeReceived DESC".format(antall_målinger)
+    container_name = "heatTrace1"
+    items = read_from_db(container_name, query)
+    ts_ht1=[]
+    temp_ht1=[]
+    ts_ht1UTC=[]
+    for i in items:
+        temp_ht1.append(i['temperature'])
+    for i in items:
+        ts_ht1.append(i['_ts'])
+    ts_ht1UTC= pd.to_datetime(ts_ht1, unit='s')
+    antall_målinger_pre=antall_målinger
+    #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
+    print(ts_ht1UTC)
     return  ts_ht1UTC,temp_ht1
 
 #ts_ht1UTC, temp_ht1 = update_tempData(antall_målinger)
@@ -139,7 +138,7 @@ def callbacks(app):
         try:
             #print(ts_ht1OSLO)
             #print(temp_ht1)
-            ts_ht1UTC, temp_ht1 = update_tempData(antall_målinger)
+            ts_ht1UTC, temp_ht1 = update_tempData(antall_målinger, antall_målinger_pre)
             X=ts_ht1UTC[:int(antall_målinger)]
             Y=temp_ht1[:int(antall_målinger)]
 
