@@ -1,11 +1,13 @@
 from threading import Timer, Thread, Lock
 from time import time, ctime, sleep
 
-from mqttCommunication import activateHeatTrace, deactivateHeatTrace
+import sys
+
+#from mqttCommunication import activateHeatTrace, deactivateHeatTrace
 
 class PI_controller:
 
-    def __init__(self, reg_name, mode='Auto', duty_cycle=1.0, log_results=False):
+    def __init__(self, reg_name, activate_func, deactivate_func, mode='Auto', duty_cycle=1.0, log_results=False):
 
         self.name = reg_name
         self.log_results = log_results
@@ -37,6 +39,9 @@ class PI_controller:
         self.actuation_control = Thread(target=self.actuationControl)
         self.actuation_control.start()
 
+        self.activate_func = activate_func
+        self.deactivate_func = deactivate_func
+
     def get_reg_name(self):
         return self.name
 
@@ -57,6 +62,7 @@ class PI_controller:
         self.Ti = Ti # Integraltid
     
     def update_value(self, value):
+        print("updating value")
         self.value_prev = self.value
         self.value = round(value,2)
         self.calculate_u_tot()
@@ -149,15 +155,30 @@ class PI_controller:
                     t_on = (actuation/100)*dutycycle
                     t_off = dutycycle - t_on
 
-                    # Skru varmekabel på
-                    activateHeatTrace()
-                    print("on - {}s".format(t_on))
+                    try:
+                        if(t_on != 0):
+                            # Skru varmekabel på
+                            self.activate_func(self.name)
+                            print("on - {}s".format(t_on))
+                    except:
+                        print("could not activate heattrace")
+                        print(sys.exc_info()[0])
+                        sleep(5)
+                        continue
                     sleep(t_on)
 
-                    # Skru av varmekabel
-                    deactivateHeatTrace()
-                    print("off - {}s".format(t_off))
+                    try:
+                        if(t_off != 0):
+                            # Skru av varmekabel
+                            self.deactivate_func(self.name)
+                            print("off - {}s".format(t_off))
+                    except:
+                        print("could not deactivate heattrace")
+                        print(sys.exc_info()[0])
+                        sleep(5)
+                        continue
                     sleep(t_off)
+
 
     def set_dutycycle(self, dutycycle):
         self.lock.acquire()
@@ -195,10 +216,7 @@ class PI_controller:
 #         command = input("")
 #         reg.update_value(float(command))
 
-# reg_1 = PID_controller("regulator 1", duty_cycle=10.0/60)
-# reg_1.set_dutycycle(10.0/60)
-# reg_1.update_parameters(1.0, 1.0)
-# reg_1.update_setpoint(2.0)
+
 
 # prompt  = Thread(target=change_value, args=(reg_1,))
 # prompt.start()

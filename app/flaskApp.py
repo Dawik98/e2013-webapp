@@ -14,15 +14,15 @@ app=Blueprint('app', __name__)
 
 @app.route('/claimMeterdata')
 def runClaimDataFunction():
-    return claimMeterdata()
+    return claimMeterdata('heatTrace1')
 
 @app.route('/activateHeatTrace')
 def runActivationFunction():
-    return activateHeatTrace()
+    return activateHeatTrace('heatTrace1')
 
 @app.route('/deactivateHeatTrace')
 def runDeactivationFunction():
-    return deactivateHeatTrace()
+    return deactivateHeatTrace('heatTrace1')
 
 
 målinger=[
