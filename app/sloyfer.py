@@ -13,6 +13,8 @@ from cosmosDB import read_from_db
 from opp_temp import update_tempData
 from opp_meter import update_meterData
 
+# ordliste som knytter sammen streng som vises i drop-down meny knyttet til streng med datanavn som 
+# brukes til å hente data fra databasen 
 målinger_dict={"Aktiv effekt" : "activePower",
                 "Reaktiv effekt" : "reactivePower",
                 "Tilsynelatende effekt": "apparentPower",
@@ -25,10 +27,11 @@ målinger_dict={"Aktiv effekt" : "activePower",
                 "Kjøretid" : "runTime",              
 }
 
+#Knytter sammen streng i drop-down meny og streng som brukes til å velge container i database.
 sløyfer_dict={"Sløyfe 1":"heatTrace1",
               "Sløyfe 2":"heatTrace2",
 }
-
+#Brukes til å dynamisk skifte benemning på graf til målerelé.
 enhet_dict={"Aktiv effekt" : "[W]",
             "Reaktiv effekt" : "[VAr]",
             "Tilsynelatende effekt": "[VA]",
@@ -40,7 +43,7 @@ enhet_dict={"Aktiv effekt" : "[W]",
             "Frekvens" : "[f]",
             "Kjøretid" : "s", 
 }
-
+#Defninerer hvordan siden skal se ut. Med overskrifter, menyer, grafer osv...
 layout = html.Div([
     html.Label('Sløyfe valg'),
     dcc.Dropdown(
@@ -51,27 +54,31 @@ layout = html.Div([
     
     html.Label('Antall målinger'),
     dcc.Input(id='AntallMålinger', value='60', type='text'),
-
+    #Grad til temperatur
     dcc.Graph(id='live-graph', animate=False),
         dcc.Interval(
             id='graph-update',
+            #Oppdaterer hvert 15. sekund. Gri tid til å lese fra database
             interval=15*1000,
             n_intervals = 1
     ),
-    html.Label('Målinger'),
+    html.Label('Målerelé'),
     dcc.Dropdown(
         id='måle-valg',
         options=[{'label': s,'value': s} for s in målinger_dict.keys()],
         value='Aktiv effekt',
         #multi=True
     ),
+    #Graf til målerelé
     dcc.Graph(id='live-graph2', animate=False),
         dcc.Interval(
             id='graph-update2',
-            interval=30*1000,
+            #Oppdater hvert 17. sekund, vil ikke overlappe.
+            interval=17*1000,
             n_intervals = 1
     ),
 ])
+# Callbacks kjører hele tiden, og oppdater verdier som ble definert i layout. 
 def callbacks(app):
     # Live temperatur data
     @app.callback(Output('live-graph', 'figure'),
@@ -81,9 +88,9 @@ def callbacks(app):
             ])   
     def update_graph_scatter(n,sløyfe_valg,antall_målinger):
         try:
-            #henter string navnet
-            #sløyfe_valg=sløyfer_dict[sløyfe_valg]
+            #henter inn ny data
             ts_UTC, temp = update_tempData(antall_målinger, sløyfer_dict[sløyfe_valg])
+            #tilordner X og Y
             X=ts_UTC[:int(antall_målinger)]
             Y=temp[:int(antall_målinger)]
             data = plotly.graph_objs.Scatter(
@@ -103,7 +110,7 @@ def callbacks(app):
             with open('errors.txt','a') as f:
                 f.write(str(e))
                 f.write('\n')
-
+    #Live målerelé data
     @app.callback(Output('live-graph2', 'figure'),
                 [Input('graph-update2', 'n_intervals'),
                 Input('sløyfe-valg', 'value'),
