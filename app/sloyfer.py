@@ -13,22 +13,6 @@ from cosmosDB import read_from_db
 from opp_temp import update_tempData
 from opp_meter import update_meterData
 
-ts_ht1=[]
-temp_ht1=[]
-ts_ht1UTC=[]
-"""
-activePower=[]
-reactivePower=[]
-apparentPower=[]
-activeEnergy=[]
-apparentEnergy=[]
-reactiveEnergy=[]
-voltage=[]
-current=[]
-frequency=[]
-runTime=[]
-_ts=[]
-"""
 målinger_dict={"Aktiv effekt" : "activePower",
                 "Reaktiv effekt" : "reactivePower",
                 "Tilsynelatende effekt": "apparentPower",
@@ -48,15 +32,14 @@ sløyfer_dict={"Sløyfe 1":"heatTrace1",
 enhet_dict={"Aktiv effekt" : "[W]",
             "Reaktiv effekt" : "[VAr]",
             "Tilsynelatende effekt": "[VA]",
-            "Aktiv energi" : "[J]",
-            "Tilsynelatende energi" : "[VAh]",
+            "Aktiv energi" : "[kWh]",
+            "Tilsynelatende energi" : "[kVAh]",
             "Reaktiv energi" : "[VArh]",
             "Spenning" : "[V]",
             "Strøm" : "[mA]",
             "Frekvens" : "[f]",
             "Kjøretid" : "s", 
 }
-
 
 layout = html.Div([
     html.Label('Sløyfe valg'),
@@ -116,10 +99,6 @@ def callbacks(app):
                                                          margin={'l':100,'r':100,'t':50,'b':50},
 
                                                          )}
-                                                         
-                                                        
-                                                         
-
         except Exception as e:
             with open('errors.txt','a') as f:
                 f.write(str(e))
@@ -133,8 +112,6 @@ def callbacks(app):
                 ])   
     def update_graph_scatter2(n,sløyfe_valg,antall_målinger,måle_valg):
         try:
-            print(sløyfe_valg)
-            print(måle_valg)
             #sløyfe_valg=sløyfer_dict[sløyfe_valg]
             #måle_valg=målinger_dict[måle_valg]
 
@@ -153,7 +130,8 @@ def callbacks(app):
                     mode= 'lines+markers'
                     )
             return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                        yaxis=dict(range=[(min(Y)),(max(Y))]),
+                                                        yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
+                                                                    title=enhet_dict[måle_valg]),
                                                         title='{}'.format(måle_valg),
                                                         margin={'l':100,'r':100,'t':50,'b':50},
                                                         )}

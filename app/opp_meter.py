@@ -1,6 +1,7 @@
 from cosmosDB import read_from_db
 import pandas as pd
 
+
 #Powerwitch data Må gjøres modulært
 def update_meterData(antall_målinger, sløyfe_valg):
     query = "SELECT TOP {} * FROM {} WHERE ({}.deviceType = 'powerSwitch' AND {}.deviceEui = '70-b3-d5-8f-f1-00-1e-78' AND {}.messageType ='powerData') ORDER BY {}.timeReceived DESC".format(antall_målinger,sløyfe_valg,sløyfe_valg,sløyfe_valg,sløyfe_valg,sløyfe_valg)
@@ -17,8 +18,7 @@ def update_meterData(antall_målinger, sløyfe_valg):
     frequency=[]
     runTime=[]
     _ts=[]
-    keyname=[]
-    listname=[]
+    
 
     meterData={"activePower":activePower, 
             "reactivePower":reactivePower,
@@ -34,8 +34,10 @@ def update_meterData(antall_målinger, sløyfe_valg):
 }
 
     for key, value in meterData.items():
-        #print(keyname)
+        #print(key)
         for i in items:
-           meterData[key].append(i[key])
-            #print(listname)
+            meterData[key].append(i[key])
+
+    #Gjør om til kW   
+    meterData = {key: (pd.Series(value) * 0.001).tolist() if key =='activeEnergy' or key =='apparentEnergy' else value for key, value in meterData.items()} 
     return meterData
