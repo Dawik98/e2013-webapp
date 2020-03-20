@@ -11,56 +11,44 @@ from datetime import datetime
 from collections import deque
 from cosmosDB import read_from_db
 from opp_temp import update_tempData
+from opp_meter import update_meterData
 
 ts_ht1=[]
 temp_ht1=[]
 ts_ht1UTC=[]
-
-målinger_dict={"Aktiv effekt":temp_ht1,
-#"Aktiv effekt":actPwr_ht1,
+"""
+activePower=[]
+reactivePower=[]
+apparentPower=[]
+activeEnergy=[]
+apparentEnergy=[]
+reactiveEnergy=[]
+voltage=[]
+current=[]
+frequency=[]
+runTime=[]
+_ts=[]
+"""
+målinger_dict={"Aktiv effekt" : "activePower",
+                "Reaktiv effekt" : "reactivePower",
+                "Tilsynelatende effekt": "apparentPower",
+                "Aktiv energi" : "activeEnergy",
+                "Tilsynelatende energi" : "apparentEnergy",
+                "Reaktiv energi" : "reactiveEnergy",
+                "Spenning" : "voltage",
+                "Strøm" : "current",
+                "Frekvens" : "frequency",
+                "Kjøretid" : "runTime",
+                "Tidsstempel": "_ts",               
 }
 
 sløyfer_dict={"Sløyfe 1":"heatTrace1",
-"Sløyfe 2":"heatTrace2",
+              "Sløyfe 2":"heatTrace2",
 }
-"""
-#Powerwitch data Må gjøres modulært
-query = "SELECT * FROM heatTrace1 WHERE (heatTrace1.deviceType = 'powerSwitch' AND heatTrace1.deviceEui = '70-b3-d5-8f-f1-00-1e-78' AND heatTrace1.messageType ='powerData') ORDER BY heatTrace1.timeReceived DESC"
-container_name = "heatTrace1"
-items = read_from_db(container_name, query)
-
-
-actPwr_ht1=[]
-for i in items:
-    actPwr_ht1.append(i['activePower'])
-
-rctPwr_ht1=[]
-for i in items:
-    rctPwr_ht1.append(i['reactivePower'])
-
-appPwr_ht1=[]
-for i in items:
-    appPwr_ht1.append(i['apparentPower'])
-
-volt_ht1=[]
-for i in items:
-    volt_ht1.append(i['voltage'])
-    
-freq_ht1 = []
-for i in items:
-    freq_ht1.append(i['frequency'])
-
-ts_ht1Ps=[]
-for i in items:
-    ts_ht1Ps.append(i['_ts'])
-ts_ht1Ps= pd.to_datetime(ts_ht1Ps, unit='s')
-"""
-#print(items)
-
 
 
 layout = html.Div([
-    html.H1('Sløyfe valg'),
+    html.Label('Sløyfe valg'),
     dcc.Dropdown(
         id='sløyfe-valg',
         options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
@@ -80,36 +68,14 @@ layout = html.Div([
     dcc.Dropdown(
         id='måle-valg',
         options=[{'label': s,'value': s} for s in målinger_dict.keys()],
-        value=['Aktiv effekt'],
-        multi=True
+        value='Aktiv effekt',
+        #multi=True
     ),
-     dcc.Graph(
-        id='basic-interactions',
-        figure={
-            'data': [
-                {
-                    'x': [1, 2, 3, 4],
-                    'y': [4, 1, 3, 5],
-                    'text': ['a', 'b', 'c', 'd'],
-                    'customdata': ['c.a', 'c.b', 'c.c', 'c.d'],
-                    'name': 'Trace 1',
-                    'mode': 'markers',
-                    'marker': {'size': 12}
-                },
-                {
-                    'x': [1, 2, 3, 4],
-                    'y': [9, 4, 1, 4],
-                    'text': ['w', 'x', 'y', 'z'],
-                    'customdata': ['c.w', 'c.x', 'c.y', 'c.z'],
-                    'name': 'Trace 2',
-                    'mode': 'markers',
-                    'marker': {'size': 12}
-                }
-            ],
-            'layout': {
-                'clickmode': 'event+select'
-            }
-        }
+    dcc.Graph(id='live-graph2', animate=False),
+        dcc.Interval(
+            id='graph-update2',
+            interval=30*1000,
+            n_intervals = 1
     ),
 ])
 def callbacks(app):
@@ -121,6 +87,7 @@ def callbacks(app):
             ])   
     def update_graph_scatter(n,sløyfe_valg,antall_målinger):
         try:
+            #henter string navnet
             sløyfe_valg=sløyfer_dict[sløyfe_valg]
             print(sløyfe_valg)
             ts_UTC, temp = update_tempData(antall_målinger, sløyfe_valg)
@@ -134,9 +101,54 @@ def callbacks(app):
                     )
             return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
                                                          yaxis=dict(range=[0,120]),
-                                                         title='Temperatur Måling'),
-                                                         'margin': {'l': 20, 'b': 20, 'r': 20, 't': 20},
-                                                         }
+                                                         title='Temperatur Måling',
+                                                         margin={'l':100,'r':100,'t':50,'b':50},
+                                                         )}
+                                                         
+                                                        
+                                                         
+
+        except Exception as e:
+            with open('errors.txt','a') as f:
+                f.write(str(e))
+                f.write('\n')
+
+    @app.callback(Output('live-graph2', 'figure'),
+                [Input('graph-update2', 'n_intervals'),
+                Input('sløyfe-valg', 'value'),
+                Input('AntallMålinger','value'),
+                Input('måle-valg', 'value')
+                ])   
+    def update_graph_scatter2(n,sløyfe_valg,antall_målinger,måle_valg):
+        try:
+            print(sløyfe_valg)
+            print(måle_valg)
+            sløyfe_valg=sløyfer_dict[sløyfe_valg]
+            måle_valg=målinger_dict[måle_valg]
+            print(sløyfe_valg)
+            print(måle_valg)
+            #Henter inn måledata basert på målevalg
+            meterData = update_meterData(antall_målinger, sløyfe_valg)
+            #Henter ut tidsstempeler og gjør omtil dato
+            ts=meterData["_ts"]
+    
+            X=pd.to_datetime(ts, unit='s')
+            Y=meterData[måle_valg]
+
+            data = plotly.graph_objs.Scatter(
+                    y=Y,
+                    x=X,
+                    name='Scatter',
+                    mode= 'lines+markers'
+                    )
+            return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
+                                                        yaxis=dict(range=[(min(Y)),(max(Y))]),
+                                                        title='Meter Data',
+                                                        margin={'l':100,'r':100,'t':50,'b':50},
+                                                        )}
+                                                        
+                                                        
+                                                        
 
         except Exception as e:
             with open('errors.txt','a') as f:

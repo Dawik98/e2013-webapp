@@ -99,6 +99,7 @@ def update_graph(data_names, n):
             figure={'data': [data],'layout' : go.Layout(xaxis=dict(range=[min(times),max(times)]),
                                                         yaxis=dict(range=[min(data_dict[data_name]),max(data_dict[data_name])]),
                                                         margin={'l':50,'r':1,'t':45,'b':1},
+                                                        layout.xaxis.title="HELLO"
                                                         title='{}'.format(data_name))}
             ), className=class_choice))
 
