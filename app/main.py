@@ -18,11 +18,15 @@ def createServer():
     # setup mqtt for mosquitto on vm
     server.config['MQTT_BROKER_URL'] = '13.74.42.218'
     server.config['MQTT_BROKER_PORT'] = 9990
+    server.config['MQTT_CLIENT_ID'] = 'Webb-App'
     server.config['MQTT_USERNAME'] = 'e2013'
     server.config['MQTT_PASSWORD'] = 'potet'
     server.config['MQTT_CLIENT_ID'] = "Webb-App"
     server.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 
+    # Koble til Mosquitto
+    from mqttCommunication import connect_mosquitto
+    connect_mosquitto(server)
 
     # legg til dashboard apper
     from dashApps.home import layout as layout_home
@@ -96,4 +100,4 @@ def addDashApp(server, path, title, layout, callbacks):
 if __name__ == '__main__':
     server = createServer()
 
-    server.run(debug=True)
+    server.run()
