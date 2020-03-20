@@ -38,12 +38,23 @@ målinger_dict={"Aktiv effekt" : "activePower",
                 "Spenning" : "voltage",
                 "Strøm" : "current",
                 "Frekvens" : "frequency",
-                "Kjøretid" : "runTime",
-                "Tidsstempel": "_ts",               
+                "Kjøretid" : "runTime",              
 }
 
 sløyfer_dict={"Sløyfe 1":"heatTrace1",
               "Sløyfe 2":"heatTrace2",
+}
+
+enhet_dict={"Aktiv effekt" : "[W]",
+            "Reaktiv effekt" : "[VAr]",
+            "Tilsynelatende effekt": "[VA]",
+            "Aktiv energi" : "[J]",
+            "Tilsynelatende energi" : "[VAh]",
+            "Reaktiv energi" : "[VArh]",
+            "Spenning" : "[V]",
+            "Strøm" : "[mA]",
+            "Frekvens" : "[f]",
+            "Kjøretid" : "s", 
 }
 
 
@@ -88,9 +99,8 @@ def callbacks(app):
     def update_graph_scatter(n,sløyfe_valg,antall_målinger):
         try:
             #henter string navnet
-            sløyfe_valg=sløyfer_dict[sløyfe_valg]
-            print(sløyfe_valg)
-            ts_UTC, temp = update_tempData(antall_målinger, sløyfe_valg)
+            #sløyfe_valg=sløyfer_dict[sløyfe_valg]
+            ts_UTC, temp = update_tempData(antall_målinger, sløyfer_dict[sløyfe_valg])
             X=ts_UTC[:int(antall_målinger)]
             Y=temp[:int(antall_målinger)]
             data = plotly.graph_objs.Scatter(
@@ -100,9 +110,11 @@ def callbacks(app):
                     mode= 'lines+markers'
                     )
             return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                         yaxis=dict(range=[0,120]),
+                                                         yaxis=dict(range=[0,120],
+                                                                    title='Temperatur [°C]'),
                                                          title='Temperatur Måling',
                                                          margin={'l':100,'r':100,'t':50,'b':50},
+
                                                          )}
                                                          
                                                         
@@ -123,17 +135,16 @@ def callbacks(app):
         try:
             print(sløyfe_valg)
             print(måle_valg)
-            sløyfe_valg=sløyfer_dict[sløyfe_valg]
-            måle_valg=målinger_dict[måle_valg]
-            print(sløyfe_valg)
-            print(måle_valg)
+            #sløyfe_valg=sløyfer_dict[sløyfe_valg]
+            #måle_valg=målinger_dict[måle_valg]
+
             #Henter inn måledata basert på målevalg
-            meterData = update_meterData(antall_målinger, sløyfe_valg)
+            meterData = update_meterData(antall_målinger, sløyfer_dict[sløyfe_valg])
             #Henter ut tidsstempeler og gjør omtil dato
             ts=meterData["_ts"]
     
             X=pd.to_datetime(ts, unit='s')
-            Y=meterData[måle_valg]
+            Y=meterData[målinger_dict[måle_valg]]
 
             data = plotly.graph_objs.Scatter(
                     y=Y,
@@ -143,7 +154,7 @@ def callbacks(app):
                     )
             return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
                                                         yaxis=dict(range=[(min(Y)),(max(Y))]),
-                                                        title='Meter Data',
+                                                        title='{}'.format(måle_valg),
                                                         margin={'l':100,'r':100,'t':50,'b':50},
                                                         )}
                                                         
