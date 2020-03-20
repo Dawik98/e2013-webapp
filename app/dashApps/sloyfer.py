@@ -13,6 +13,9 @@ from cosmosDB import read_from_db
 from opp_temp import update_tempData
 from opp_meter import update_meterData
 
+from dashApps.layout import header
+from dashApps.layout import callbacks as layout_callbacks
+
 målinger_dict={"Aktiv effekt" : "activePower",
                 "Reaktiv effekt" : "reactivePower",
                 "Tilsynelatende effekt": "apparentPower",
