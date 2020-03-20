@@ -1,5 +1,3 @@
-# testing graf
-
 import dash
 import pandas
 from dash.dependencies import Output, Input
@@ -10,19 +8,46 @@ import random
 import plotly.graph_objs as go
 from collections import deque
 
+#import standard layout
+from dashApps.layout import header
+from dashApps.layout import callbacks as layout_callbacks
 
+#app = dash.Dash(__name__)
 
-layout = html.Div(
-    [
-        dcc.Graph(id='live-graph', animate=True),
+layout = html.Div([
+    header,
+    html.Label('Regulerings-sløyfe'),
+    dcc.Dropdown(
+        options=[
+            {'label': 'Sløyfe 1', 'value': 's1'},
+            {'label': u'Sløyfe 2', 'value': 's2'},
+        ],
+        value='s1'
+    ),
+
+    html.Label('Målinger'),
+    dcc.Dropdown(
+        options=[
+            {'label': 'Temperatur', 'value': 'temp'},
+            {'label': u'Jordfeil', 'value': 'jordfeil'},
+            {'label': 'Aktiv effekt', 'value': 'aktiv_effekt'}
+        ],
+        value=['temp', 'aktiv_effekt'],
+        multi=True
+    ),
+    dcc.Graph(id='live-graph', animate=True),
         dcc.Interval(
             id='graph-update',
             interval=1000,
-            n_intervals = 0
+            n_intervals = 1
         ),
-    ]
+   
+]
 )
+
 def callbacks(app):
+    layout_callbacks(app)
+
     X = deque(maxlen=20)
     X.append(1)
     Y = deque(maxlen=20)
@@ -44,5 +69,6 @@ def callbacks(app):
         return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[min(X),max(X)]),
                                                     yaxis=dict(range=[min(Y),max(Y)]),)}
 
+
 #if __name__ == '__main__':
-#    app.run_server(debug=True)
+ #   app.run_server(debug=True)
