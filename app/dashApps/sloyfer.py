@@ -10,12 +10,8 @@ import plotly.graph_objs as go
 from datetime import datetime
 from collections import deque
 from cosmosDB import read_from_db
-<<<<<<< HEAD:app/dashApps/sloyfer.py
-from dashApps.opp_temp import update_tempData
-=======
 from opp_temp import update_tempData
 from opp_meter import update_meterData
->>>>>>> 8570ec492f549480439fc7f8541ffdcb4aa14019:app/sloyfer.py
 
 målinger_dict={"Aktiv effekt" : "activePower",
                 "Reaktiv effekt" : "reactivePower",
