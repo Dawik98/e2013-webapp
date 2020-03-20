@@ -48,7 +48,7 @@ layout = html.Div([
         options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
         value='Sløyfe 1'
     ),    
-
+    
     html.Label('Antall målinger'),
     dcc.Input(id='AntallMålinger', value='60', type='text'),
 
