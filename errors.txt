@@ -1,0 +1,4 @@
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: f191196b-3958-47ee-8603-0259f710d8e4, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: dde6a897-9c6b-481a-b098-b581d2fcdfbd, Microsoft.Azure.Documents.Common/2.10.0"}

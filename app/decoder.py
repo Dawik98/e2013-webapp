@@ -68,4 +68,4 @@ def decoder(payload):
             if (data[9]): packetData['output'] = True
             else: packetData['output'] = False
     
-    return packetData
+    return packetData, timeOslo

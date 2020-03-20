@@ -44,25 +44,3 @@ def callbacks(app):
         if n:
             return not is_open
         return is_open
-
-
-
-#header = html.Header(className='site-heaader',
-#            children = html.Nav(className="navbar navbar-expand-mg navbar-dark bg-dark fixed-top",
-#            children = html.Div(className="container", 
-#            children = [
-#                html.A("E2013", className='navbar-brand mr-4', href="/",),
-#                DangerouslySetInnerHTML('''<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>'''),
-#                #html.Button(children = html.Span(className="navbar-toggler-icon"), className="navbar-toogler", type="button", **{'data-toggle': "collapse", "data-target": "#navbarColor02", "aria-controls": "navbarColor02", "aria-expanded": "false", "aria-label": "Toggle navigation"},
-#                #),#button
-#                html.Div(className="collapse navbar-collapse", id="navbarToggle", 
-#                children = html.Div(className="navbar-nav mr-auto", children=[
-#                    html.A("Home", className='nav-item nav-link', href="/",),
-#                    html.A("Sensor Data", className='nav-item nav-link', href="/SensorData",),
-#                    html.A("test 1", className='nav-item nav-link', href="/test1/",),
-#                    html.A("test 2", className='nav-item nav-link', href="/test2/",),
-#            ])#Div
-#            )#Div
-#            ])#Div
-#            )#Nav
-#            )#Header
