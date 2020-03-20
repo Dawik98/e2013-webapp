@@ -164,7 +164,6 @@ class PI_controller:
                         print("could not activate heattrace")
                         print(sys.exc_info()[0])
                         sleep(5)
-                        continue
                     sleep(t_on)
 
                     try:
@@ -176,7 +175,6 @@ class PI_controller:
                         print("could not deactivate heattrace")
                         print(sys.exc_info()[0])
                         sleep(5)
-                        continue
                     sleep(t_off)
 
 
