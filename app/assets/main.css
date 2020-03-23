@@ -1,4 +1,12 @@
 
+/* Definner vareiabler */
+:root {
+  --coll-width: 200px;
+}
+
+.tableFixHead table {
+    width: auto;
+}
 
 
 .tableFixHead tbody{
@@ -6,9 +14,21 @@
     overflow-y: auto;
 }
 
-tbody, thead {display:block}
+.tableFixHead tbody, thead {
+    display:block;
+    width: 100%;
+}
 
 
-tbody td, thead th {
-    width: 25%;  /* Optional */
+.tableFixHead thead th, tbody td{
+    width: var(--coll-width);  /* Optional */
+}
+
+/* Siste kolonne må være 12px kortere for å få plass til sccrollbar */
+.scrollBarColl {
+    width: calc(var(--coll-width) - 12px);
+}
+
+.label-dropdown {
+    padding: 8px
 }
