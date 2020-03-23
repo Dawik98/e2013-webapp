@@ -135,13 +135,10 @@ def callbacks(app):
             #Henter inn måledata basert på målevalg
             meterData = update_meterData(antall_målinger, sløyfer_dict[sløyfe_valg])
             #Henter ut tidsstempeler og gjør omtil dato
-            print(meterData)
             ts=meterData["_ts"]
     
             X=pd.to_datetime(ts, unit='s')
             Y=meterData[målinger_dict[måle_valg]]
-            print(X)
-            print(Y)
 
             data = plotly.graph_objs.Scatter(
                     y=Y,
