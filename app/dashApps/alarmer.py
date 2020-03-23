@@ -16,6 +16,9 @@ from dashApps.layout import callbacks as layout_callbacks
 
 num_of_alarms = '25'
 
+site_title = html.Div(html.H1("Alarmer for alle sløyfer"), className="page-header") 
+# TODO legg til mulighet til å velge sløyfe
+
 def get_alarm_table(num_of_alarms):
 
     if (num_of_alarms != "Alle"):
@@ -56,7 +59,7 @@ layout = html.Div([
     dcc.Interval(id='refresh', n_intervals=0, interval=20*1000),
     header,
     dbc.Container([
-
+        dbc.Row(dbc.Col(site_title)),
         dbc.Row(html.Div(id='table', className='tableFixHead')),
         dbc.Row([dbc.Col(label_dropdown, width='auto'), dbc.Col(dropdown)], justify='start', no_gutters=True)
 
