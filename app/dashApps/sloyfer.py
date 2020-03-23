@@ -49,7 +49,7 @@ enhet_dict={"Aktiv effekt" : "[W]",
 #Defninerer hvordan siden skal se ut. Med overskrifter, menyer, grafer osv...
 layout = html.Div([
     header,
-    html.Label('Regulerings-sløyfe'),
+    html.Label('Sløyfe valg'),
     dcc.Dropdown(
         id='sløyfe-valg',
         options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
@@ -86,10 +86,10 @@ layout = html.Div([
 def callbacks(app):
     layout_callbacks(app)
 
-    X = deque(maxlen=20)
-    X.append(1)
-    Y = deque(maxlen=20)
-    Y.append(1)
+    #X = deque(maxlen=20)
+    #X.append(1)
+    #Y = deque(maxlen=20)
+    #Y.append(1)
 
     @app.callback(Output('live-graph', 'figure'),
             [Input('graph-update', 'n_intervals'),
@@ -111,7 +111,7 @@ def callbacks(app):
                     )
             return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
                                                          yaxis=dict(range=[0,120],
-                                                                    title='Temperatur [°C]'),
+                                                         title='Temperatur [°C]'),
                                                          title='Temperatur Måling',
                                                          margin={'l':100,'r':100,'t':50,'b':50},
 
