@@ -98,6 +98,6 @@ def addDashApp(server, path, title, layout, callbacks):
 
 
 if __name__ == '__main__':
-    server = createServer()
 
-    server.run()
+    server = createServer()
+    server.run(host="0.0.0.0", port=8000 )

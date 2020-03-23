@@ -34,7 +34,7 @@ class PI_controller:
         self.lock = Lock() # Lock for u_tot and dutycycle
 
         self.mode = mode
-        self.run_thread = True
+        self.run_actuation = False
 
         self.actuation_control = Thread(target=self.actuationControl)
         self.actuation_control.start()
@@ -138,7 +138,7 @@ class PI_controller:
         dutycycle = None
         actuation = None
 
-        while(self.run_thread == True):
+        while(self.run_actuation == True):
 
             if not self.lock.acquire(False):
                 print("Failed to unlock the Lock")
@@ -164,7 +164,6 @@ class PI_controller:
                         print("could not activate heattrace")
                         print(sys.exc_info()[0])
                         sleep(5)
-                        continue
                     sleep(t_on)
 
                     try:
@@ -176,7 +175,6 @@ class PI_controller:
                         print("could not deactivate heattrace")
                         print(sys.exc_info()[0])
                         sleep(5)
-                        continue
                     sleep(t_off)
 
 
@@ -205,10 +203,10 @@ class PI_controller:
             print("Invalid controller mode ...")
 
     def stop(self):
-        self.run = False
+        self.run_actuation = False
 
     def start(self):
-        self.run = True
+        self.run_actuation = True
 
 
 # def change_value(reg):

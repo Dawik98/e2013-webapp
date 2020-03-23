@@ -15,7 +15,7 @@ from dashApps.layout import callbacks as layout_callbacks
 
 def get_alarm_table():
     #get data where temp is <10 or >30
-    query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < 10 OR {0}.temperature > 30 ) ORDER BY {0}.timeReceived DESC"
+    query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < 10 OR {0}.temperature > 30 ) ORDER BY {0}.timeReceived DESC".format("heatTrace1")
     abnormal_values = read_from_db('heatTrace1', query)
 
     table_header = [html.Thead(html.Tr([html.Th("Time"), html.Th("Device placement"), html.Th("Device Eui"), html.Th("Value"),]))]
