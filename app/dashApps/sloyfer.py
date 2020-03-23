@@ -1,5 +1,5 @@
 import dash
-#import pandas as pd
+import pandas as pd
 from dash.dependencies import Output, Input
 import dash_core_components as dcc
 import dash_html_components as html
@@ -10,8 +10,8 @@ import plotly.graph_objs as go
 from datetime import datetime
 from collections import deque
 from cosmosDB import read_from_db
-from opp_temp import update_tempData
-from opp_meter import update_meterData
+from dashApps.opp_temp import update_tempData
+from dashApps.opp_meter import update_meterData
 
 from dashApps.layout import header
 from dashApps.layout import callbacks as layout_callbacks
@@ -135,10 +135,13 @@ def callbacks(app):
             #Henter inn måledata basert på målevalg
             meterData = update_meterData(antall_målinger, sløyfer_dict[sløyfe_valg])
             #Henter ut tidsstempeler og gjør omtil dato
+            print(meterData)
             ts=meterData["_ts"]
     
             X=pd.to_datetime(ts, unit='s')
             Y=meterData[målinger_dict[måle_valg]]
+            print(X)
+            print(Y)
 
             data = plotly.graph_objs.Scatter(
                     y=Y,

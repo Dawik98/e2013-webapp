@@ -36,7 +36,7 @@ def write_to_db(container_name, data):
 
 def read_from_db(container_name, query):
     cosmos = connect_to_db()
-    items = cosmos.QueryItems(collection_link+container_name, query.format(container_name), {'enableCrossPartitionQuery':True})
+    items = cosmos.QueryItems(collection_link+container_name, query, {'enableCrossPartitionQuery':True})
     items = list(items) # save result as list
     return items
 
