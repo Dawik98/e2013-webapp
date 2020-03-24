@@ -10,7 +10,7 @@ navbar_items = [
     dbc.NavLink("Home", href="/Home", external_link=True),
     dbc.NavLink("Sløyfer", href="/sløyfer", external_link=True),
     dbc.NavLink("Alarmer", href="/alarmer", external_link=True),
-    dbc.NavLink("Instillinger", href="/instillinger", external_link=True),
+    dbc.NavLink("Innstillinger", href="/instillinger", external_link=True),
 ]
 
 header = dbc.Navbar(

@@ -83,7 +83,7 @@ def change_alarm_values(sløyfe, alarm_values):
 
 valgt_sløyfe = get_sløyfer()[0]
 
-site_title = html.Div(html.H1("Instillinger for {}".format(valgt_sløyfe)), className="page-header") 
+site_title = html.Div(html.H1("Innstillinger for {}".format(valgt_sløyfe)), className="page-header") 
 
 def choose_sløyfe_dropdown():
     sløyfer = get_sløyfer() 
