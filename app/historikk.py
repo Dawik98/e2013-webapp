@@ -67,7 +67,7 @@ layout = html.Div([
     html.Div([dcc.Dropdown(
                             id='måle-valg',
                             options=[{'label': s,'value':s} for s in målinger_dict.keys()],
-                            value='Temperatur',
+                            value='Aktiv effekt',
                             multi=True
                             )
     ]),
@@ -86,8 +86,10 @@ def callbacks(app):
         #Henter inn data
         #historiskData=update_historiskData(sløyfe_valg)
         #Plotter temperatur
-        #print(måle_valg)
+        for måling in målinger_dict:
+            print(målinger_dict[måling])
         #if måle_valg == "Temperatur":
+        """
         traces=[]
         for måling in måle_valg:
             if måling == "Temperatur":
@@ -115,9 +117,9 @@ def callbacks(app):
                             mode='lines+markers',
                             marker={"size": 3.5},
                             name="Aktiv effekt")
-        """                    
+                          
 
-        data = [traces]
+        data = [trace1, trace2]
         return {"data": data,
                 "layout": go.Layout(
                                     title="Historikk",
