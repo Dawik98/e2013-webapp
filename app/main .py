@@ -33,8 +33,11 @@ def createServer():
     from sloyfer import layout as layout_sloyfer
     from sloyfer import callbacks as callbacks_sloyfer
     addDashApp(server, '/sløyfer/', 'sloyfer', layout_sloyfer, callbacks_sloyfer)
-
-
+    
+    from historikk import layout as layout_historikk
+    from historikk import callbacks as callbacks_historikk
+    addDashApp(server, '/historikk/', 'historikk', layout_historikk, callbacks_historikk)
+    
     from flaskApp import app
     server.register_blueprint(app)
 

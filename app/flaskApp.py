@@ -25,21 +25,6 @@ def deactivateHeatTrace():
     mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
 
 
-målinger=[
-    {
-        'Enhet': 'Temperatur sensor 1',
-        'Temperatur': '31',
-        'Batteritilstand':'93.7%',
-        'Tidspunkt':'12:32:27'
-    },
-    {
-        'Enhet': 'Temperatur sensor 2',
-        'Temperatur': '30',
-        'Batteritilstand':'92.7%',
-        'Tidspunkt':'12:32:29'
-    }
-]
-
 # main web page
 @app.route('/')
 @app.route('/Home')

@@ -32,16 +32,16 @@ sløyfer_dict={"Sløyfe 1":"heatTrace1",
               "Sløyfe 2":"heatTrace2",
 }
 #Brukes til å dynamisk skifte benemning på graf til målerelé.
-enhet_dict={"Aktiv effekt" : "[W]",
-            "Reaktiv effekt" : "[VAr]",
-            "Tilsynelatende effekt": "[VA]",
-            "Aktiv energi" : "[kWh]",
-            "Tilsynelatende energi" : "[kVAh]",
-            "Reaktiv energi" : "[VArh]",
-            "Spenning" : "[V]",
-            "Strøm" : "[mA]",
-            "Frekvens" : "[f]",
-            "Kjøretid" : "s", 
+enhet_dict={"Aktiv effekt" : " Aktiv effekt [W]",
+            "Reaktiv effekt" : " Reaktv effekt [VAr]",
+            "Tilsynelatende effekt": " Tilsynelatende effekt[VA]",
+            "Aktiv energi" : "Aktiv energi [kWh]",
+            "Tilsynelatende energi" : " Tilsynelatende energi [kVAh]",
+            "Reaktiv energi" : " Reaktiv energi [VArh]",
+            "Spenning" : " Spennning [V]",
+            "Strøm" : " Strøm [mA]",
+            "Frekvens" : " Nettfrekvens [f]",
+            "Kjøretid" : "Kjøretid [s]", 
 }
 #Defninerer hvordan siden skal se ut. Med overskrifter, menyer, grafer osv...
 layout = html.Div([
@@ -138,7 +138,7 @@ def callbacks(app):
                     )
             return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
                                                         yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
-                                                                    title=enhet_dict[måle_valg]),
+                                                                    title=enhet_dict[måle_valg], tickangle=0,),
                                                         title='{}'.format(måle_valg),
                                                         margin={'l':100,'r':100,'t':50,'b':50},
                                                         )}
