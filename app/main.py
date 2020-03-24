@@ -89,4 +89,4 @@ def addDashApp(server, path, title, layout, callbacks):
 if __name__ == '__main__':
     server = createServer()
 
-    server.run()
+    server.run(debug = True)
