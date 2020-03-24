@@ -1,0 +1,1 @@
+{"heatTrace1": {"devices": [{"device_eui": "70-b3-d5-80-a0-10-94-3a", "deviceType": "tempSensor"}, {"device_eui": "70-b3-d5-80-a0-10-94-3d", "deviceType": "tempSensor"}], "alarm_values": [11, 30]}, "heatTrace2": {"devices": [], "alarm_values": []}}

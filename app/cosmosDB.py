@@ -41,15 +41,15 @@ def read_from_db(container_name, query):
     return items
 
 # return containers from cosmos db
-def get_containers():
-    list_of_containers = []
-
-    for i in devices:
-        container = devices[i][0]
-        # add container to list if it isn't added alleready
-        if container in list_of_containers:
-            pass
-        else:
-            list_of_containers.append(container)
-
-    return list_of_containers
+#def get_containers():
+#    list_of_containers = []
+#
+#    for i in devices:
+#        container = devices[i][0]
+#        # add container to list if it isn't added alleready
+#        if container in list_of_containers:
+#            pass
+#        else:
+#            list_of_containers.append(container)
+#
+#    return list_of_containers
