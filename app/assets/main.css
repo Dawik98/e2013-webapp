@@ -32,3 +32,8 @@
 .label-dropdown {
     padding: 8px
 }
+
+.collapsing-no-animation {
+    -webkit-transition: none;
+    transition: none;
+}

@@ -12,6 +12,8 @@ import json
 #            'alarm_values' : []}
 #        }
 
+{"heatTrace1": {"devices": [{"device_eui": "70-b3-d5-80-a0-10-94-3a", "deviceType": "tempSensor"}, {"device_eui": "70-b3-d5-80-a0-10-94-3d", "deviceType": "tempSensor"}]}, "heatTrace2": {"devices": [], "alarm_values": []}}
+
 data = [11,30]
 
 #with open('app/settings.txt', 'r+') as settings_file:

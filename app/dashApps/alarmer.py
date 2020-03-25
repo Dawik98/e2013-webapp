@@ -104,8 +104,6 @@ def callbacks(app):
             return num_of_alarms
 
         num_of_alarms = label_clicked
-        print(label_clicked)
-
         return label_clicked
 
         
