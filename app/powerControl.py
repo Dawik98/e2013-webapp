@@ -68,6 +68,7 @@ class PI_controller:
         self.calculate_u_tot()
 
     def update_setpoint(self, setpoint):
+        print("Updating setpoint: {}".format(setpoint))
         self.setpoint = round(setpoint,2)
         self.calculate_u_tot()
 

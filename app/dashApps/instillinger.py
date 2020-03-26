@@ -8,6 +8,7 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
 import json
+from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace, controller1
 
 #import standard layout
 from dashApps.layout import header
@@ -248,7 +249,7 @@ def callbacks(app):
         label_clicked = id_lookup[button_id]
 
         if (click_tempSensor is None and click_powerSwitch is None) or not ctx.triggered:
-        # if neither button has been clicked, return "Not selected"
+        # if neither button has been clicked, return "Velg enhet type"
             return "Velg enhet type"
 
         return label_clicked
@@ -272,8 +273,7 @@ def callbacks(app):
         [State('setpoint-input', 'value')]
     )
     def update_test_label(button_click, setpoint_value):
-        print(setpoint_value)
-        
+        controller1.update_setpoint(setpoint_value)
         return ""
 
         
