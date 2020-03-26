@@ -67,7 +67,8 @@ layout = html.Div([
     html.Div([dcc.Dropdown(
                             id='måle-valg',
                             options=[{'label': s,'value':s} for s in målinger_dict.keys()],
-                            value='Aktiv effekt',
+                            #value='Aktiv effekt',
+                            placeholder="Velg en eller flere målinger",
                             multi=True
                             )
     ]),
@@ -83,15 +84,94 @@ def callbacks(app):
         Input('sløyfe-valg','value')
         ])
     def update_figure(selected_days,måle_valg,sløyfe_valg):
-        #Henter inn data
-        #historiskData=update_historiskData(sløyfe_valg)
-        #Plotter temperatur
-        for måling in målinger_dict:
-            print(målinger_dict[måling])
-        #if måle_valg == "Temperatur":
-        """
-        traces=[]
+        trace1=[]
+        trace2=[]
+        trace3=[]
+        trace4=[]
+        trace5=[]
+        trace6=[]
+        trace7=[]
+        trace8=[]
+        trace9=[]
+        trace10=[]
+        trace11=[]
+
         for måling in måle_valg:
+            if måling == "Temperatur":
+                trace1 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["temperature"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5} ,
+                                    name="Temperatur")
+            if måling == "Aktiv effekt":
+                trace2 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["activePower"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Aktiv effekt")
+            if måling == "Reaktiv effekt":
+                trace3 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["reactivePower"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Aktiv effekt")
+            if måling == "Tilsynelatende effekt":
+                trace4 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["apparentPower"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Tilsynelatende effekt")
+            if måling == "Aktiv energi":
+                trace5 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["activeEnergy"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Aktiv energi")
+            if måling == "Tilsynelatende energi":
+                trace6 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["apparentEnergy"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Tilsynelatende energi")      
+            if måling == "Reaktiv energi":
+                trace7 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["reactiveEnergy"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Reaktiv energi") 
+            if måling == "Spenning":
+                trace8 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["voltage"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Spenning") 
+            if måling == "Strøm":
+                trace9 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["current"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Strøm") 
+            if måling == "Frekvens":
+                trace10 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["frequency"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Frekvens") 
+            if måling == "Kjøretid":
+                trace11 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["runTime"],
+                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    mode='lines+markers',
+                                    marker={"size": 3.5},
+                                    name="Kjøretid") 
+
+        data = [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9,trace10,trace11]
+        return {"data": data,
+                "layout": go.Layout(
+                                    title="Historikk",
+                                    margin={'l':100,'r':100,'t':50,'b':50},
+                                                    )}
+        """ 
+         print(målinger_dict[måling])
             if måling == "Temperatur":
                 traces.append(go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["temperature"],
                                 x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["_ts"],unit='s'), 
@@ -106,23 +186,7 @@ def callbacks(app):
                                 mode='lines+markers',
                                 marker={"size": 3.5},
                                 name=måling))
-        """                    
-        trace1 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["temperature"],
-                            x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["_ts"],unit='s'), 
-                            mode='lines+markers',
-                            marker={"size": 3.5} ,
-                            name="Temperatur")
-        trace2 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["activePower"],
-                            x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
-                            mode='lines+markers',
-                            marker={"size": 3.5},
-                            name="Aktiv effekt")
-                          
+        print(traces)
 
-        data = [trace1, trace2]
-        return {"data": data,
-                "layout": go.Layout(
-                                    title="Historikk",
-                                    margin={'l':100,'r':100,'t':50,'b':50},
-                                                    )}
-                                                                    
+        
+        """  
