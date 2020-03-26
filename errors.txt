@@ -24,3 +24,69 @@ HTTPSConnectionPool(host='e2013-db.documents.azure.com', port=443): Max retries 
 HTTPSConnectionPool(host='e2013-db.documents.azure.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x000001B15AE60070>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
 HTTPSConnectionPool(host='e2013-db.documents.azure.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x000001B15A97FA60>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
 HTTPSConnectionPool(host='e2013-db.documents.azure.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x000001B15B084B50>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: ce8174a8-7f20-4cea-96d7-3287f9fce5e3, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 00cd8176-ca0c-49cc-a458-0d93dcc07d39, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 1d9dfdb7-89cf-477f-aef9-f6b2ce423776, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: eaedf992-b76d-4708-b53e-8ee83589598b, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 03b1e647-1280-4952-930d-82449e3ddaf4, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 674eaf33-bb77-43f5-b00f-c709f784375c, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: aeb9f520-6fca-473f-9704-e4c96f4c0ede, Microsoft.Azure.Documents.Common/2.10.0"}
+min() arg is an empty sequence
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":80,\"end\":90},\"code\":\"SC2001\",\"message\":\"Identifier 'heatTrace1' could not be resolved.\"}]}\r\nActivityId: bb02380a-da63-4586-84ac-488355267a4c, Microsoft.Azure.Documents.Common/2.10.0"}
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: f32c1e04-cde1-439c-b873-cb9bbccaa6bb, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 50919683-2dea-4b32-a6f2-d2166dcbd5c7, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 837a79e9-b72b-4b5a-a5a9-1b85a64c0704, Microsoft.Azure.Documents.Common/2.10.0"}
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: ea3e76b2-4cd3-45e2-878d-1cab9104d3f1, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 0b1fbab1-ec5d-43ba-939c-96afda400931, Microsoft.Azure.Documents.Common/2.10.0"}
+min() arg is an empty sequence
+min() arg is an empty sequence
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: cde5a866-58d7-4726-bae4-94b07e79cb8b, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 910e5aa4-cf1a-425c-8e02-a494149c4c1e, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: c604aa06-87b0-4487-b50e-b53698362306, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 87fab44b-abbf-45d3-9ec0-f4731224c7b0, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: e324e6d5-91c5-4203-abb8-38aac80a3523, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: b3f596d6-daad-492c-9adc-9571b12e3d3e, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 5aa32dfc-6772-4ca9-96a8-af03b5acf040, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 6c7a386e-66cc-4bd5-a8ff-87eef4e71229, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 0d12cc2e-3adf-4aac-84b0-c843191f5be8, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 2b18e065-29f6-4db8-a630-f8fbb68e1230, Microsoft.Azure.Documents.Common/2.10.0"}
+name 'Null' is not defined
+name 'Null' is not defined

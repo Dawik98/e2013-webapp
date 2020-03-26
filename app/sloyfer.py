@@ -53,7 +53,7 @@ layout = html.Div([
     ),    
     
     html.Label('Antall målinger'),
-    dcc.Input(id='AntallMålinger', value='60', type='text'),
+    dcc.Input(id='AntallMålinger', value='60', type='text',placeholder="Velg antall målinger",debounce=True),
     #Grad til temperatur
     dcc.Graph(id='live-graph', animate=False),
         dcc.Interval(
@@ -91,6 +91,8 @@ def callbacks(app):
             #henter inn ny data
             ts_UTC, temp = update_tempData(antall_målinger, sløyfer_dict[sløyfe_valg])
             #tilordner X og Y
+            
+
             X=ts_UTC[:int(antall_målinger)]
             Y=temp[:int(antall_målinger)]
             data = plotly.graph_objs.Scatter(
@@ -119,6 +121,8 @@ def callbacks(app):
                 ])   
     def update_graph_scatter2(n,sløyfe_valg,antall_målinger,måle_valg):
         try:
+            if antall_målinger == None:
+                antall_målinger=0
             #sløyfe_valg=sløyfer_dict[sløyfe_valg]
             #måle_valg=målinger_dict[måle_valg]
 
