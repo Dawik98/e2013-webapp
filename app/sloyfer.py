@@ -88,26 +88,31 @@ def callbacks(app):
             ])   
     def update_graph_scatter(n,sløyfe_valg,antall_målinger):
         try:
-            #henter inn ny data
-            ts_UTC, temp = update_tempData(antall_målinger, sløyfer_dict[sløyfe_valg])
-            #tilordner X og Y
             
+            if antall_målinger == "":
+                 return {'data': [], 'layout': {}}
+            
+            else:
+                #henter inn ny data
+                ts_UTC, temp = update_tempData(antall_målinger, sløyfer_dict[sløyfe_valg])
+                #tilordner X og Y
+                
 
-            X=ts_UTC[:int(antall_målinger)]
-            Y=temp[:int(antall_målinger)]
-            data = plotly.graph_objs.Scatter(
-                    y=Y,
-                    x=X,
-                    name='Scatter',
-                    mode= 'lines+markers'
-                    )
-            return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                         yaxis=dict(range=[0,120],
-                                                                    title='Temperatur [°C]'),
-                                                         title='Temperatur Måling',
-                                                         margin={'l':100,'r':100,'t':50,'b':50},
+                X=ts_UTC[:int(antall_målinger)]
+                Y=temp[:int(antall_målinger)]
+                data = plotly.graph_objs.Scatter(
+                        y=Y,
+                        x=X,
+                        name='Scatter',
+                        mode= 'lines+markers'
+                        )
+                return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
+                                                            yaxis=dict(range=[0,120],
+                                                                        title='Temperatur [°C]'),
+                                                            title='Temperatur Måling',
+                                                            margin={'l':100,'r':100,'t':50,'b':50},
 
-                                                         )}
+                                                            )}
         except Exception as e:
             with open('errors.txt','a') as f:
                 f.write(str(e))
@@ -121,32 +126,34 @@ def callbacks(app):
                 ])   
     def update_graph_scatter2(n,sløyfe_valg,antall_målinger,måle_valg):
         try:
-            if antall_målinger == None:
-                antall_målinger=0
-            #sløyfe_valg=sløyfer_dict[sløyfe_valg]
-            #måle_valg=målinger_dict[måle_valg]
+                #sløyfe_valg=sløyfer_dict[sløyfe_valg]
+                #måle_valg=målinger_dict[måle_valg]
 
-            #Henter inn måledata basert på målevalg
-            meterData = update_meterData(antall_målinger, sløyfer_dict[sløyfe_valg])
-            #Henter ut tidsstempeler og gjør omtil dato
-            ts=meterData["_ts"]
-    
-            X=pd.to_datetime(ts, unit='s')
-            Y=meterData[målinger_dict[måle_valg]]
+                #Henter inn måledata basert på målevalg
+                if antall_målinger == '':
+                     return {'data': [], 'layout': {}}
+                
+                else: 
+                    meterData = update_meterData(antall_målinger, sløyfer_dict[sløyfe_valg])
+                    #Henter ut tidsstempeler og gjør omtil dato
+                    ts=meterData["_ts"]
+            
+                    X=pd.to_datetime(ts, unit='s')
+                    Y=meterData[målinger_dict[måle_valg]]
 
-            data = plotly.graph_objs.Scatter(
-                    y=Y,
-                    x=X,
-                    name='Scatter',
-                    mode= 'lines+markers'
-                    )
-            return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                        yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
-                                                                    title=enhet_dict[måle_valg], tickangle=0,),
-                                                        title='{}'.format(måle_valg),
-                                                        margin={'l':100,'r':100,'t':50,'b':50},
-                                                        )}
-                                                        
+                    data = plotly.graph_objs.Scatter(
+                            y=Y,
+                            x=X,
+                            name='Scatter',
+                            mode= 'lines+markers'
+                            )  
+                    return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
+                                                                yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
+                                                                            title=enhet_dict[måle_valg], tickangle=0,),
+                                                                title='{}'.format(måle_valg),
+                                                                margin={'l':100,'r':100,'t':50,'b':50},
+                                                                )}
+                                                            
                                                         
                                                         
 
