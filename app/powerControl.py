@@ -34,7 +34,7 @@ class PI_controller:
         self.lock = Lock() # Lock for u_tot and dutycycle
 
         self.mode = mode
-        self.run_actuation = False
+        self.run_actuation = False # Reléstyring er "default off"
 
         self.actuation_control = Thread(target=self.actuationControl)
         self.actuation_control.start()
@@ -62,7 +62,7 @@ class PI_controller:
         self.Ti = Ti # Integraltid
     
     def update_value(self, value):
-        print("updating value")
+        print("Updating measure value")
         self.value_prev = self.value
         self.value = round(value,2)
         self.calculate_u_tot()
@@ -80,9 +80,8 @@ class PI_controller:
     # Proporsjonalbidrag
     def proportional(self):
         u_p = self.Kp * self.error
-        u_p = round(u_p,2)
-        self.u_p = u_p
-
+        self.u_p = round(u_p,2)
+        
     # Intagralbidrag
     def integral(self):
         try:
@@ -137,45 +136,49 @@ class PI_controller:
     def actuationControl(self):
         dutycycle = None
         actuation = None
+        while True:
+            if (self.run_actuation == True):
 
-        while(self.run_actuation == True):
+                if not self.lock.acquire(False):
+                    print("Failed to lock the Lock")
+                else:
+                    try:
+                        print("Lock acquired")
+                        dutycycle = self.dutycycle*60 # Konverterer til sekunder
+                        actuation = self.u_tot
 
-            if not self.lock.acquire(False):
-                print("Failed to unlock the Lock")
+                    finally:
+                        self.lock.release()
+                        print("Lock released")
+
+                        t_on = (actuation/100)*dutycycle
+                        t_off = dutycycle - t_on
+
+                        try:
+                            if(t_on != 0):
+                                # Skru varmekabel på
+                                self.activate_func(self.name)
+                                print("On - {}s".format(t_on))
+                        except:
+                            print("Could not activate heat trace")
+                            print(sys.exc_info()[0])
+                            sleep(5)
+                            continue
+                        sleep(t_on)
+
+                        try:
+                            if(t_off != 0):
+                                # Skru av varmekabel
+                                self.deactivate_func(self.name)
+                                print("Off - {}s".format(t_off))
+                        except:
+                            print("Could not deactivate heattrace")
+                            print(sys.exc_info()[0])
+                            sleep(5)
+                            continue
+                        sleep(t_off)
             else:
-                try:
-                    print("Lock acquired")
-                    dutycycle = self.dutycycle*60 # Konverterer til sekunder
-                    actuation = self.u_tot
-
-                finally:
-                    self.lock.release()
-                    print("Lock released")
-
-                    t_on = (actuation/100)*dutycycle
-                    t_off = dutycycle - t_on
-
-                    try:
-                        if(t_on != 0):
-                            # Skru varmekabel på
-                            self.activate_func(self.name)
-                            print("on - {}s".format(t_on))
-                    except:
-                        print("could not activate heattrace")
-                        print(sys.exc_info()[0])
-                        sleep(5)
-                    sleep(t_on)
-
-                    try:
-                        if(t_off != 0):
-                            # Skru av varmekabel
-                            self.deactivate_func(self.name)
-                            print("off - {}s".format(t_off))
-                    except:
-                        print("could not deactivate heattrace")
-                        print(sys.exc_info()[0])
-                        sleep(5)
-                    sleep(t_off)
+                sleep(1)
 
 
     def set_dutycycle(self, dutycycle):
@@ -204,20 +207,8 @@ class PI_controller:
 
     def stop(self):
         self.run_actuation = False
+        return "Actuation controller is not running"
 
     def start(self):
         self.run_actuation = True
-
-
-# def change_value(reg):
-#     while(True):
-#         command = input("")
-#         reg.update_value(float(command))
-
-
-
-# prompt  = Thread(target=change_value, args=(reg_1,))
-# prompt.start()
-
-#ac = Thread(target=actuationControl)
-#ac.start()
+        return "Actuaton controller is running"

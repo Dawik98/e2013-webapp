@@ -84,7 +84,7 @@ def change_alarm_values(sløyfe, alarm_values):
 
 valgt_sløyfe = get_sløyfer()[0]
 
-site_title = html.Div(html.H1("Instillinger for {}".format(valgt_sløyfe)), className="page-header") 
+site_title = html.Div(html.H1("Innstillinger for {}".format(valgt_sløyfe)), className="page-header") 
 
 def choose_sløyfe_dropdown():
     sløyfer = get_sløyfer() 
@@ -140,14 +140,31 @@ def confirm_buttons():
     button_collapse = dbc.Collapse(html.Div([button_confirm, button_cancel]), id='confirm-add-device-button-collapse', is_open=False, className="collapsing-no-slide-animation")
     return button_collapse
 
+def controller_settings():
+    controller_settings = html.Div([
+    dbc.Row([html.H2("Regulator-innstillinger"), html.P(id='dummy')]),
+    dbc.Row([dbc.Col(html.P("Setpunkt:", id="test-label"), width=3), dbc.Col(dbc.Input(type='number', step=0.1, id="setpoint-input"), width=4)], justify='start'),
+    dbc.Row([dbc.Button("Oppdater regulator innstillinger", color='success', id='update-controller-button')])
+    ])
+    return controller_settings
+
 layout = html.Div([
     header,
     dbc.Container([
         dbc.Row([dbc.Col(site_title), dbc.Col(choose_sløyfe_dropdown())]),
-        dbc.Row(html.Div(id='table', className='tableFixHead', children = [get_settings_table()])),
-        dbc.Row([add_device_button()]),
-        dbc.Row([confirm_buttons()])
-
+        dbc.Row([
+            dbc.Col([
+                dbc.Row(html.Div(id='table', className='tableFixHead', children = [get_settings_table()])),
+                dbc.Row([add_device_button()]),
+                dbc.Row([confirm_buttons()])
+            ]),
+            dbc.Col([    
+                controller_settings(),
+                dbc.Row([
+                    html.H2("Alarm-innstillinger")
+                ])
+            ])
+        ])
     ]),# Container
     ])# Div
 
@@ -263,6 +280,16 @@ def callbacks(app):
         print("Args:")
         print(args)
         return get_settings_table()
+
+    @app.callback(
+        Output('dummy', 'children'),
+        [Input('update-controller-button', 'n_clicks')],
+        [State('setpoint-input', 'value')]
+    )
+    def update_test_label(button_click, setpoint_value):
+        print(setpoint_value)
+        
+        return ""
 
         
 #if __name__ == "__main__":
