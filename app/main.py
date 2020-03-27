@@ -61,10 +61,8 @@ def addDashApp(server, path, title, layout, callbacks):
     #    "crossorigin" : "anonymous"
     #    
     #}]
-    external_stylesheets = [{
-        "href" : "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
-        "rel" : "stylesheet",
-        "integrity" : "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh",
+    font_awesome_stylesheets = [{
+        "href" : "https://kit.fontawesome.com/274a562a3f.js",
         "crossorigin" : "anonymous"
         
     }]
@@ -89,7 +87,7 @@ def addDashApp(server, path, title, layout, callbacks):
                         url_base_pathname=path, 
                         external_scripts=external_scripts, 
                         #external_stylesheets=external_stylesheets)
-                        external_stylesheets=[dbc.themes.SANDSTONE, 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'])
+                        external_stylesheets=[dbc.themes.SANDSTONE, font_awesome_stylesheets])
 
     
     with server.app_context():

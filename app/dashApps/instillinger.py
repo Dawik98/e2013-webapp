@@ -80,7 +80,7 @@ def change_alarm_values(sløyfe, alarm_values):
         settings_file.seek(0)
         json.dump(settings, settings_file)
 
-# Site components:
+#---------------------------------------------------- Site components --------------------------------------------------------------------
 
 valgt_sløyfe = get_sløyfer()[0]
 
@@ -119,7 +119,7 @@ def get_settings_table():
         elif deviceType == "powerSwitch":
             deviceType = "Power switch"
 
-        delete_button = html.I(n_clicks=0, className="far far-window-close")
+        delete_button = html.I(className="fas fa-window-close fa-pull-right fa-lg", id="delete-{}".format(deviceEui))
 
         row = html.Tr([html.Td(deviceEui), html.Td([deviceType, delete_button]),])
         table_rows.append(row)
@@ -236,17 +236,32 @@ def callbacks(app):
 
         return label_clicked
         
+
+    def delete_buttons_inputs():
+        inputs = []
+
+        settings = get_settings()
+        settings = settings[valgt_sløyfe]['devices']
+
+        for item in settings:
+            deviceEui = item["device_eui"]
+            button_id = "delete-{}".format(deviceEui)
+            print(button_id)
+            inputs.append(Input(component_id=button_id, component_property='n_clicks'))
+
+        return inputs
+
+
+    # Oppdater tabellen
     @app.callback(
         Output(component_id='table', component_property='children'),
-        [Input(component_id='confirm-add-device-button', component_property='n_clicks')],
+        [Input(component_id='confirm-add-device-button', component_property='n_clicks')]+delete_buttons_inputs(),
         [State(component_id='add-eui', component_property='value'),
         State(component_id='add-type', component_property='label'),
         ])
-    def update_settings(click_confirm_add, device_eui, device_type):
-        
-        if device_eui != None: 
-            add_device('heatTrace1', device_eui, device_type)
-
+    def update_settings(click_confirm_add, device_eui, device_type, *args):
+        print("Args:")
+        print(args)
         return get_settings_table()
 
         
