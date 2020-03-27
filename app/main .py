@@ -37,7 +37,11 @@ def createServer():
     from historikk import layout as layout_historikk
     from historikk import callbacks as callbacks_historikk
     addDashApp(server, '/historikk/', 'historikk', layout_historikk, callbacks_historikk)
-    
+
+    from home import layout as layout_home
+    from home import callbacks as callbacks_home
+    addDashApp(server, '/home1/', 'home1', layout_home, callbacks_home)
+      
     from flaskApp import app
     server.register_blueprint(app)
 

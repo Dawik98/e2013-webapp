@@ -114,7 +114,7 @@ def callbacks(app):
                                     x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Aktiv effekt")
+                                    name="Reaktiv effekt")
             if måling == "Tilsynelatende effekt":
                 trace4 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["apparentPower"],
                                     x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
