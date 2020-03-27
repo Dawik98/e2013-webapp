@@ -20,14 +20,19 @@ sløyfer_dict={"Sløyfe 1":"heatTrace1",
 
 
 layout = html.Div([
+html.Div([
+    html.Label('Sløyfe valg'),
+    dcc.Dropdown(
+        id='sløyfe-valg',
+        options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
+        value='Sløyfe 1'
+    ),  
 
 html.Div([
 daq.Indicator(
     id='DB-indicator',
     label="Connected",
 )]),
-
-html.Div([dcc.Input(id='AntallDager', value='60', type='text')]),
 
 html.Div([
 daq.Thermometer(
@@ -39,19 +44,8 @@ daq.Thermometer(
             'margin-bottom': '5%',
             'margin-top': '5%'},
         showCurrentValue=True,
-        units="[°C]"
-
-),
-html.Label('Temperatur '),
+        units="[°C]")
 ]),
-
-html.Div([
-    html.Label('Sløyfe valg'),
-    dcc.Dropdown(
-        id='sløyfe-valg',
-        options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
-        value='Sløyfe 1'
-    ),  
 ])
 
 
@@ -63,7 +57,7 @@ def callbacks(app):
     @app.callback([Output('DB-indicator', 'label'),
                     Output('DB-indicator', 'value'),
                     Output('DB-indicator', 'color')],
-                    [Input('AntallDager', 'value')])
+                    [Input('sløyfe-valg', 'value')])
 
     def db_connection(x):
         
