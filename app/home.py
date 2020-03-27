@@ -17,7 +17,9 @@ sløyfer_dict={"Sløyfe 1":"heatTrace1",
               #"Sløyfe 2":"heatTrace2",
 }
 
-
+setpoint='20'
+tilkobledeSløyfer=2
+AntallSløyfer=3
 
 layout = html.Div([
 html.Div([
@@ -27,6 +29,7 @@ html.Div([
         options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
         value='Sløyfe 1'
     ),  
+]),
 
 html.Div([
 daq.Indicator(
@@ -38,16 +41,28 @@ html.Div([
 daq.Thermometer(
         id='my-thermometer',
         labelPosition='top',
-        min=-5,
+        min=0,
         max=120,
         style={
             'margin-bottom': '5%',
             'margin-top': '5%'},
         showCurrentValue=True,
-        units="[°C]")
+        units="[°C]",
+        scale={'start': 0, 'interval':10, 'custom': {setpoint: 'Referanse'}} 
+        )
 ]),
-])
 
+html.Div([
+    daq.Gauge(
+        id='Aktive-sløyfer',
+        label="Default",
+        color={"gradient":True,"ranges":{"green":[2,2],"yellow":[1,1],"red":[0,0]}},
+        value=tilkobledeSløyfer,
+        max=2,
+        min=0,
+    )
+ 
+]),
 
 ])
 
@@ -67,8 +82,7 @@ def callbacks(app):
         if cosmos != "":
             value=True
             label='connected'
-            color="#32CD32"
-            
+            color="#32CD32"   
         else:
             value=False
             label='Disconnected'
@@ -84,3 +98,23 @@ def callbacks(app):
         ts_UTC, temp = update_tempData(antall_målinger, sløyfer_dict[sløyfe_valg])
         label='Temperatur i {0}'.format(sløyfe_valg)
         return temp[0], label
+
+    """   
+    @app.callback([Output('Aktive-sløyfer', 'color')],
+                    [Input('sløyfe-valg', 'value')])
+
+    def up_gauge(sløyfer_aktiv):
+        tilkobledeSløyfer=2
+        AntallSløyfer=3
+
+        if tilkobledeSløyfer == AntallSløyfer:
+            color="#32CD32"
+        elif tilkobledeSløyfer < AntallSløyfer:
+            color="#ffff00"
+        elif tilkobledeSløyfer == 0 :
+            color="#FF0000"
+        
+        else: color="#FF0000" 
+
+        return color
+    """

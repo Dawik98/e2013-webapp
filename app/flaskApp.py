@@ -26,21 +26,6 @@ def deactivateHeatTrace():
 
 
 # main web page
-@app.route('/')
-@app.route('/Home')
-def Home():
-
-    # print(get_containers()) 
-
-    #query data from database
-    query = "SELECT * FROM heatTrace1 WHERE heatTrace1.deviceType = 'tempSensor' ORDER BY heatTrace1.timeReceived DESC"
-    container_name = "heatTrace1"
-
-    items = read_from_db(container_name, query)
-
-    val = items[0]['temperature']
-
-    return render_template('index.html',målinger=målinger, val=val)
 
 @app.route('/SensorData')
 def SensorData():

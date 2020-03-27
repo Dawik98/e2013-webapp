@@ -40,7 +40,7 @@ def createServer():
 
     from home import layout as layout_home
     from home import callbacks as callbacks_home
-    addDashApp(server, '/home1/', 'home1', layout_home, callbacks_home)
+    addDashApp(server, '/home/' and '/', 'home', layout_home, callbacks_home)
       
     from flaskApp import app
     server.register_blueprint(app)
