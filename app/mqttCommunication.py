@@ -13,6 +13,10 @@ outputState = {
 }
 timeOslo = datetime.time()
 
+def get_output_state(devicePlacement):
+    global outputState
+    return outputState[devicePlacement]
+
 def connect_mosquitto(server):
     global mqtt
     mqtt = Mqtt(server)
@@ -40,13 +44,17 @@ def connect_mosquitto(server):
             outputState = {
                 packetData['devicePlacement']: [packetData['output'], timeOslo]
             }
+            print("outputState: {}".format(outputState['heatTrace1'][0]))
         elif (packetData['messageType'] == 'dataLog'):
             controller1.update_value(packetData['temperature'])
             
-        #write data to database
-        container_name = packetData['devicePlacement']
-    
-        write_to_db(container_name, packetData)
+        # Write data to database if this isn't a powerdata-message or if active power is not zero.
+        if (packetData['messageType'] != 'powerData'):
+            container_name = packetData['devicePlacement']
+            write_to_db(container_name, packetData)
+        elif (packetData['activePower'] != 0):
+            container_name = packetData['devicePlacement']
+            write_to_db(container_name, packetData)
 
 # Utsending av "Meter-data-request"
 def claimMeterdata(devicePlacement):
@@ -58,8 +66,8 @@ def claimMeterdata(devicePlacement):
         mqtt.publish('powerSwitch', bytes([4, 2, 0])) # Pakke sendes til Mosquitto MQTT Broker, videre til Node-Red og til slutt til målereléet.
         attempts += 1 # Øker verdien til forsøkstelleren.
         print("Meterdata request were sent. This is the {}. attempt.".format(attempts))
-        print("Going to sleep for 5 seconds")
-        time.sleep(5) # Løkken sover i 5 sekunder for å vente på pakketransport.
+        print("Going to sleep for 6 seconds")
+        time.sleep(6) # Løkken sover i 6 sekunder for å vente på pakketransport.
         print("Woke up from sleep")
     # Dersom det ikke kom inn noen ny eller riktig pakke etter 5 forsøk returneres det en feilmelding.
     if ((packetData['messageType'] != 'powerData') or (packetData['devicePlacement'] != devicePlacement) or (timeOslo < startTime)):
@@ -83,13 +91,13 @@ def activateHeatTrace(devicePlacement):
         print("Woke up from sleep.")
     # Dersom aktiveringstidspunktet var før denne funksjonen startet returneres denne beskjeden.
     if (outputState[devicePlacement][1] < startTime):
-        return ("Heat Trace are already activated")
+        return ("Varmekabelen er allerede aktivert.")
     # Dersom utgangstilstanden fortsatt er True fungerte ikke aktiveringen, eller det er ikke mottatt bekreftelse på aktivering.
     elif (outputState[devicePlacement][0] == True):
-        return ("Did not receive confirmation of activation. Message were sent 5 times.")
+        return ("NB! Mottok ingen bekreftelse på aktivering. Aktiveringsmelding ble sendt 5 ganger.")
     # I andre tilfeller har aktiveringen lyktes og informasjon med antall forsøk returneres.
     else:
-        return ("Activation message has been sent to gateway. Confirmation were received within the {}. attempt.".format(attempts))
+        return ("Aktiveringsmelding ble sendt til gateway. Bekreftelse ble mottatt etter {}. forsøk.".format(attempts))
 
 # Deaktivering av varmekabel der sløyfevariabelen er argumentet (heatTrace1, heatTrace2, osv...)
 def deactivateHeatTrace(devicePlacement):
@@ -106,15 +114,14 @@ def deactivateHeatTrace(devicePlacement):
         print("Woke up from sleep.")
     # Dersom deaktiveringstidspunktet var før denne funksjonen startet returneres denne beskjeden.
     if (outputState[devicePlacement][1] < startTime):
-        return ("Heat Trace are already deactivated")
+        return ("Varmekabelen er allerede deaktivert.")
     # Dersom utgangstilstanden fortsatt er FALSE fungerte ikke deaktiveringen, eller det er ikke mottatt bekreftelse på deaktivering.
     elif (outputState[devicePlacement][0] == False):
-        return ("Did not receive confirmation of deactivation. Message were sent 5 times.")
+        return ("NB! Mottok ingen bekreftelse på deaktivering. Deaktiveringsmelding ble sendt 5 ganger.")
     # I andre tilfeller har deaktiveringen lyktes og informasjon med antall forsøk returneres.
     else:
-        return ("Deactivation message has been sent to gateway. Confirmation were received within the {}. attempt.".format(attempts))
+        return ("Deaktiveringsmelding ble sendt til gateway. Bekreftelse ble mottatt etter {}. forsøk.".format(attempts))
 
-controller1 = PI_controller('heatTrace1', activateHeatTrace, deactivateHeatTrace)
-# controller1.set_dutycycle(10.0/60)
-controller1.update_parameters(3.0, 0.0)
-controller1.update_setpoint(20.0)
+controller1 = PI_controller('heatTrace1', activateHeatTrace, deactivateHeatTrace, claimMeterdata)
+
+# def createControllers()

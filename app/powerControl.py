@@ -6,9 +6,7 @@ import sys
 #from mqttCommunication import activateHeatTrace, deactivateHeatTrace
 
 class PI_controller:
-
-    def __init__(self, reg_name, activate_func, deactivate_func, mode='Auto', duty_cycle=1.0, log_results=False):
-
+    def __init__(self, reg_name, activate_func, deactivate_func, claim_func, mode='Auto', duty_cycle=1.0, log_results=False):
         self.name = reg_name
         self.log_results = log_results
 
@@ -30,7 +28,7 @@ class PI_controller:
         self.time_now = time()
         self.time_prev = 0
 
-        self.dutycycle = duty_cycle # min
+        self.dutycycle = duty_cycle # Dutycycle i minutter
         self.lock = Lock() # Lock for u_tot and dutycycle
 
         self.mode = mode
@@ -41,6 +39,7 @@ class PI_controller:
 
         self.activate_func = activate_func
         self.deactivate_func = deactivate_func
+        self.claim_func = claim_func
 
     def get_reg_name(self):
         return self.name
@@ -48,14 +47,11 @@ class PI_controller:
     # Skriv til loggen
     def writer(self, data):
          file = open(self.name+'_log.txt', 'a')
-
          for i in data:
              file.write(str(i))
              file.write('|')
          file.write('\n')
-
          file.close()
-
 
     def update_parameters(self, Kp, Ti):
         self.Kp = Kp # Proporsjonal forsterkning
@@ -68,14 +64,13 @@ class PI_controller:
         self.calculate_u_tot()
 
     def update_setpoint(self, setpoint):
-        print("Updating setpoint: {}".format(setpoint))
         self.setpoint = round(setpoint,2)
+        print("New setpoint is set: {} °C".format(self.setpoint))
         self.calculate_u_tot()
 
     def get_sample_time(self):
         self.time_prev = self.time_now
         self.time_now = time()
-
         self.Ts = self.time_now - self.time_prev
 
     # Proporsjonalbidrag
@@ -116,8 +111,10 @@ class PI_controller:
 
             # Kalkuler proporsjonal-, integralbidraget til pådraget.
             self.proportional()
+            print("Proporsjonalbidraget er {} %".format(self.u_p))
             self.integral()
             u_tot = self.u_p + self.u_i
+            print("Integralbidraget er {} %".format(self.u_i))
 
             # Anti windup:
             if u_tot > 100.0:
@@ -135,11 +132,8 @@ class PI_controller:
 
     # Duty cycle i minutter
     def actuationControl(self):
-        dutycycle = None
-        actuation = None
         while True:
             if (self.run_actuation == True):
-
                 if not self.lock.acquire(False):
                     print("Failed to lock the Lock")
                 else:
@@ -147,37 +141,35 @@ class PI_controller:
                         print("Lock acquired")
                         dutycycle = self.dutycycle*60 # Konverterer til sekunder
                         actuation = self.u_tot
-
                     finally:
                         self.lock.release()
                         print("Lock released")
-
                         t_on = (actuation/100)*dutycycle
                         t_off = dutycycle - t_on
-
                         try:
                             if(t_on != 0):
                                 # Skru varmekabel på
                                 self.activate_func(self.name)
-                                print("On - {}s".format(t_on))
+                                print("{} will be on for {} seconds".format(self.name, t_on))
+                                sleep(t_on)
+                                print("Woke up from on-time sleep")
                         except:
                             print("Could not activate heat trace")
                             print(sys.exc_info()[0])
                             sleep(5)
                             continue
-                        sleep(t_on)
-
                         try:
                             if(t_off != 0):
                                 # Skru av varmekabel
                                 self.deactivate_func(self.name)
-                                print("Off - {}s".format(t_off))
+                                print("{} will be off for {} seconds".format(self.name, t_off))
+                                sleep(t_off)
+                                print("Woke up from off-time sleep")
                         except:
                             print("Could not deactivate heattrace")
                             print(sys.exc_info()[0])
                             sleep(5)
                             continue
-                        sleep(t_off)
             else:
                 sleep(1)
 
@@ -186,6 +178,14 @@ class PI_controller:
         self.lock.acquire()
         try:
             self.dutycycle = dutycycle
+            print("New dutycycle is set: {} minutes".format(dutycycle))
+        finally:
+            self.lock.release()
+
+    def get_dutycycle(self):
+        self.lock.acquire()
+        try:
+            return self.dutycycle
         finally:
             self.lock.release()
 
@@ -196,13 +196,22 @@ class PI_controller:
         finally:
             self.lock.release()
 
+    def get_u_tot(self):
+        self.lock.acquire()
+        try:
+            return self.u_tot
+        finally:
+            self.lock.release()
+
     def change_mode(self, mode, actuation=0.0):
         if mode == 'Auto':
-            self.bumpless(actuation)
-            self.mode = 'Auto'
+            if (self.mode != 'Auto'):
+                self.bumpless(actuation)
+                self.mode = 'Auto'
         elif mode == 'Manual':
-            self.u_tot = actuation
-            self.mode = 'Manual'
+            if (self.mode != 'Manual'):
+                self.set_u_tot(actuation)
+                self.mode = 'Manual'
         else:
             print("Invalid controller mode ...")
 

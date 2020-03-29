@@ -41,9 +41,9 @@ def createServer():
     from dashApps.alarmer import callbacks as callbacks_alarmer
     addDashApp(server, '/alarmer/', 'Alarmer', layout_alarmer, callbacks_alarmer)
     
-    from dashApps.instillinger import layout as layout_instillinger
-    from dashApps.instillinger import callbacks as callbacks_instillinger
-    addDashApp(server, '/instillinger/', 'Instillinger', layout_instillinger, callbacks_instillinger)
+    from dashApps.innstillinger import layout as layout_innstillinger
+    from dashApps.innstillinger import callbacks as callbacks_innstillinger
+    addDashApp(server, '/innstillinger/', 'Innstillinger', layout_innstillinger, callbacks_innstillinger)
 
 
     from flaskApp import app
@@ -97,9 +97,7 @@ def addDashApp(server, path, title, layout, callbacks):
         dashApp.layout = layout
         callbacks(dashApp)
 
-
-
 if __name__ == '__main__':
 
     server = createServer()
-    server.run(host="0.0.0.0", port=8000, debug=True )
+    server.run(host="0.0.0.0", port=8000)
