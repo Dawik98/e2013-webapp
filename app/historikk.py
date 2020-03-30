@@ -63,7 +63,12 @@ layout = html.Div([
         value='Sløyfe 1'
         )
     ]), 
-    html.Div([dcc.Input(id='Antall-Dager', value='60', type='text')]),
+    html.Div([
+    html.Label('Fra dato'),
+    dcc.Input(id='fra_Dato', value='2020-03-12 14:00:02', type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
+
+    html.Label('Til dato'),
+    dcc.Input(id='til_Dato', value='2020-03-26 14:00:02', type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),]),
     html.Div([dcc.Dropdown(
                             id='måle-valg',
                             options=[{'label': s,'value':s} for s in målinger_dict.keys()],
@@ -79,11 +84,12 @@ def callbacks(app):
     
     @app.callback(
         dash.dependencies.Output('my-graph', 'figure'),
-        [Input('Antall-Dager', 'value'),
+        [Input('fra_Dato', 'value'),
+        Input('til_Dato', 'value'),
         Input('måle-valg', 'value'),
         Input('sløyfe-valg','value')
         ])
-    def update_figure(selected_days,måle_valg,sløyfe_valg):
+    def update_figure(fra_dato, til_dato,måle_valg,sløyfe_valg):
         trace1=[]
         trace2=[]
         trace3=[]
@@ -166,27 +172,10 @@ def callbacks(app):
 
         data = [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9,trace10,trace11]
         return {"data": data,
-                "layout": go.Layout(
+                "layout": go.Layout(xaxis=dict(range=[fra_dato,til_dato]),
                                     title="Historikk",
+                                    autosize=False,
+                                    width=2100,
+                                    height=900,
                                     margin={'l':100,'r':100,'t':50,'b':50},
                                                     )}
-        """ 
-         print(målinger_dict[måling])
-            if måling == "Temperatur":
-                traces.append(go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["temperature"],
-                                x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["_ts"],unit='s'), 
-                                mode='lines+markers',
-                                marker={"size": 3.5} ,
-                                name="Temperatur"))
-            elif måling != "Temperatur": 
-                #print(måle_valg)
-                #print(måling)
-                traces.append(go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"][målinger_dict[måling]],
-                                x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
-                                mode='lines+markers',
-                                marker={"size": 3.5},
-                                name=måling))
-        print(traces)
-
-        
-        """  
