@@ -57,10 +57,10 @@ layout = html.Div([
     ),    
 
     html.Label('Fra dato'),
-    dcc.Input(id='fra_Dato', value='2020-03-30 08:07:02', type='text',placeholder="Skriv inn dato (YYYY-MM-DD HH:MM:SS)",debounce=True),
+    dcc.Input(id='fra_Dato', value='2020-03-29 14:00:02', type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
 
     html.Label('Til dato'),
-    dcc.Input(id='til_Dato', value='', type='text',placeholder="(YYYY-MM-DD HH:MM:SS),'-' for live",debounce=True),
+    dcc.Input(id='til_Dato', value='', type='text',placeholder="YYYY-MM-DD HH:MM:SS,'-' for live",debounce=True),
 
     dcc.Graph(id='live-graph', animate=False),
         dcc.Interval(
@@ -81,7 +81,7 @@ layout = html.Div([
         dcc.Interval(
             id='graph-update2',
             #Oppdater hvert 17. sekund, vil ikke overlappe.
-            interval=17*1000,
+            interval=27*1000,
             n_intervals = 1
     ),
 ])
@@ -139,7 +139,7 @@ def callbacks(app):
                 #måle_valg=målinger_dict[måle_valg]
 
                 #Henter inn måledata basert på målevalg
-                if fra_dato == '':
+                if fra_dato == "":
                      return {'data': [], 'layout': {}}
                 
                 else: 
@@ -150,6 +150,7 @@ def callbacks(app):
                     X=pd.to_datetime(ts, unit='s')
                     Y=meterData[målinger_dict[måle_valg]]
 
+                    print(Y)
                     data = plotly.graph_objs.Scatter(
                             y=Y,
                             x=X,
