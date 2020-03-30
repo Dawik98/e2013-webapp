@@ -105,67 +105,67 @@ def callbacks(app):
         for måling in måle_valg:
             if måling == "Temperatur":
                 trace1 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["temperature"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Temperatur-Sensor"]["timeReceived"],
                                     mode='lines+markers',
                                     marker={"size": 3.5} ,
                                     name="Temperatur")
             if måling == "Aktiv effekt":
                 trace2 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["activePower"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"],
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Aktiv effekt")
             if måling == "Reaktiv effekt":
                 trace3 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["reactivePower"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"] ,
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Reaktiv effekt")
             if måling == "Tilsynelatende effekt":
                 trace4 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["apparentPower"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"] ,
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Tilsynelatende effekt")
             if måling == "Aktiv energi":
                 trace5 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["activeEnergy"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"],
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Aktiv energi")
             if måling == "Tilsynelatende energi":
                 trace6 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["apparentEnergy"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Tilsynelatende energi")      
             if måling == "Reaktiv energi":
                 trace7 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["reactiveEnergy"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Reaktiv energi") 
             if måling == "Spenning":
                 trace8 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["voltage"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Spenning") 
             if måling == "Strøm":
                 trace9 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["current"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Strøm") 
             if måling == "Frekvens":
                 trace10 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["frequency"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Frekvens") 
             if måling == "Kjøretid":
                 trace11 = go.Scatter(y=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["runTime"],
-                                    x=pd.to_datetime(historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["_ts"],unit='s'), 
+                                    x=historiskData[sløyfer_dict[sløyfe_valg]]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="Kjøretid") 

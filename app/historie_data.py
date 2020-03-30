@@ -41,11 +41,11 @@ def update_historiskData(sløyfe_valg):
             "current":current,
             "frequency":frequency,
             "runTime":runTime,
-            "_ts":_tsMeter,
+            "timeReceived":_tsMeter,
             },
             "Temperatur-Sensor":{
             "temperature":temperature,
-            "_ts":_tsTemp,
+            "timeReceived":_tsTemp,
             }
     }
     #Sorterer riktige målinger til riktig liste. Løper gjennom meterData. 
