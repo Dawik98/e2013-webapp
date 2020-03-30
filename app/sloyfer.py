@@ -149,7 +149,6 @@ def callbacks(app):
                     X=meterData["timeReceived"]
                     Y=meterData[målinger_dict[måle_valg]]
 
-                    print(Y)
                     data = plotly.graph_objs.Scatter(
                             y=Y,
                             x=X,

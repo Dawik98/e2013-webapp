@@ -21,10 +21,9 @@ def update_tempData(sløyfe_valg, fra_dato, til_dato):
             ts.append(i['timeReceived'])
     
     ts_UTC=ts
-    
+
     #Gjør om til datatypen "Date-time" som blir brukt til plotting.
     #ts_UTC= pd.to_datetime(ts, unit='s')
     
     return  ts_UTC,temp
 
-ts_UTC, temp= update_tempData("heatTrace1", "2020-03-21 00:00:00", "2020-03-29 00:00:00" )
