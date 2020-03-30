@@ -125,7 +125,7 @@ def callbacks(app):
                 f.write(str(e))
                 f.write('\n')
     #Live målerelé data
-    """
+    
     @app.callback(Output('live-graph2', 'figure'),
                 [Input('graph-update2', 'n_intervals'),
                 Input('sløyfe-valg', 'value'),
@@ -133,17 +133,17 @@ def callbacks(app):
                 Input('til_Dato','value'),
                 Input('måle-valg', 'value')
                 ])   
-    def update_graph_scatter2(n,sløyfe_valg,fra_dato, til_dato,måle_valg):
+    def update_graph_scatter2(n,sløyfe_valg,fra_dato, til_dato, måle_valg):
         try:
                 #sløyfe_valg=sløyfer_dict[sløyfe_valg]
                 #måle_valg=målinger_dict[måle_valg]
 
                 #Henter inn måledata basert på målevalg
-                if antall_målinger == '':
+                if fra_dato == '':
                      return {'data': [], 'layout': {}}
                 
                 else: 
-                    meterData = update_meterData(fra_dato, til_dato, sløyfer_dict[sløyfe_valg])
+                    meterData = update_meterData(sløyfer_dict[sløyfe_valg],fra_dato, til_dato)
                     #Henter ut tidsstempeler og gjør omtil dato
                     ts=meterData["_ts"]
             
@@ -170,4 +170,3 @@ def callbacks(app):
             with open('errors.txt','a') as f:
                 f.write(str(e))
                 f.write('\n')
-        """

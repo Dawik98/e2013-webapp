@@ -3,9 +3,14 @@ import pandas as pd
 
 #Funksjon som brukes til å laste ny data inn i plot til måle rele. Queryer databasen for alle målinger ettersom tilkoblingen er det som krever tid, så kan en bytte fritt mellom ulike målinger. 
 #Powerwitch data Må gjøres modulært
-def update_meterData(antall_målinger, sløyfe_valg):
-    query = "SELECT TOP {} * FROM {} WHERE ({}.deviceType = 'powerSwitch' AND {}.deviceEui = '70-b3-d5-8f-f1-00-1e-78' AND {}.messageType ='powerData') ORDER BY {}.timeReceived DESC".format(antall_målinger,sløyfe_valg,sløyfe_valg,sløyfe_valg,sløyfe_valg,sløyfe_valg)
+def update_meterData(sløyfe_valg, fra_dato, til_dato):
+
+    if til_dato == '':
+        til_dato=pd.datetime.now()
+    
+    query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'powerSwitch' AND {0}.deviceEui = '70-b3-d5-8f-f1-00-1e-78' AND {0}.timeReceived >= '{1}' AND {0}.timeReceived <= '{2}' AND {0}.messageType ='powerData') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg,fra_dato, til_dato)
     container_name = sløyfe_valg
+    items=[]
     items = read_from_db(container_name, query)
     #definerer listene og dictonaryen i funksjonen for å nulstille lengden.
     activePower=[]
@@ -32,7 +37,7 @@ def update_meterData(antall_målinger, sløyfe_valg):
             "frequency":frequency,
             "runTime":runTime,
             "_ts":_ts,
-}
+    }
     #Sorterer riktige målinger til riktig liste. Løper gjennom meterData. 
     for key, value in meterData.items():
         #print(key)
