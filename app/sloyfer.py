@@ -145,9 +145,8 @@ def callbacks(app):
                 else: 
                     meterData = update_meterData(sløyfer_dict[sløyfe_valg],fra_dato, til_dato)
                     #Henter ut tidsstempeler og gjør omtil dato
-                    ts=meterData["_ts"]
             
-                    X=pd.to_datetime(ts, unit='s')
+                    X=meterData["timeReceived"]
                     Y=meterData[målinger_dict[måle_valg]]
 
                     print(Y)

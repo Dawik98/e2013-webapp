@@ -23,7 +23,7 @@ def update_meterData(sløyfe_valg, fra_dato, til_dato):
     current=[]
     frequency=[]
     runTime=[]
-    _ts=[]
+    timeReceived=[]
     
 
     meterData={"activePower":activePower, 
@@ -36,7 +36,7 @@ def update_meterData(sløyfe_valg, fra_dato, til_dato):
             "current":current,
             "frequency":frequency,
             "runTime":runTime,
-            "_ts":_ts,
+            "timeReceived":timeReceived,
     }
     #Sorterer riktige målinger til riktig liste. Løper gjennom meterData. 
     for key, value in meterData.items():
