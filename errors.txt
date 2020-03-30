@@ -280,3 +280,192 @@ Status code: 400
 {"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":11,\"end\":12},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: ada9bc97-786c-487c-b8c5-b464da7e6dba, Microsoft.Azure.Documents.Common/2.10.0"}
 Status code: 400
 {"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":11,\"end\":12},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 1ff00d92-e7e4-4fa9-bf25-f717f76bb4e6, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 731d32d2-7376-434f-a4cb-526511d36624, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 2cd13fab-00fd-49d5-b48a-c5789fe582b8, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 7475b83c-c481-4d96-b9fd-fabb5d785181, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 21c8f631-7247-4a5f-ac4f-a982532f6978, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: e3863ab7-80c4-4567-af47-50811a8ad3c3, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: defaba1e-9df3-4d6f-a564-9a5a75152f43, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: eb64b66c-c390-490b-93fb-27ec28741c52, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 5a9db7e7-99a7-4451-b70a-dc35a7f6fee6, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: ed9c3207-ebd2-49a3-83c2-afd0f2e44033, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":172,\"end\":174},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 9a17afb3-9a0a-429d-9efa-b329cfa6aec0, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":171,\"end\":173},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: ad442552-7261-44b6-a08e-51cb32f99908, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":171,\"end\":173},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: b6230b78-12fd-4dda-a454-8ec426943d4a, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":171,\"end\":173},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: b4b9d469-ada1-4449-aa1c-9a164e862563, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 43ae9bce-deb3-4227-aa46-5bbbe6ccbf28, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 6afb949b-dfa6-439b-9794-ba96196a678b, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 50d9da3d-c775-45ab-97be-ba2d0357f197, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: f6caca98-ef5b-4f18-b6d2-1ef1c5a2033c, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: f12196eb-93bb-4e4a-98bf-3a47293a4423, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 7e1ef60c-d3c0-4308-84e1-f4f0489620ca, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 5668b2fe-d8d6-4688-ba37-0d08305a0a73, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: e15f6f18-08a8-4989-89ee-00002c4fd4a9, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: c0a1b2e3-255f-4502-8299-f8cc9913b40c, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 6460ce0c-5f92-4300-814f-2ef1a17993ee, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 207d67aa-64bc-467a-baac-7e7ca1bf1f1c, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 5aec3963-4675-4050-884b-ff8fc11c6c79, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 89bc6644-04a2-4fd4-84be-45e5751ba0bb, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 82270b34-7e54-4a89-a976-5e86a0f8dd9f, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 1223579c-8b20-428c-8410-c1e9dcfb1809, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 21a9d2b9-7e41-4711-a293-a550881d4235, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 7fb80d26-fc8c-4904-8c27-7341ce7c56e2, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 3e97ff46-00ee-4496-9c39-fce11528a347, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: de59459d-185a-4969-b899-f7fabc1a4357, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":170,\"end\":172},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 2a676f6b-c53c-4989-8646-918d61c207c6, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 2cf88b4a-b51c-49d9-85e2-83e1cbbc707a, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 12b9ddb6-a3d1-4019-8406-91ab3aa55ee0, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 267f8b7c-72bd-4a8d-b0aa-5e7e004bb1e3, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 04108972-1efb-47b4-ab66-05fc0e2a3d2b, Microsoft.Azure.Documents.Common/2.10.0"}
+name 'antall_målinger' is not defined
+name 'antall_målinger' is not defined
+name 'antall_målinger' is not defined
+name 'antall_målinger' is not defined
+name 'antall_målinger' is not defined
+name 'antall_målinger' is not defined
+name 'antall_målinger' is not defined
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 87a50ff8-fbae-4a01-8e74-2b7a3b071d89, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 302e9f6a-4a37-4cb4-a03f-5b7d30c44fac, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 4ab972e7-6f6e-4e70-a199-a089706d8af9, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: af2b4651-2892-4aeb-bcf7-b7fd760ccfe4, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":161,\"end\":163},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 1337d160-2898-4062-a568-e3011e4da03d, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":161,\"end\":163},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 6202a2dd-fbf6-4a37-891d-838d978df3a5, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":161,\"end\":163},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 881c009e-4bc5-477c-a286-7ab825ddbda1, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":161,\"end\":163},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 0b12c133-6d64-4241-a7a2-0a87dd6de7f1, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":161,\"end\":163},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 0f1b74df-2393-4f1e-9e62-bed101b9069a, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: dd75d5eb-14e2-43c4-9365-d65170ae3309, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 3a483d5d-107b-4437-9649-338b160869df, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 940dbdbc-7eed-4f8f-9843-82c44ec24f4c, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: ba302cd9-b012-495a-9fa3-e02fd274987c, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: e694dbb2-c0f5-483a-a280-11977e556faf, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":164,\"end\":166},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 3e5b3394-8474-41f6-bfb9-38d4265ff605, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":165,\"end\":167},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 3bdef8b6-b934-4631-ba55-cbced79bf66b, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":165,\"end\":167},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 52023211-a3bc-4cac-9c1d-34dce14ceb97, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":165,\"end\":167},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: f65eaed4-a0b2-4423-8665-0657965224ed, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":165,\"end\":167},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 86a332fe-4dbc-49fd-9fb1-ddf1e9be8c3b, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":165,\"end\":167},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 566e8b55-b41e-4ed5-b9c4-816e434cf257, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":165,\"end\":167},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '08'.\"}]}\r\nActivityId: 3aa70c03-6b64-4013-950e-25231799ec9b, Microsoft.Azure.Documents.Common/2.10.0"}
+update_tempData() missing 1 required positional argument: 'til_dato'
+update_tempData() missing 1 required positional argument: 'til_dato'
+update_tempData() missing 1 required positional argument: 'til_dato'
+update_tempData() missing 1 required positional argument: 'til_dato'
+update_tempData() missing 1 required positional argument: 'til_dato'
+update_tempData() missing 1 required positional argument: 'til_dato'
+update_tempData() missing 1 required positional argument: 'til_dato'
+update_tempData() missing 1 required positional argument: 'til_dato'
+update_tempData() missing 1 required positional argument: 'til_dato'
+update_tempData() missing 1 required positional argument: 'til_dato'
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":150,\"end\":151},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '<'.\"}]}\r\nActivityId: 4ef718b7-a588-4605-9dda-16422f03e79f, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":150,\"end\":151},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '<'.\"}]}\r\nActivityId: 736ed95a-70b3-42de-a140-58859f60377b, Microsoft.Azure.Documents.Common/2.10.0"}
+Status code: 400
+{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":150,\"end\":151},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '<'.\"}]}\r\nActivityId: 8960978c-ddf8-4105-93ce-0cd0238469b6, Microsoft.Azure.Documents.Common/2.10.0"}
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence

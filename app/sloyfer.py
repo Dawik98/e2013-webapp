@@ -6,12 +6,16 @@ import dash_html_components as html
 import plotly
 import random
 import pytz
+import time
+import datetime
 import plotly.graph_objs as go
 from datetime import datetime
 from collections import deque
 from cosmosDB import read_from_db
 from opp_temp import update_tempData
 from opp_meter import update_meterData
+
+
 
 # ordliste som knytter sammen streng som vises i drop-down meny knyttet til streng med datanavn som 
 # brukes til å hente data fra databasen 
@@ -51,10 +55,13 @@ layout = html.Div([
         options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
         value='Sløyfe 1'
     ),    
-    
-    html.Label('Antall målinger'),
-    dcc.Input(id='AntallMålinger', value='60', type='text',placeholder="Velg antall målinger",debounce=True),
-    #Grad til temperatur
+
+    html.Label('Fra dato'),
+    dcc.Input(id='fra_Dato', value='2020-03-30 08:07:02', type='text',placeholder="Skriv inn dato (YYYY-MM-DD HH:MM:SS)",debounce=True),
+
+    html.Label('Til dato'),
+    dcc.Input(id='til_Dato', value='', type='text',placeholder="(YYYY-MM-DD HH:MM:SS),'-' for live",debounce=True),
+
     dcc.Graph(id='live-graph', animate=False),
         dcc.Interval(
             id='graph-update',
@@ -84,22 +91,22 @@ def callbacks(app):
     @app.callback(Output('live-graph', 'figure'),
             [Input('graph-update', 'n_intervals'),
             Input('sløyfe-valg', 'value'),
-            Input('AntallMålinger','value')
+            Input('fra_Dato', 'value'),
+            Input('til_Dato','value')
             ])   
-    def update_graph_scatter(n,sløyfe_valg,antall_målinger):
-        try:
-            
-            if antall_målinger == "":
+    def update_graph_scatter(n,sløyfe_valg,fra_dato, til_dato):
+        try:          
+            if fra_dato == "":
                  return {'data': [], 'layout': {}}
             
             else:
                 #henter inn ny data
-                ts_UTC, temp = update_tempData(antall_målinger, sløyfer_dict[sløyfe_valg])
+                ts_UTC, temp = update_tempData(sløyfer_dict[sløyfe_valg], fra_dato, til_dato)
                 #tilordner X og Y
                 
 
-                X=ts_UTC[:int(antall_målinger)]
-                Y=temp[:int(antall_målinger)]
+                X=ts_UTC
+                Y=temp
                 data = plotly.graph_objs.Scatter(
                         y=Y,
                         x=X,
@@ -118,13 +125,15 @@ def callbacks(app):
                 f.write(str(e))
                 f.write('\n')
     #Live målerelé data
+    """
     @app.callback(Output('live-graph2', 'figure'),
                 [Input('graph-update2', 'n_intervals'),
                 Input('sløyfe-valg', 'value'),
-                Input('AntallMålinger','value'),
+                Input('fra_Dato', 'value'),
+                Input('til_Dato','value'),
                 Input('måle-valg', 'value')
                 ])   
-    def update_graph_scatter2(n,sløyfe_valg,antall_målinger,måle_valg):
+    def update_graph_scatter2(n,sløyfe_valg,fra_dato, til_dato,måle_valg):
         try:
                 #sløyfe_valg=sløyfer_dict[sløyfe_valg]
                 #måle_valg=målinger_dict[måle_valg]
@@ -134,7 +143,7 @@ def callbacks(app):
                      return {'data': [], 'layout': {}}
                 
                 else: 
-                    meterData = update_meterData(antall_målinger, sløyfer_dict[sløyfe_valg])
+                    meterData = update_meterData(fra_dato, til_dato, sløyfer_dict[sløyfe_valg])
                     #Henter ut tidsstempeler og gjør omtil dato
                     ts=meterData["_ts"]
             
@@ -161,3 +170,4 @@ def callbacks(app):
             with open('errors.txt','a') as f:
                 f.write(str(e))
                 f.write('\n')
+        """

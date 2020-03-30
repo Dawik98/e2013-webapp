@@ -2,8 +2,15 @@ from cosmosDB import read_from_db
 import pandas as pd
 
 #Leser fra databasen, laster inn antall målinger og hvilken sløyfe.
-def update_tempData(antall_målinger, sløyfe_valg):
-    query = "SELECT TOP {} * FROM {} WHERE ({}.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY {}.timeReceived DESC".format(antall_målinger,sløyfe_valg,sløyfe_valg,sløyfe_valg)
+def update_tempData(sløyfe_valg, fra_dato, til_dato):
+    print(fra_dato)
+    print(til_dato)
+    if til_dato == '':
+        til_dato=pd.datetime.now()
+
+    print(til_dato)
+    query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'tempSensor' AND {0}.deviceEui = '70-b3-d5-80-a0-10-94-46'  AND {0}.timeReceived >= '{1}' AND {0}.timeReceived <= '{2}') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg, fra_dato, til_dato)
+    print(query)
     container_name = sløyfe_valg
     items = read_from_db(container_name, query)
     # Definerer litene inne i funsjonen slik de ikke vokser for hver kjøring
@@ -14,7 +21,8 @@ def update_tempData(antall_målinger, sløyfe_valg):
     for i in items:
         temp.append(i['temperature'])
     for i in items:
-        ts.append(i['_ts'])
+            ts.append(i['_ts'])
     #Gjør om til datatypen "Date-time" som blir brukt til plotting.
     ts_UTC= pd.to_datetime(ts, unit='s')
+    
     return  ts_UTC,temp
