@@ -102,8 +102,17 @@ def callbacks(app):
 
         return choose_sløyfe_dropdown(main_url, chosen_sløyfe), get_navbar_items(chosen_sløyfe)
         
+
+# returnerer siste bit av url addressen = valgt sløyfe
+def get_sløyfe_from_pathname(pathname):
+        try:
+            chosen_sløyfe = pathname.split('/')[2]
+        except:
+            chosen_sløyfe = "Ingen sløyfe ble valgt"
+        return chosen_sløyfe
+
 def update_sløyfe_callback(app, item_list):
-    # item list skal inneholde lister med id til items som er avhengig av valgt sløyfe og funksjonen som returnerer den item
+    # item_list skal inneholde lister med id til items som er avhengig av valgt sløyfe og funksjonen som returnerer den item
     # hver elemnt i listen skal være liste: [id, func]...
     
     callback_outputs = []
@@ -114,10 +123,7 @@ def update_sløyfe_callback(app, item_list):
 
     @app.callback(callback_outputs, [Input(component_id='url', component_property='pathname')])
     def update_sløyfe(pathname):
-        try:
-            chosen_sløyfe = pathname.split('/')[2]
-        except:
-            chosen_sløyfe = "Ingen sløyfe ble valgt"
+        chosen_sløyfe=get_sløyfe_from_pathname(pathname)
 
         site_components=[]
         for item in item_list:

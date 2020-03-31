@@ -12,7 +12,7 @@ import re
 from itertools import zip_longest
 
 #import standard layout
-from dashApps.layout import header, update_sløyfe_callback
+from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
 
 
@@ -105,10 +105,12 @@ def get_site_title(chosen_sløyfe):
     return site_title
 
 
-def get_settings_table():
+def get_settings_table(chosen_sløyfe):
 
+    print('chosens sløyfe = '+chosen_sløyfe)
     settings = get_settings()
-    settings = settings['heatTrace1']['devices']
+    settings = settings[chosen_sløyfe]['devices']
+    print(settings)
 
     table_header = [html.Thead(html.Tr([html.Th("Enhetens eui"), html.Th("Enhet")]))]
     table_rows = []
@@ -175,7 +177,7 @@ layout = html.Div([
         dbc.Row([dbc.Col(html.Div(id='site-title-div'))]),
         dbc.Row([
             dbc.Col([
-                dbc.Row(html.Div(id='table', className='tableFixHead', children = [get_settings_table()])),
+                dbc.Row(html.Div(html.Div(id='table-div'), id='table', className='tableFixHead')),
                 dbc.Row([add_device_button()]),
                 dbc.Row([confirm_buttons()])
             ]),
@@ -193,7 +195,8 @@ layout = html.Div([
 def callbacks(app):
     layout_callbacks(app)
 
-    update_sløyfe_callback(app, [['site-title-div', get_site_title]])
+    update_sløyfe_callback(app, [['site-title-div', get_site_title],
+                                 ['table-div', get_settings_table]])
 
     # Vis / skjul tabellraden for å leggen inn ny enhet
     @app.callback(
@@ -296,13 +299,16 @@ def callbacks(app):
         [Input(component_id='confirm-add-device-button', component_property='n_clicks')]+delete_buttons_inputs(),
         [State(component_id='add-eui', component_property='value'),
         State(component_id='add-type', component_property='label'),
+        State(component_id='url', component_property='pathname'),
         ])
     def update_settings(click_confirm_add, *args, **kwargs):
 
         ctx = dash.callback_context
         states = ctx.states
         inputs = ctx.inputs
-        print(inputs)
+
+        pathname = states['url.pathname']
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
 
         triggered_button = ctx.triggered[0]['prop_id'].split('.')[0]
         print(ctx.triggered)
@@ -312,15 +318,15 @@ def callbacks(app):
         device_type = states['add-type.label']
 
         if triggered_button == None or ctx.triggered[0]['value'] == None:
-            return get_settings_table()
+            return get_settings_table(chosen_sløyfe)
         elif triggered_button == 'confirm-add-device-button':
-            add_device('heatTrace1', device_eui, device_type)
-            return get_settings_table()
+            add_device(chosen_sløyfe, device_eui, device_type)
+            return get_settings_table(chosen_sløyfe)
         elif triggered_button != 'confirm-add-device-button':
             eui = remove_buttons_ids[triggered_button]
             print(eui)
-            remove_device('heatTrace1', eui)
-            return get_settings_table()
+            remove_device(chosen_sløyfe, eui)
+            return get_settings_table(chosen_sløyfe)
 
 #        for key, value in inputs.items():
 #            print("key= {}, value={}".format(key, value))
