@@ -10,12 +10,14 @@ import time
 import datetime
 import plotly.graph_objs as go
 from datetime import datetime
+from dateutil.relativedelta import *
 from collections import deque
 from cosmosDB import read_from_db
 from opp_temp import update_tempData
 from opp_meter import update_meterData
 
-
+til_dato = pd.datetime.now()
+fra_dato= til_dato + relativedelta(hours=-1)
 
 # ordliste som knytter sammen streng som vises i drop-down meny knyttet til streng med datanavn som 
 # brukes til å hente data fra databasen 
@@ -57,7 +59,7 @@ layout = html.Div([
     ),    
 
     html.Label('Fra dato'),
-    dcc.Input(id='fra_Dato', value='2020-03-29 14:00:02', type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
+    dcc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
 
     html.Label('Til dato'),
     dcc.Input(id='til_Dato', value='', type='text',placeholder="YYYY-MM-DD HH:MM:SS,'-' for live",debounce=True),

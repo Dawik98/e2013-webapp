@@ -8,11 +8,14 @@ import random
 import pytz
 import plotly.graph_objs as go
 from datetime import datetime
+from dateutil.relativedelta import *
 from collections import deque
 from cosmosDB import read_from_db
 from historie_data import update_historiskData
 
 
+til_dato = pd.datetime.now()
+fra_dato= til_dato + relativedelta(months=-1)
 
 
 målinger_dict={ "Temperatur" : "temperature",
@@ -52,8 +55,6 @@ historiskData={}
 for key, value in sløyfer_dict.items(): 
     historiskData[value] = update_historiskData(value)
 
-
-
 layout = html.Div([
     html.Div([html.H1("Historikk")], style={"text-align": "center"}),
     html.Div([html.Label('Sløyfe valg'),
@@ -65,10 +66,10 @@ layout = html.Div([
     ]), 
     html.Div([
     html.Label('Fra dato'),
-    dcc.Input(id='fra_Dato', value='2020-03-12 14:00:02', type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
+    dcc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
 
     html.Label('Til dato'),
-    dcc.Input(id='til_Dato', value='2020-03-26 14:00:02', type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),]),
+    dcc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),]),
     html.Div([dcc.Dropdown(
                             id='måle-valg',
                             options=[{'label': s,'value':s} for s in målinger_dict.keys()],
