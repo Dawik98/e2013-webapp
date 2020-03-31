@@ -1,21 +1,29 @@
 from cosmosDB import read_from_db
 import pandas as pd
 
+#Leser fra databasen, laster inn antall målinger og hvilken sløyfe.
+def update_tempData(sløyfe_valg, fra_dato, til_dato):
 
-def update_tempData(antall_målinger, sløyfe_valg):
-    #if  antall_målinger_pre != antall_målinger:
-    #print("Kjører funksjon")
-    query = "SELECT TOP {0} * FROM {1} WHERE ({1}.deviceType = 'tempSensor' AND {1}.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY {1}.timeReceived DESC".format(antall_målinger,sløyfe_valg)
+    if til_dato == '':
+        til_dato=pd.datetime.now()
+    query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'tempSensor' AND {0}.deviceEui = '70-b3-d5-80-a0-10-94-46'  AND {0}.timeReceived >= '{1}' AND {0}.timeReceived <= '{2}') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg, fra_dato, til_dato)
     container_name = sløyfe_valg
+    items=[]
     items = read_from_db(container_name, query)
+    # Definerer litene inne i funsjonen slik de ikke vokser for hver kjøring
     ts=[]
     temp=[]
     ts_UTC=[]
+    #sorterer ut relevant informasjon fra "Items" som innehold alt som ble lest fradatabasen
     for i in items:
         temp.append(i['temperature'])
     for i in items:
-        ts.append(i['_ts'])
-    ts_UTC= pd.to_datetime(ts, unit='s')
-    #ts_ht1OSLO = ts_ht1UTC.astimezone(pytz.timezone('Europe/Oslo'))
-    #print(temp_ht1)
+            ts.append(i['timeReceived'])
+    
+    ts_UTC=ts
+
+    #Gjør om til datatypen "Date-time" som blir brukt til plotting.
+    #ts_UTC= pd.to_datetime(ts, unit='s')
+    
     return  ts_UTC,temp
+
