@@ -3,27 +3,31 @@ from flask_mqtt import Mqtt
 from forms import RegistrationForm, LoginForm
 
 from cosmosDB import read_from_db
+from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace, controller1
 
-import json
-import os
-import io
-
-from mqtt import mqtt, connect_to_db
+import json, os, io
 
 app=Blueprint('app', __name__)
 
 @app.route('/claimMeterdata')
-def claimMeterdata():
-    mqtt.publish('powerSwitch', bytes([4, 2, 0]))
+def runClaimDataFunction():
+    return claimMeterdata('heatTrace1')
 
 @app.route('/activateHeatTrace')
-def activateHeatTrace():
-    mqtt.publish('powerSwitch', bytes([4, 0, 0, 0, 0, 0, 1, 0, 0, 0]))
+def runActivationFunction():
+    return activateHeatTrace('heatTrace1')
 
 @app.route('/deactivateHeatTrace')
-def deactivateHeatTrace():
-    mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
+def runDeactivationFunction():
+    return deactivateHeatTrace('heatTrace1')
 
+@app.route('/activateController')
+def startController():
+    return controller1.start()
+
+@app.route('/deactivateController')
+def stopController():
+    return controller1.stop()
 
 målinger=[
     {
@@ -40,26 +44,23 @@ målinger=[
     }
 ]
 
-# main web page
-@app.route('/')
-@app.route('/Home')
-def Home():
-
-    # print(get_containers()) 
-
-    #query data from database
-    query = "SELECT * FROM heatTrace1 WHERE heatTrace1.deviceType = 'tempSensor' ORDER BY heatTrace1.timeReceived DESC"
-    container_name = "heatTrace1"
-
-    items = read_from_db(container_name, query)
-
-    val = items[0]['temperature']
-
-    return render_template('index.html',målinger=målinger, val=val)
-
-@app.route('/SensorData')
-def SensorData():
-    return render_template('SensorData.html', title='Målinger')
+## main web page
+#@app.route('/')
+#@app.route('/Home')
+#def Home():
+#    #query data from database
+#    query = "SELECT * FROM heatTrace1 WHERE heatTrace1.deviceType = 'tempSensor' ORDER BY heatTrace1.timeReceived DESC"
+#    container_name = "heatTrace1"
+#
+#    items = read_from_db(container_name, query)
+#
+#    val = items[0]['temperature']
+#
+#    return render_template('index.html',målinger=målinger, val=val)
+#
+#@app.route('/SensorData')
+#def SensorData():
+#    return render_template('SensorData.html', title='Målinger')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

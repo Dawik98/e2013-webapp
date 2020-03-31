@@ -1,12 +1,18 @@
-# Pull a pre-built alpine docker image with nginx and python3 installed
-FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.7
+
+FROM python:3.8-slim-buster
 
 ENV LISTEN_PORT=8000
 EXPOSE 8000
 
 COPY /app /app
 
-# Uncomment to install additional requirements from a requirements.txt file
 COPY requirements.txt /
-RUN pip install --no-cache-dir -U pip
-RUN pip install --no-cache-dir -r /requirements.txt
+
+RUN pip install --upgrade wheel
+RUN pip install -r requirements.txt
+
+
+WORKDIR /app
+ENTRYPOINT [ "python" ]
+CMD [ "main.py" ]
+
