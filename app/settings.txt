@@ -1,1 +1,1 @@
-{"heatTrace1": {"devices": [{"device_eui": "70-b3-d5-80-a0-10-94-3a", "deviceType": "tempSensor"}, {"device_eui": "70-b3-d5-80-a0-10-94-3d", "deviceType": "tempSensor"}, {"device_eui": "70-b3-d5-80-a0-10-94-46", "deviceType": "Temperatur sensor"}, {"device_eui": "", "deviceType": "Velg enhet type"}]}, "heatTrace2": {"devices": [], "alarm_values": []}}
+{"heatTrace1": {"devices": [{"device_eui": "70-b3-d5-80-a0-10-94-3a", "deviceType": "tempSensor"}, {"device_eui": "70-b3-d5-80-a0-10-94-3d", "deviceType": "tempSensor"}]}, "heatTrace2": {"devices": [], "alarm_values": []}}

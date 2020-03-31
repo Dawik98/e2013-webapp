@@ -8,9 +8,11 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
 import json
+import re
+from itertools import zip_longest
 
 #import standard layout
-from dashApps.layout import header
+from dashApps.layout import header, update_sløyfe_callback
 from dashApps.layout import callbacks as layout_callbacks
 
 
@@ -24,6 +26,7 @@ def get_settings():
         data = json.load(json_file)
         return data
 
+# kopiert til layout.py
 def get_sløyfer():
     sløyfer = []
     with open('app/settings.txt') as json_file:
@@ -82,27 +85,33 @@ def change_alarm_values(sløyfe, alarm_values):
 
 #---------------------------------------------------- Site components --------------------------------------------------------------------
 
-valgt_sløyfe = get_sløyfer()[0]
+# alle mulige rader må være definert på forhånd pga hvordan dash callbacks fungerer
+def make_id_dict():
+    remove_buttons_ids = {}
+    remove_buttons = {}
 
-site_title = html.Div(html.H1("Innstillinger for {}".format(valgt_sløyfe)), className="page-header") 
+    for i in range(20):
+        id_ = "delete-row-{}".format(i+1)
+        remove_buttons_ids[id_] = None
+        remove_buttons[id_] = html.I(className="fas fa-window-close fa-pull-right fa-lg", id=id_)
+    
+    return remove_buttons_ids, remove_buttons
+    
+remove_buttons_ids, remove_buttons = make_id_dict()
 
-def choose_sløyfe_dropdown():
-    sløyfer = get_sløyfer() 
-    items = []
-    for sløyfe in sløyfer:
-        items.append(dbc.DropdownMenuItem(sløyfe, id=sløyfe))
 
-    dropdown = dbc.DropdownMenu(label = "Velg sløyfe   ", id='dropdown-sløyfer', children=items)
-    return dropdown
+def get_site_title(chosen_sløyfe):
+    site_title = html.Div(html.H1("Innstillinger for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
+    return site_title
+
 
 def get_settings_table():
 
     settings = get_settings()
-    settings = settings[valgt_sløyfe]['devices']
+    settings = settings['heatTrace1']['devices']
 
     table_header = [html.Thead(html.Tr([html.Th("Enhetens eui"), html.Th("Enhet")]))]
     table_rows = []
-
 
     add_eui = dbc.Input(placeholder="Skriv inn enhetens eui", type='text', id="add-eui")
     device_types = [dbc.DropdownMenuItem("Temperatur sensor", id='tempSensor'),
@@ -110,20 +119,32 @@ def get_settings_table():
     add_type = dbc.DropdownMenu(device_types, label="Velg enhet type", id="add-type")#, toggleClassName="btn-outline-secondary")
     add_device_row = dbc.Collapse(html.Tr([html.Td(add_eui), html.Td(add_type)]), id='add-row-collapse')#, is_open=False)
 
-    for item in settings:
-        deviceEui = item["device_eui"]
-        deviceType = item["deviceType"]
+    # lag alle mulige rader i tabellen, hvis bare de som har tilskrevet enhet
+    for (key, status), setting_item in zip_longest(remove_buttons_ids.items(), settings):
 
-        if deviceType == "tempSensor":
-            deviceType = "Temperatur sensor"
-        elif deviceType == "powerSwitch":
-            deviceType = "Power switch"
+        if setting_item:
+            deviceEui = setting_item["device_eui"]
+            deviceType = setting_item["deviceType"]
 
-        delete_button = html.I(className="fas fa-window-close fa-pull-right fa-lg", id="delete-{}".format(deviceEui))
+            if deviceType == "tempSensor":
+                deviceType = "Temperatur sensor"
+            elif deviceType == "powerSwitch":
+                deviceType = "Power switch"
 
-        row = html.Tr([html.Td(deviceEui), html.Td([deviceType, delete_button]),])
-        table_rows.append(row)
-    
+            delete_button = remove_buttons[key]
+            remove_buttons_ids[key]=deviceEui
+
+            row = html.Tr([html.Td(deviceEui), html.Td([deviceType, delete_button]),])
+            table_rows.append(row)
+        elif setting_item == None:
+            deviceEui = ""
+            deviceType = ""
+
+            delete_button = remove_buttons[key]
+
+            row = html.Tr([html.Td(deviceEui), html.Td([deviceType, delete_button]),], style={'display':'none'})
+            table_rows.append(row)
+
     table_rows.append(add_device_row)
 
     table_body=[html.Tbody(table_rows)]
@@ -151,7 +172,7 @@ def controller_settings():
 layout = html.Div([
     header,
     dbc.Container([
-        dbc.Row([dbc.Col(site_title), dbc.Col(choose_sløyfe_dropdown())]),
+        dbc.Row([dbc.Col(html.Div(id='site-title-div'))]),
         dbc.Row([
             dbc.Col([
                 dbc.Row(html.Div(id='table', className='tableFixHead', children = [get_settings_table()])),
@@ -171,6 +192,8 @@ layout = html.Div([
 
 def callbacks(app):
     layout_callbacks(app)
+
+    update_sløyfe_callback(app, [['site-title-div', get_site_title]])
 
     # Vis / skjul tabellraden for å leggen inn ny enhet
     @app.callback(
@@ -242,32 +265,30 @@ def callbacks(app):
     def display_confirm_buttons(click_tempSensor, click_powerSwitch, click_cancel_add, click_confirm_add):
         id_lookup = {'tempSensor':'Temperatur sensor', 'powerSwitch':'Power Switch', 'cancel-add-device-button':'Velg enhet type', 'confirm-add-device-button':'Velg enhet type'}
 
-        ctx = dash.callback_context
+        try:
+            ctx = dash.callback_context
 
-        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-        label_clicked = id_lookup[button_id]
+            button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+            label_clicked = id_lookup[button_id]
 
-        if (click_tempSensor is None and click_powerSwitch is None) or not ctx.triggered:
-        # if neither button has been clicked, return "Not selected"
+            if (click_tempSensor is None and click_powerSwitch is None) or not ctx.triggered:
+            # if neither button has been clicked, return "Not selected"
+                return "Velg enhet type"
+
+            return label_clicked
+        except:
             return "Velg enhet type"
-
-        return label_clicked
         
 
     def delete_buttons_inputs():
         inputs = []
 
-        settings = get_settings()
-        settings = settings[valgt_sløyfe]['devices']
+        for key, status in remove_buttons_ids.items():
+            inputs.append(Input(component_id=key, component_property='n_clicks'))
 
-        for item in settings:
-            deviceEui = item["device_eui"]
-            button_id = "delete-{}".format(deviceEui)
-            print(button_id)
-            inputs.append(Input(component_id=button_id, component_property='n_clicks'))
+        #print(inputs)
 
         return inputs
-
 
     # Oppdater tabellen
     @app.callback(
@@ -276,11 +297,55 @@ def callbacks(app):
         [State(component_id='add-eui', component_property='value'),
         State(component_id='add-type', component_property='label'),
         ])
-    def update_settings(click_confirm_add, device_eui, device_type, *args):
-        print("Args:")
-        print(args)
+    def update_settings(click_confirm_add, *args, **kwargs):
+
+        ctx = dash.callback_context
+        states = ctx.states
+        inputs = ctx.inputs
+        print(inputs)
+
+        triggered_button = ctx.triggered[0]['prop_id'].split('.')[0]
+        print(ctx.triggered)
+        print('triggered by "{}" '.format(triggered_button))
+
+        device_eui = states['add-eui.value']
+        device_type = states['add-type.label']
+
+        if triggered_button == None or ctx.triggered[0]['value'] == None:
+            return get_settings_table()
+        elif triggered_button == 'confirm-add-device-button':
+            add_device('heatTrace1', device_eui, device_type)
+            return get_settings_table()
+        elif triggered_button != 'confirm-add-device-button':
+            eui = remove_buttons_ids[triggered_button]
+            print(eui)
+            remove_device('heatTrace1', eui)
+            return get_settings_table()
+
+#        for key, value in inputs.items():
+#            print("key= {}, value={}".format(key, value))
+#            if key == 'confirm-add-device-button.n_clicks' and value != None:
+#                add_device('heatTrace1', device_eui, device_type)
+#                return get_settings_table()
+#            elif key != 'confirm-add-device-button.n_clicks' and value != None:
+#                eui = re.search(r'delete-(.*).n_clicks', key).group(1)
+#                print(eui)
+#                remove_device('heatTrace1', eui)
+#                return get_settings_table()
+#
         return get_settings_table()
 
+
+        print("states")
+        print(ctx.states)
+        print("inputs")
+        print(ctx.inputs)
+
+        print("Args:")
+        print(args)
+
+
+    # dummy update
     @app.callback(
         Output('dummy', 'children'),
         [Input('update-controller-button', 'n_clicks')],
@@ -290,6 +355,19 @@ def callbacks(app):
         print(setpoint_value)
         
         return ""
+
+    # Update url
+    @app.callback(
+        Output(component_id='dummy-label', component_property='children'),
+        [
+        Input(component_id='url', component_property='pathname'),
+        ])
+    def update_url(pathname):
+        global current_url
+        current_url = pathname
+        url = get_chosen_sløyfe()
+        
+        return url
 
         
 #if __name__ == "__main__":

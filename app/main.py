@@ -87,7 +87,8 @@ def addDashApp(server, path, title, layout, callbacks):
                         url_base_pathname=path, 
                         external_scripts=external_scripts, 
                         #external_stylesheets=external_stylesheets)
-                        external_stylesheets=[dbc.themes.SANDSTONE, font_awesome_stylesheets])
+                        external_stylesheets=[dbc.themes.SANDSTONE, font_awesome_stylesheets],
+                        suppress_callback_exceptions=True)
 
     
     with server.app_context():
@@ -100,4 +101,4 @@ def addDashApp(server, path, title, layout, callbacks):
 if __name__ == '__main__':
 
     server = createServer()
-    server.run(host="0.0.0.0", port=8000, debug=True )
+    server.run(host="0.0.0.0", port=8000)
