@@ -205,20 +205,20 @@ class PI_controller:
 
     def change_mode(self, mode, actuation=0.0):
         if mode == 'Auto':
-            if (self.mode != 'Auto'):
-                self.bumpless(actuation)
-                self.mode = 'Auto'
+            print("Ny regulatormodus: Auto, Tidligere pådrag: {}".format(actuation))
+            self.bumpless(actuation)
+            self.mode = mode
         elif mode == 'Manual':
-            if (self.mode != 'Manual'):
-                self.set_u_tot(actuation)
-                self.mode = 'Manual'
+            print("Ny regulatormodus: Manuell, Pådrag: {}".format(actuation))
+            self.set_u_tot(actuation)
+            self.mode = 'Manual'
         else:
-            print("Invalid controller mode ...")
+            print("Ugylding regulatormodus!")
 
     def stop(self):
         self.run_actuation = False
-        return "Actuation controller is not running"
+        print("Actuation controller is not running")
 
     def start(self):
         self.run_actuation = True
-        return "Actuaton controller is running"
+        print("Actuaton controller is running")

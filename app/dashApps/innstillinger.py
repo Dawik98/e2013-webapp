@@ -156,7 +156,7 @@ def confirm_controller_buttons(button_id, button_collapse_id):
 def manual_actuation_input():
     manual_actuation_input_field_collapse = dbc.Collapse([dbc.Row([
         dbc.Col(html.P("Manuelt pådrag: [%]", id='manual-actuation-input-label'), width=6),
-        dbc.Col(dbc.Input(type='number', step=0.1, id='manual-actuation-input', persistence=True), width=2),
+        dbc.Col(dbc.Input(type='number', step=0.1, id='manual-actuation-input', value=controller1.get_u_tot()), width=2),
         dbc.Col(confirm_controller_buttons('manual-actuation-confirm-button', 'manual-actuation-confirm-button-collapse')),
     ], form=True)
     ], id='manual-actuation-input-field-collapse', is_open=False, className='collapsing-no-slide-animation')
@@ -172,7 +172,7 @@ def controller_settings():
         ]),
         dbc.Row([
             dbc.Col(html.P("Automatisk AV/PÅ-styring", id='auto-actuation-label'), width=6),
-            dbc.Col(dbc.Checklist(options=[{'value': True}], id='auto-actuation-checklist', switch=True, persistence=True)),
+            dbc.Col(dbc.Checklist(options=[{'value': True}], id='auto-actuation-checklist', switch=True)),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Manuell styring", id='manual-actuation-label'), width=6),
@@ -198,17 +198,17 @@ def controller_settings():
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Proporsjonalforsterkning, Kp:", id='Kp-label'), width=6),
-            dbc.Col(dbc.Input(type='number', step=0.01, id='Kp-input', persistence=True), width=2),
+            dbc.Col(dbc.Input(type='number', step=0.01, id='Kp-input', value=controller1.Kp), width=2),
             dbc.Col(confirm_controller_buttons('Kp-confirm-button', 'Kp-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Integraltid, Ti [s]:", id='Ti-label'), width=6),
-            dbc.Col(dbc.Input(type='number', id='Ti-input', persistence=True), width=2),
+            dbc.Col(dbc.Input(type='number', id='Ti-input', value=controller1.Ti), width=2),
             dbc.Col(confirm_controller_buttons('Ti-confirm-button', 'Ti-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Dutycycle [min]:", id='dutycycle-label'), width=6),
-            dbc.Col(dbc.Input(type='number', step=0.1, id='dutycycle-input', persistence=True), width=2),
+            dbc.Col(dbc.Input(type='number', step=0.1, id='dutycycle-input', value=controller1.get_dutycycle()), width=2),
             dbc.Col(confirm_controller_buttons('dutycycle-confirm-button', 'dutycycle-confirm-button-collapse')),
         ], form=True),
     ])
@@ -233,9 +233,10 @@ layout = html.Div([
                     html.H2("Alarm-innstillinger")
                 ])
             ])
-        ])
+        ]),
     ]),# Container
-    ])# Div
+    dcc.Interval(id='interval-component', interval=5000, n_intervals=0),
+])# Div
 
 
 def callbacks(app):
@@ -470,7 +471,7 @@ def callbacks(app):
     @app.callback(
         [
             Output(component_id='manual-actuation-radioitems', component_property='options'),
-            Output(component_id='manual-actuation-radioitems', component_property='value')
+            Output(component_id='manual-actuation-radioitems', component_property='value'),
         ],
         [
             Input(component_id='auto-actuation-checklist', component_property='value'),
@@ -478,20 +479,21 @@ def callbacks(app):
     )
     def enable_disable_manual_actuation(auto_actuation):
         outputState = get_output_state('heatTrace1')[0]
+        print('Tilstand på "auto_actuation": {}, "outputState": {}'.format(auto_actuation, outputState))
         if auto_actuation:
-            print("Starter varmekabelkjøring med not outputState: ".format(not outputState))
+            print("Starter automatisk av-på-styring.")
             controller1.start()
-            return [
+            return ([
                 {'label': "AV", 'value': False, 'disabled': True},
                 {'label': "PÅ", 'value': True, 'disabled': True}
-            ], not outputState
+            ], not outputState)
         else:
             controller1.stop()
-            print("Stopper varmekabelkjøring med not outputState: ".format(not outputState))
-            return [
+            print("Stopper automatisk av-på-styring.")
+            return ([
                 {'label': "AV", 'value': False, 'disabled': False},
                 {'label': "PÅ", 'value': True, 'disabled': False}
-            ], not outputState
+            ], not outputState)
         
     # Manuell av/på-styring
     @app.callback(
@@ -506,7 +508,7 @@ def callbacks(app):
     def activate_deactivate_heat_trace(on_off, auto):
         outputState = get_output_state('heatTrace1')[0]
         print("on_off: {}, auto: {}, outputState: {}".format(on_off, auto, outputState))
-        if (on_off == None):
+        if ((on_off == None) or (auto == None)):
             return "Oppdaterer..."
         if (on_off and not auto and outputState):
             print("Aktiverer varmekabel")
@@ -529,9 +531,41 @@ def callbacks(app):
     )
     def show_hide_manual_actuation_field(mode, manual_actuation_input):
         print("Innkommende modus: {}".format(mode))
-        if (mode == 'Auto'):
+        if (mode != controller1.mode):
             controller1.change_mode(mode, manual_actuation_input)
+        if (mode == 'Auto'):
             return False
         else:
-            controller1.change_mode(mode, manual_actuation_input)
             return True
+
+    # Oppdater input/verdier hvert sekund
+    @app.callback(
+        [
+            Output(component_id='auto-actuation-checklist', component_property='value'),
+            Output(component_id='controller-mode-radioitems', component_property='value'),
+            Output(component_id='manual-actuation-input', component_property='value'),
+            Output(component_id='setpoint-input', component_property='value'),
+            Output(component_id='Kp-input', component_property='value'),
+            Output(component_id='Ti-input', component_property='value'),
+            Output(component_id='dutycycle-input', component_property='value'),
+        ],
+        [
+            Input(component_id='interval-component', component_property='n_intervals'),
+        ]
+    )
+    def update_input_fields(value):
+        print("Oppdaterer inputs")
+        if (controller1.run_actuation == True):
+            auto = [True]
+        else:
+            auto = []
+        print("Tilstand på auto: {}".format(auto))
+        return (
+            auto,
+            controller1.mode,
+            controller1.get_u_tot(),
+            controller1.setpoint,
+            controller1.Kp,
+            controller1.Ti,
+            controller1.dutycycle,
+        )
