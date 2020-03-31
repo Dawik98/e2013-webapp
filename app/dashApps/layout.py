@@ -52,6 +52,7 @@ def get_navbar_items(chosen_sløyfe):
     navbar_items = [
         dbc.NavLink("Home", href="/Home/", external_link=True),
         dbc.NavLink("Sløyfer", href="/sløyfer/{}".format(chosen_sløyfe), external_link=True, id='sløyfe-nav-link'),
+        dbc.NavLink("Historikk", href="/historikk/{}".format(chosen_sløyfe), external_link=True, id='historikk-nav-link'),
         dbc.NavLink("Alarmer", href="/alarmer/{}".format(chosen_sløyfe), external_link=True, id='alarmer-nav-link'),
         dbc.NavLink("Innstillinger", href="/instillinger/{}".format(chosen_sløyfe), external_link=True, id='innstillinger-nav-link'),
         ]

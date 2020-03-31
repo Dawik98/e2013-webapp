@@ -16,6 +16,11 @@ from cosmosDB import read_from_db
 from opp_temp import update_tempData
 from opp_meter import update_meterData
 
+#import standard layout
+from dashApps.layout import header
+from dashApps.layout import callbacks as layout_callbacks
+
+
 til_dato = pd.datetime.now()
 fra_dato= til_dato + relativedelta(hours=-1)
 
@@ -51,6 +56,8 @@ enhet_dict={"Aktiv effekt" : " Aktiv effekt [W]",
 }
 #Defninerer hvordan siden skal se ut. Med overskrifter, menyer, grafer osv...
 layout = html.Div([
+    header,
+
     html.Label('Sløyfe valg'),
     dcc.Dropdown(
         id='sløyfe-valg',
@@ -89,6 +96,8 @@ layout = html.Div([
 ])
 # Callbacks kjører hele tiden, og oppdater verdier som ble definert i layout. 
 def callbacks(app):
+    
+    layout_callbacks(app)
     # Live temperatur data
     @app.callback(Output('live-graph', 'figure'),
             [Input('graph-update', 'n_intervals'),

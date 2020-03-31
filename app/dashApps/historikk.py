@@ -13,6 +13,10 @@ from collections import deque
 from cosmosDB import read_from_db
 from historie_data import update_historiskData
 
+#import standard layout
+from dashApps.layout import header
+from dashApps.layout import callbacks as layout_callbacks
+
 
 til_dato = pd.datetime.now()
 fra_dato= til_dato + relativedelta(months=-1)
@@ -56,6 +60,7 @@ for key, value in sløyfer_dict.items():
     historiskData[value] = update_historiskData(value)
 
 layout = html.Div([
+    header,
     html.Div([html.H1("Historikk")], style={"text-align": "center"}),
     html.Div([html.Label('Sløyfe valg'),
     dcc.Dropdown(
@@ -82,7 +87,7 @@ layout = html.Div([
 ])
 
 def callbacks(app):
-    
+    layout_callbacks(app)
     @app.callback(
         dash.dependencies.Output('my-graph', 'figure'),
         [Input('fra_Dato', 'value'),
