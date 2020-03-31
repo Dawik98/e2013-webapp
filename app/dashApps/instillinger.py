@@ -76,12 +76,22 @@ def remove_sløyfe(sløyfe):
         settings_file.truncate(0) #clear file
         json.dump(settings, settings_file)
 
-def change_alarm_values(sløyfe, alarm_values):
+def change_alarm_values(sløyfe, min_value, max_value):
+    alarm_values = {'min_val':min_value, 'max_val': max_value}
     with open('app/settings.txt', 'r+') as settings_file:
         settings = json.load(settings_file)
         settings[sløyfe]['alarm_values'] = alarm_values
         settings_file.seek(0)
         json.dump(settings, settings_file)
+
+def get_alarms(sløyfe):
+    alarms = []
+    with open('app/settings.txt') as json_file:
+        data = json.load(json_file)
+        for key, value in data[sløyfe]['alarm_values'].items():
+            alarms.append(value)
+        print(alarms)
+    return alarms
 
 #---------------------------------------------------- Site components --------------------------------------------------------------------
 
@@ -171,6 +181,26 @@ def controller_settings():
     ])
     return controller_settings
 
+def get_alarm_settings():
+    curr_alarm_val = get_alarms('heatTrace1')
+    print("curr_alarms={}".format(curr_alarm_val))
+    alarm_settings = html.Div(id='alarm-settings', children =[
+        dbc.Row([html.H2("Alarm innstillinger")], className='mt-5'),
+        dbc.Row([
+            dbc.Col(html.P("Max. temperatur: [°C]"), width=4),
+            dbc.Col(dbc.Input(type='number', step=1, id='max-temp-input', value=curr_alarm_val[1]), width=2)
+        ]),
+        dbc.Row([
+            dbc.Col(html.P("Min. temperatur: [°C]"), width=4),
+            dbc.Col(dbc.Input(type='number', step=1, id='min-temp-input', value=curr_alarm_val[0]), width=2)
+        ]),
+        dbc.Row(
+            [dbc.Collapse(id='collapse-alarm-confirm', is_open=False, children = dbc.Button("Oppdater alarm innstillinger", id='button-alarm-confirm'))
+        ])
+
+    ])
+    return alarm_settings
+
 layout = html.Div([
     header,
     dbc.Container([
@@ -183,11 +213,9 @@ layout = html.Div([
             ]),
             dbc.Col([    
                 controller_settings(),
-                dbc.Row([
-                    html.H2("Alarm-innstillinger")
+                get_alarm_settings()
                 ])
             ])
-        ])
     ]),# Container
     ])# Div
 
@@ -328,20 +356,6 @@ def callbacks(app):
             remove_device(chosen_sløyfe, eui)
             return get_settings_table(chosen_sløyfe)
 
-#        for key, value in inputs.items():
-#            print("key= {}, value={}".format(key, value))
-#            if key == 'confirm-add-device-button.n_clicks' and value != None:
-#                add_device('heatTrace1', device_eui, device_type)
-#                return get_settings_table()
-#            elif key != 'confirm-add-device-button.n_clicks' and value != None:
-#                eui = re.search(r'delete-(.*).n_clicks', key).group(1)
-#                print(eui)
-#                remove_device('heatTrace1', eui)
-#                return get_settings_table()
-#
-        return get_settings_table()
-
-
         print("states")
         print(ctx.states)
         print("inputs")
@@ -362,19 +376,38 @@ def callbacks(app):
         
         return ""
 
-    ## Update url
-    #@app.callback(
-    #    Output(component_id='dummy-label', component_property='children'),
-    #    [
-    #    Input(component_id='url', component_property='pathname'),
-    #    ])
-    #def update_url(pathname):
-    #    global current_url
-    #    current_url = pathname
-    #    url = get_chosen_sløyfe()
-    #    
-    #    return url
+    @app.callback(
+        Output(component_id='collapse-alarm-confirm', component_property='is_open'),
+        [Input(component_id='max-temp-input', component_property='value'),
+        Input(component_id='min-temp-input', component_property='value')
+        ])
+    def show_confirm_alarm_settings(max_temp, min_temp):
+        #TODO bytte 'heatTrace1' her !!!!!!!!!
+        curr_alarm_val = get_alarms('heatTrace1')
+        # hvis oppdater knappen bare når veriden er forandret
+        if [min_temp, max_temp] == curr_alarm_val:
+            return False
+        else:
+            print ("max = {}; min = {}".format(max_temp, min_temp))
+            return True
 
-        
-#if __name__ == "__main__":
-#    app.run_server(debug=True)
+    @app.callback(
+        Output(component_id='alarm-settings', component_property='children'),
+        [Input(component_id='button-alarm-confirm', component_property='n_clicks'),
+        ],
+        [State(component_id='min-temp-input', component_property='value'),
+        State(component_id='max-temp-input', component_property='value'),
+        ])
+    def update_alarms(button_click, min_temp, max_temp):
+
+        ctx = dash.callback_context
+        triggered_button = ctx.triggered[0]['prop_id'].split('.')[0]
+        print('triggered by "{}" '.format(triggered_button))
+
+        if triggered_button == None or ctx.triggered[0]['value'] == None:
+            raise PreventUpdate
+        elif triggered_button == 'button-alarm-confirm':
+            change_alarm_values('heatTrace1', min_temp, max_temp)
+            return get_alarm_settings()
+        else:
+            return get_alarm_settings()
