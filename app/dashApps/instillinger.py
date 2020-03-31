@@ -356,18 +356,18 @@ def callbacks(app):
         
         return ""
 
-    # Update url
-    @app.callback(
-        Output(component_id='dummy-label', component_property='children'),
-        [
-        Input(component_id='url', component_property='pathname'),
-        ])
-    def update_url(pathname):
-        global current_url
-        current_url = pathname
-        url = get_chosen_sløyfe()
-        
-        return url
+    ## Update url
+    #@app.callback(
+    #    Output(component_id='dummy-label', component_property='children'),
+    #    [
+    #    Input(component_id='url', component_property='pathname'),
+    #    ])
+    #def update_url(pathname):
+    #    global current_url
+    #    current_url = pathname
+    #    url = get_chosen_sløyfe()
+    #    
+    #    return url
 
         
 #if __name__ == "__main__":

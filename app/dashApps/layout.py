@@ -111,10 +111,6 @@ def update_sløyfe_callback(app, item_list):
     for item in item_list:
         callback_output = Output(component_id=item[0], component_property='children')
         callback_outputs.append(callback_output)
-    print(type(callback_outputs[0]))
-
-    callback_args = [callback_outputs, [Input(component_id='url', component_property='pathname')]]
-
 
     @app.callback(callback_outputs, [Input(component_id='url', component_property='pathname')])
     def update_sløyfe(pathname):
