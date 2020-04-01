@@ -14,6 +14,8 @@ from cosmosDB import read_from_db
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
 
+from dashApps.innstillinger import get_alarms
+
 num_of_alarms = '25'
 
 def get_site_title(chosen_sløyfe):
@@ -24,14 +26,17 @@ site_title = html.Div(html.H1("Alarmer for alle sløyfer"), className="page-head
 # TODO legg til mulighet til å velge sløyfe
 
 def get_alarm_table(num_of_alarms, chosen_sløyfe):
+    alarms = get_alarms(chosen_sløyfe)
+    min_val = alarms[0]
+    max_val = alarms[1]
 
     if (num_of_alarms != "Alle"):
         #get data where temp is <10 or >30
-        query = "SELECT TOP {1} * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < 10 OR {0}.temperature > 30 ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, num_of_alarms)
+        query = "SELECT TOP {1} * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < {2} OR {0}.temperature > {3} ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, num_of_alarms, min_val, max_val)
         abnormal_values = read_from_db(chosen_sløyfe, query)
     else:
         #get data where temp is <10 or >30
-        query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < 10 OR {0}.temperature > 30 ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, num_of_alarms)
+        query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < {1} OR {0}.temperature > {2} ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, min_val, max_val)
         abnormal_values = read_from_db(chosen_sløyfe, query)
 
     table_header = [html.Thead(html.Tr([html.Th("Tid"), html.Th("Enhetens plassering"), html.Th("Enhetens Eui"), html.Th("Verdi"),]))]

@@ -127,7 +127,7 @@ def change_alarm_values(sløyfe, min_value, max_value):
 
 def get_alarms(sløyfe):
     alarms = []
-    with open('app/settings.txt') as json_file:
+    with open(settingsFile) as json_file:
         data = json.load(json_file)
         for key, value in data[sløyfe]['alarm_values'].items():
             alarms.append(value)

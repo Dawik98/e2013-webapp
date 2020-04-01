@@ -37,7 +37,7 @@ def choose_sløyfe_dropdown(main_url, chosen_sløyfe):
     for sløyfe in sløyfer:
         href = "/{}/{}/".format(main_url, sløyfe)
         print(href)
-        items.append(dbc.DropdownMenuItem(dbc.NavLink(sløyfe, href=href, external_link=True), id=sløyfe, className='ml'))
+        items.append(dbc.DropdownMenuItem(dbc.NavLink(sløyfe, href=href, external_link=True, className='dropdown-item'), id=sløyfe, className='ml'))
 
     label = chosen_sløyfe
     print("label = " + label)
