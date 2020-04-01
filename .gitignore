@@ -1,3 +1,6 @@
 .vscode/
 app/__pycache__/
 app/dashApps/__pycache__/
+
+*.pyc
+*.pyo
