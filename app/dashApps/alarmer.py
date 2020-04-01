@@ -1,7 +1,7 @@
 # HOME PAGE
 
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_core_components as dcc 
 import dash_html_components as html 
 import dash_bootstrap_components as dbc
@@ -11,24 +11,28 @@ from datetime import datetime
 from cosmosDB import read_from_db
 
 #import standard layout
-from dashApps.layout import header
+from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
 
 num_of_alarms = '25'
 
+def get_site_title(chosen_sløyfe):
+    site_title = html.Div(html.H1("Alarmer for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
+    return site_title
+
 site_title = html.Div(html.H1("Alarmer for alle sløyfer"), className="page-header") 
 # TODO legg til mulighet til å velge sløyfe
 
-def get_alarm_table(num_of_alarms):
+def get_alarm_table(num_of_alarms, chosen_sløyfe):
 
     if (num_of_alarms != "Alle"):
         #get data where temp is <10 or >30
-        query = "SELECT TOP {1} * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < 10 OR {0}.temperature > 30 ) ORDER BY {0}.timeReceived DESC".format("heatTrace1", num_of_alarms)
-        abnormal_values = read_from_db('heatTrace1', query)
+        query = "SELECT TOP {1} * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < 10 OR {0}.temperature > 30 ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, num_of_alarms)
+        abnormal_values = read_from_db(chosen_sløyfe, query)
     else:
         #get data where temp is <10 or >30
-        query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < 10 OR {0}.temperature > 30 ) ORDER BY {0}.timeReceived DESC".format("heatTrace1", num_of_alarms)
-        abnormal_values = read_from_db('heatTrace1', query)
+        query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < 10 OR {0}.temperature > 30 ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, num_of_alarms)
+        abnormal_values = read_from_db(chosen_sløyfe, query)
 
     table_header = [html.Thead(html.Tr([html.Th("Tid"), html.Th("Enhetens plassering"), html.Th("Enhetens Eui"), html.Th("Verdi"),]))]
     table_rows = []
@@ -59,7 +63,7 @@ layout = html.Div([
     dcc.Interval(id='refresh', n_intervals=0, interval=20*1000),
     header,
     dbc.Container([
-        dbc.Row(dbc.Col(site_title)),
+        dbc.Row(dbc.Col(html.Div(id='site-title'))),
         dbc.Row(html.Div(id='table', className='tableFixHead')),
         dbc.Row([dbc.Col(label_dropdown, width='auto'), dbc.Col(dropdown)], justify='start', no_gutters=True)
 
@@ -69,6 +73,8 @@ layout = html.Div([
 
 def callbacks(app):
     layout_callbacks(app)
+    update_sløyfe_callback(app, [['site-title', get_site_title],
+                                 ])
 
     @app.callback(
         Output(component_id='table', component_property='children'),
@@ -77,10 +83,12 @@ def callbacks(app):
         Input(component_id='50', component_property='n_clicks'),
         Input(component_id='100', component_property='n_clicks'),
         Input(component_id='Alle', component_property='n_clicks'),
-        ])
-    def display_layout(n_intervals, n_25, n_50, n_100, n_Alle):
+        ],
+        [State(component_id='url', component_property='pathname')])
+    def display_layout(n_intervals, n_25, n_50, n_100, n_Alle, pathname):
 
-        return [get_alarm_table(num_of_alarms)]
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        return [get_alarm_table(num_of_alarms, chosen_sløyfe)]
 
     @app.callback(
         Output(component_id='dropdown-alarms', component_property='label'),
@@ -100,7 +108,6 @@ def callbacks(app):
         global num_of_alarms
 
         if (n_25 is None and n_50 is None and n_100 is None and n_Alle is None) or not ctx.triggered:
-        # if neither button has been clicked, return "Not selected"
             return num_of_alarms
 
         num_of_alarms = label_clicked

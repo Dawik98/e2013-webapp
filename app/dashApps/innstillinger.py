@@ -309,8 +309,9 @@ layout = html.Div([
     header,
     dbc.Container([
         dbc.Row([dbc.Col(html.Div(id='site-title-div'))]),
-        dbc.Row([
+        dbc.Row(className='mt-3', children=[
             dbc.Col([
+                dbc.Row(html.H2("Enheter i sløyfen")),
                 dbc.Row(html.Div(html.Div(id='table-div'), id='table', className='tableFixHead')),
                 dbc.Row([add_device_button()]),
                 dbc.Row([confirm_buttons()])
