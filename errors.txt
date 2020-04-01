@@ -866,3 +866,27 @@ min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
 HTTPSConnectionPool(host='e2013-db.documents.azure.com', port=443): Max retries exceeded with url: / (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x0000022D863A9CA0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence

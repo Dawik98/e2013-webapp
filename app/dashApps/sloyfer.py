@@ -9,7 +9,6 @@ import plotly
 import random
 import pytz
 import time
-import datetime
 import plotly.graph_objs as go
 from datetime import datetime
 from dateutil.relativedelta import *
