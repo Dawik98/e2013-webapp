@@ -24,7 +24,7 @@ from dashApps.layout import callbacks as layout_callbacks
 
 
 til_dato = pd.datetime.now()
-fra_dato= til_dato + relativedelta(hours=-12)
+fra_dato= til_dato + relativedelta(hours=-6)
 
 # ordliste som knytter sammen streng som vises i drop-down meny knyttet til streng med datanavn som 
 # brukes til å hente data fra databasen 
@@ -111,16 +111,13 @@ def callbacks(app):
             ])   
     def update_graph_scatter(n,fra_dato, til_dato, url):
         try:   
-            
-            sløyfe_valg = pathname.split('/')[2]
-
-
-            print("tull")
-            print(sløyfe_valg)       
+            ctx = dash.callback_context
+            states = ctx.states
+            pathname = states['url.pathname']
+            sløyfe_valg = get_sløyfe_from_pathname(pathname)
+      
             if fra_dato == "":
                  return {'data': [], 'layout': {}}
-            
-           
             else:
                 #henter inn ny data
                 ts_UTC, temp = update_tempData(sløyfe_valg, fra_dato, til_dato)
@@ -148,43 +145,39 @@ def callbacks(app):
     
     @app.callback(Output('live-graph2', 'figure'),
                 [Input('graph-update2', 'n_intervals'),
-                Input('site-title', 'value'),
                 Input('fra_Dato', 'value'),
                 Input('til_Dato','value'),
-                Input('måle-valg', 'value')
-                ])   
-    def update_graph_scatter2(n,sløyfe_valg,fra_dato, til_dato, måle_valg):
+                Input('måle-valg', 'value')],
+                [State(component_id='url', component_property='pathname'),
+                ]) 
+    def update_graph_scatter2(n,fra_dato, til_dato, måle_valg, url):
         try:
-                #sløyfe_valg=sløyfer_dict[sløyfe_valg]
-                #måle_valg=målinger_dict[måle_valg]
+            ctx = dash.callback_context
+            states = ctx.states
+            pathname = states['url.pathname']
+            sløyfe_valg = get_sløyfe_from_pathname(pathname)
+      
+            if fra_dato == "":
+                return {'data': [], 'layout': {}}
+            else: 
+                meterData = update_meterData(sløyfe_valg,fra_dato, til_dato)
+                #Henter ut tidsstempeler og gjør omtil dato
+        
+                X=meterData["timeReceived"]
+                Y=meterData[målinger_dict[måle_valg]]
 
-                #Henter inn måledata basert på målevalg
-                if fra_dato == "":
-                     return {'data': [], 'layout': {}}
-                
-                else: 
-                    meterData = update_meterData(sløyfer_dict[sløyfe_valg],fra_dato, til_dato)
-                    #Henter ut tidsstempeler og gjør omtil dato
-            
-                    X=meterData["timeReceived"]
-                    Y=meterData[målinger_dict[måle_valg]]
-
-                    data = plotly.graph_objs.Scatter(
-                            y=Y,
-                            x=X,
-                            name='Scatter',
-                            mode= 'lines+markers'
-                            )  
-                    return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                                yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
-                                                                            title=enhet_dict[måle_valg], tickangle=0,),
-                                                                title='{}'.format(måle_valg),
-                                                                margin={'l':100,'r':100,'t':50,'b':50},
-                                                                )}
-                                                            
-                                                        
-                                                        
-
+                data = plotly.graph_objs.Scatter(
+                        y=Y,
+                        x=X,
+                        name='Scatter',
+                        mode= 'lines+markers'
+                        )  
+                return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
+                                                            yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
+                                                                        title=enhet_dict[måle_valg], tickangle=0,),
+                                                            title='{}'.format(måle_valg),
+                                                            margin={'l':100,'r':100,'t':50,'b':50},
+                                                            )}                                                                                                                                                            
         except Exception as e:
             with open('errors.txt','a') as f:
                 f.write(str(e))
