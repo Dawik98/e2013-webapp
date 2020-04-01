@@ -58,13 +58,12 @@ def get_site_title(chosen_sløyfe):
 
 historiskData={}
 sløyfer=['heatTrace1']
+############ NB MÅ LEGGES INN TIL SLUTT!!!!!!###################################################
 #sløyfer=get_sløyfer()
 #print(sløyfer)
 
 for i in sløyfer:
-    print(i)
     historiskData[i] = update_historiskData(i)
-    print(historiskData)
 
 
 layout = html.Div([
