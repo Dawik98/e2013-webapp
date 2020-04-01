@@ -107,7 +107,9 @@ def callbacks(app):
             Input('fra_Dato', 'value'),
             Input('til_Dato','value')],
             [State(component_id='url', component_property='pathname'),
-            ])   
+            ])
+    
+    
     def update_graph_scatter(n,fra_dato, til_dato, url):
         try:   
             ctx = dash.callback_context

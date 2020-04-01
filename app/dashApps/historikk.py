@@ -18,11 +18,6 @@ from historie_data import update_historiskData
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname, get_sløyfer
 from dashApps.layout import callbacks as layout_callbacks
 
-
-til_dato = datetime.now()
-fra_dato= til_dato + relativedelta(months=-1)
-
-
 målinger_dict={ "Temperatur" : "temperature",
                 "Aktiv effekt" : "activePower",
                 "Reaktiv effekt" : "reactivePower",
@@ -56,15 +51,19 @@ def get_site_title(chosen_sløyfe):
     site_title = html.Div(html.H1("Historisk graf for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
     return site_title
 
-historiskData={}
-sløyfer=['heatTrace1']
-############ NB MÅ LEGGES INN TIL SLUTT!!!!!!###################################################
-#sløyfer=get_sløyfer()
-#print(sløyfer)
+############ NB get_sløyfer MÅ LEGGES INN TIL SLUTT!!!!!!###################################################
+def site_refreshed ():
+    til_dato = datetime.now()
+    fra_dato= til_dato + relativedelta(months=-1)
+    historiskData={}
+    sløyfer=['heatTrace1']
+    #sløyfer=get_sløyfer()
+    #print(sløyfer)
+    for i in sløyfer:
+        historiskData[i] = update_historiskData(i)
+    return historiskData, til_dato, fra_dato
 
-for i in sløyfer:
-    historiskData[i] = update_historiskData(i)
-
+historiskData, til_dato, fra_dato = site_refreshed()
 
 layout = html.Div([
     header,
@@ -85,21 +84,41 @@ layout = html.Div([
                             )
     ]),
     html.Div([dcc.Graph(id="my-graph")]),
-])
+
+
+    # Hidden div inside the app that stores the intermediate value
+    dbc.Button(id='historisk-data', style={'display': 'none'}),
+    
+
+])  
 
 def callbacks(app):
     layout_callbacks(app)
     update_sløyfe_callback(app, [['site-title-div', get_site_title]])
 
+    #Refresh siden
+    @app.callback([Output('historisk-data', 'children'),
+                    Output('til_Dato', 'value'),
+                    Output('fra_Dato', 'value')],
+                    [Input('historisk-data', 'n_clicks'),
+                    ])
+
+    def update_refresh(n):
+        historiskData, til_dato, fra_dato = site_refreshed()
+        til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
+        fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
+        return historiskData, til_dato, fra_dato
+
     @app.callback(
         dash.dependencies.Output('my-graph', 'figure'),
         [Input('fra_Dato', 'value'),
         Input('til_Dato', 'value'),
-        Input('måle-valg', 'value')],
+        Input('måle-valg', 'value'),
+        Input('historisk-data', 'children')],
         [State(component_id='url', component_property='pathname'),
         ])
 
-    def update_figure(fra_dato, til_dato,måle_valg,url):
+    def update_figure(fra_dato, til_dato, måle_valg, historiskData, url):
         trace1=[]
         trace2=[]
         trace3=[]

@@ -974,3 +974,43 @@ min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
+HTTPSConnectionPool(host='e2013-db-northeurope.documents.azure.com', port=443): Max retries exceeded with url: //dbs/E2013/colls/heatTrace1/docs/ (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x00000283AB92D0D0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+Status code: 405
+{"code":"MethodNotAllowed","message":"RequestHandler.Post"}
+HTTPSConnectionPool(host='e2013-db-northeurope.documents.azure.com', port=443): Max retries exceeded with url: //dbs/E2013/colls/heatTrace1/docs/ (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x00000283AB6FE910>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
+min() arg is an empty sequence
