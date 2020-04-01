@@ -82,6 +82,7 @@ def change_alarm_values(sløyfe, min_value, max_value):
         settings = json.load(settings_file)
         settings[sløyfe]['alarm_values'] = alarm_values
         settings_file.seek(0)
+        settings_file.truncate(0) #clear file
         json.dump(settings, settings_file)
 
 def get_alarms(sløyfe):
@@ -131,7 +132,7 @@ def get_settings_table(chosen_sløyfe):
     add_type = dbc.DropdownMenu(device_types, label="Velg enhet type", id="add-type")#, toggleClassName="btn-outline-secondary")
     add_device_row = dbc.Collapse(html.Tr([html.Td(add_eui), html.Td(add_type)]), id='add-row-collapse')#, is_open=False)
 
-    # lag alle mulige rader i tabellen, hvis bare de som har tilskrevet enhet
+    # lag alle mulige rader i tabellen, vis bare de som har tilskrevet enhet
     for (key, status), setting_item in zip_longest(remove_buttons_ids.items(), settings):
 
         if setting_item:
@@ -181,25 +182,30 @@ def controller_settings():
     ])
     return controller_settings
 
-def get_alarm_settings():
-    curr_alarm_val = get_alarms('heatTrace1')
-    print("curr_alarms={}".format(curr_alarm_val))
-    alarm_settings = html.Div(id='alarm-settings', children =[
-        dbc.Row([html.H2("Alarm innstillinger")], className='mt-5'),
+def get_alarm_settings_inputs(chosen_sløyfe):
+    print("Running get alarms input")
+    curr_alarm_val = get_alarms(chosen_sløyfe)
+    setting_inputs = html.Div([
         dbc.Row([
             dbc.Col(html.P("Max. temperatur: [°C]"), width=4),
-            dbc.Col(dbc.Input(type='number', step=1, id='max-temp-input', value=curr_alarm_val[1]), width=2)
+            dbc.Col(dbc.Input(type='number', step=1, value=curr_alarm_val[1], id='max-temp-input',), width=2)
         ]),
         dbc.Row([
             dbc.Col(html.P("Min. temperatur: [°C]"), width=4),
-            dbc.Col(dbc.Input(type='number', step=1, id='min-temp-input', value=curr_alarm_val[0]), width=2)
+            dbc.Col(dbc.Input(type='number', step=1, value=curr_alarm_val[0], id='min-temp-input',), width=2)
         ]),
-        dbc.Row(
-            [dbc.Collapse(id='collapse-alarm-confirm', is_open=False, children = dbc.Button("Oppdater alarm innstillinger", id='button-alarm-confirm'))
-        ])
-
     ])
-    return alarm_settings
+    return setting_inputs
+
+def get_alarm_settings(chosen_sløyfe):
+    alarm_settings_div = [
+        dbc.Row([html.H2("Alarm innstillinger")], className='mt-5'),
+        html.Div(get_alarm_settings_inputs(chosen_sløyfe), id='alarm-settings'),
+        dbc.Row(
+            dbc.Collapse(dbc.Button("Oppdater alarm innstillinger", id='button-alarm-confirm'), id='collapse-alarm-confirm', is_open=False)
+        )
+    ]
+    return alarm_settings_div
 
 layout = html.Div([
     header,
@@ -213,7 +219,7 @@ layout = html.Div([
             ]),
             dbc.Col([    
                 controller_settings(),
-                get_alarm_settings()
+                html.Div(id='alarm-settings-div'),
                 ])
             ])
     ]),# Container
@@ -224,7 +230,8 @@ def callbacks(app):
     layout_callbacks(app)
 
     update_sløyfe_callback(app, [['site-title-div', get_site_title],
-                                 ['table-div', get_settings_table]])
+                                 ['table-div', get_settings_table],
+                                 ['alarm-settings-div', get_alarm_settings]])
 
     # Vis / skjul tabellraden for å leggen inn ny enhet
     @app.callback(
@@ -380,11 +387,16 @@ def callbacks(app):
         Output(component_id='collapse-alarm-confirm', component_property='is_open'),
         [Input(component_id='max-temp-input', component_property='value'),
         Input(component_id='min-temp-input', component_property='value')
+        ],
+        [State(component_id='collapse-alarm-confirm', component_property='is_open'),
+        State(component_id='url', component_property='pathname'),
         ])
-    def show_confirm_alarm_settings(max_temp, min_temp):
-        #TODO bytte 'heatTrace1' her !!!!!!!!!
-        curr_alarm_val = get_alarms('heatTrace1')
+    def show_confirm_alarm_settings(max_temp, min_temp, is_open, pathname):
+
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+
         # hvis oppdater knappen bare når veriden er forandret
+        curr_alarm_val = get_alarms(chosen_sløyfe)
         if [min_temp, max_temp] == curr_alarm_val:
             return False
         else:
@@ -397,17 +409,17 @@ def callbacks(app):
         ],
         [State(component_id='min-temp-input', component_property='value'),
         State(component_id='max-temp-input', component_property='value'),
+        State(component_id='url', component_property='pathname'),
         ])
-    def update_alarms(button_click, min_temp, max_temp):
+    def update_alarms(button_click, min_temp, max_temp, pathname):
+        print("Running update alarm")
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
 
         ctx = dash.callback_context
         triggered_button = ctx.triggered[0]['prop_id'].split('.')[0]
-        print('triggered by "{}" '.format(triggered_button))
 
-        if triggered_button == None or ctx.triggered[0]['value'] == None:
-            raise PreventUpdate
-        elif triggered_button == 'button-alarm-confirm':
-            change_alarm_values('heatTrace1', min_temp, max_temp)
-            return get_alarm_settings()
+        if triggered_button == 'button-alarm-confirm':
+            change_alarm_values(chosen_sløyfe, min_temp, max_temp)
+            return get_alarm_settings_inputs(chosen_sløyfe)
         else:
-            return get_alarm_settings()
+            return get_alarm_settings_inputs(chosen_sløyfe)
