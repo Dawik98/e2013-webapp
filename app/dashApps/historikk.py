@@ -96,7 +96,7 @@ def callbacks(app):
     layout_callbacks(app)
     update_sløyfe_callback(app, [['site-title-div', get_site_title]])
 
-    #Refresh siden
+    #Refresh dato og data ved refresh side
     @app.callback([Output('historisk-data', 'children'),
                     Output('til_Dato', 'value'),
                     Output('fra_Dato', 'value')],

@@ -94,12 +94,27 @@ layout = html.Div([
             interval=27*1000,
             n_intervals = 1
     ),
+
+    # Hidden div inside the app that stores the intermediate value
+    dbc.Button(id='refresh-dato', style={'display': 'none'}),
+
+
 ])
 # Callbacks kjører hele tiden, og oppdater verdier som ble definert i layout. 
 def callbacks(app):
 
     layout_callbacks(app)
     update_sløyfe_callback(app, [['site-title-div', get_site_title]])
+
+    @app.callback(Output('fra_Dato', 'value'),
+                    [Input('refresh-dato', 'n_clicks'),
+                    ])
+
+    def update_refresh(n):
+        til_dato = datetime.now()
+        fra_dato= til_dato + relativedelta(days=-6)
+        fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
+        return fra_dato
 
     # Live temperatur data
     @app.callback(Output('live-graph', 'figure'),
@@ -109,7 +124,7 @@ def callbacks(app):
             [State(component_id='url', component_property='pathname'),
             ])
     
-    
+
     def update_graph_scatter(n,fra_dato, til_dato, url):
         try:   
             ctx = dash.callback_context
