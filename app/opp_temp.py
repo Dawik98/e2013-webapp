@@ -6,7 +6,7 @@ def update_tempData(sløyfe_valg, fra_dato, til_dato):
 
     if til_dato == '':
         til_dato=pd.datetime.now()
-    query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'tempSensor' AND {0}.deviceEui = '70-b3-d5-80-a0-10-94-46'  AND {0}.timeReceived >= '{1}' AND {0}.timeReceived <= '{2}') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg, fra_dato, til_dato)
+    query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'tempSensor' AND {0}.timeReceived >= '{1}' AND {0}.timeReceived <= '{2}') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg, fra_dato, til_dato)
     container_name = sløyfe_valg
     items=[]
     items = read_from_db(container_name, query)
