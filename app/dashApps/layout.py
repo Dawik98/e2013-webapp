@@ -7,16 +7,7 @@ import dash_bootstrap_components as dbc
 
 import json
 
-<<<<<<< HEAD
-navbar_items = [
-    dbc.NavLink("Home", href="/Home", external_link=True),
-    dbc.NavLink("Sløyfer", href="/sløyfer", external_link=True),
-    dbc.NavLink("Alarmer", href="/alarmer", external_link=True),
-    dbc.NavLink("Innstillinger", href="/innstillinger", external_link=True),
-]
-=======
 current_url = ""
->>>>>>> 74f33d77345947ea1fd8c7a1415d56efbc5f04d5
 
 #def get_url():
 #    url = current_url.split('/')[0]
@@ -62,7 +53,7 @@ def get_navbar_items(chosen_sløyfe):
         dbc.NavLink("Home", href="/Home/", external_link=True),
         dbc.NavLink("Sløyfer", href="/sløyfer/{}".format(chosen_sløyfe), external_link=True, id='sløyfe-nav-link'),
         dbc.NavLink("Alarmer", href="/alarmer/{}".format(chosen_sløyfe), external_link=True, id='alarmer-nav-link'),
-        dbc.NavLink("Innstillinger", href="/instillinger/{}".format(chosen_sløyfe), external_link=True, id='innstillinger-nav-link'),
+        dbc.NavLink("Innstillinger", href="/innstillinger/{}".format(chosen_sløyfe), external_link=True, id='innstillinger-nav-link'),
         ]
 
     return dbc.Nav(navbar_items, className="mr-auto", navbar=True,)
