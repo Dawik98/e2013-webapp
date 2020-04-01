@@ -9,19 +9,6 @@ import json
 
 current_url = ""
 
-#def get_url():
-#    url = current_url.split('/')[0]
-#    print("url = " + url)
-#    return url
-
-#def get_chosen_sløyfe():
-#    print(current_url)
-#    try: 
-#        chosen_sløyfe = current_url.split('/')[2]
-#        return chosen_sløyfe
-#    except:
-#        return "blablabal"
-
 def get_sløyfer():
     sløyfer = []
     with open('app/settings.txt') as json_file:
