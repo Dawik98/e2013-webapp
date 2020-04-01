@@ -41,14 +41,9 @@ def createServer():
     from dashApps.alarmer import callbacks as callbacks_alarmer
     addDashApp(server, '/alarmer/', 'Alarmer', layout_alarmer, callbacks_alarmer)
     
-    from dashApps.test1 import layout as layout1
-    from dashApps.test1 import callbacks as callbacks1
-    addDashApp(server, '/test1/', 'test1', layout1, callbacks1)
-
-    from dashApps.test2 import layout as layout2
-    from dashApps.test2 import callbacks as callbacks2
-    addDashApp(server, '/test2/', 'test2', layout2, callbacks2)
-
+    from dashApps.innstillinger import layout as layout_innstillinger
+    from dashApps.innstillinger import callbacks as callbacks_innstillinger
+    addDashApp(server, '/innstillinger/', 'Innstillinger', layout_innstillinger, callbacks_innstillinger)
 
 
     from flaskApp import app
@@ -59,6 +54,13 @@ def createServer():
 
 def addDashApp(server, path, title, layout, callbacks):
 
+    #external_stylesheets = [{
+    #    "href" : "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
+    #    "rel" : "stylesheet",
+    #    "integrity" : "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh",
+    #    "crossorigin" : "anonymous"
+    #    
+    #}]
     external_stylesheets = [{
         "href" : "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
         "rel" : "stylesheet",
@@ -87,7 +89,7 @@ def addDashApp(server, path, title, layout, callbacks):
                         url_base_pathname=path, 
                         external_scripts=external_scripts, 
                         #external_stylesheets=external_stylesheets)
-                        external_stylesheets=[dbc.themes.SANDSTONE])
+                        external_stylesheets=[dbc.themes.SANDSTONE, 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'])
 
     
     with server.app_context():
@@ -95,9 +97,7 @@ def addDashApp(server, path, title, layout, callbacks):
         dashApp.layout = layout
         callbacks(dashApp)
 
-
-
 if __name__ == '__main__':
 
     server = createServer()
-    server.run(host="0.0.0.0", port=8000, debug=True )
+    server.run(host="0.0.0.0", port=8000)

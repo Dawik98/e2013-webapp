@@ -10,7 +10,7 @@
 
 
 .tableFixHead tbody{
-    height: 500px;
+    height: 450px;
     overflow-y: auto;
 }
 
@@ -31,4 +31,9 @@
 
 .label-dropdown {
     padding: 8px
+}
+
+.collapsing-no-animation {
+    -webkit-transition: none;
+    transition: none;
 }

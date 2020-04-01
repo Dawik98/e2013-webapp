@@ -30,7 +30,7 @@ def get_alarm_table(num_of_alarms):
         query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < 10 OR {0}.temperature > 30 ) ORDER BY {0}.timeReceived DESC".format("heatTrace1", num_of_alarms)
         abnormal_values = read_from_db('heatTrace1', query)
 
-    table_header = [html.Thead(html.Tr([html.Th("Time"), html.Th("Device placement"), html.Th("Device Eui"), html.Th("Value"),]))]
+    table_header = [html.Thead(html.Tr([html.Th("Tid"), html.Th("Enhetens plassering"), html.Th("Enhetens Eui"), html.Th("Verdi"),]))]
     table_rows = []
     
     for item in abnormal_values:
@@ -104,8 +104,6 @@ def callbacks(app):
             return num_of_alarms
 
         num_of_alarms = label_clicked
-        print(label_clicked)
-
         return label_clicked
 
         

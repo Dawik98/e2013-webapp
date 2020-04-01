@@ -60,11 +60,11 @@ layout = html.Div([
     dcc.Input(id='AntallMålinger', value='60', type='text'),
     #Grad til temperatur
     dcc.Graph(id='live-graph', animate=False),
-        dcc.Interval(
-            id='graph-update',
-            #Oppdaterer hvert 15. sekund. Gri tid til å lese fra database
-            interval=15*1000,
-            n_intervals = 1
+    dcc.Interval(
+        id='graph-update',
+        #Oppdaterer hvert 15. sekund. Gri tid til å lese fra database
+        interval=15*1000,
+        n_intervals = 1
     ),
     html.Label('Målerelé'),
     dcc.Dropdown(
@@ -128,6 +128,7 @@ def callbacks(app):
                 Input('måle-valg', 'value')
                 ])   
     def update_graph_scatter2(n,sløyfe_valg,antall_målinger,måle_valg):
+        print("Running update av graph")
         try:
             #sløyfe_valg=sløyfer_dict[sløyfe_valg]
             #måle_valg=målinger_dict[måle_valg]
