@@ -1,8 +1,10 @@
 import dash
 import pandas as pd
-from dash.dependencies import Output, Input
+from dash.dependencies import Output, Input, State
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.exceptions import PreventUpdate
+import dash_bootstrap_components as dbc
 import plotly
 import random
 import pytz
@@ -17,12 +19,12 @@ from opp_temp import update_tempData
 from opp_meter import update_meterData
 
 #import standard layout
-from dashApps.layout import header
+from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
 
 
 til_dato = pd.datetime.now()
-fra_dato= til_dato + relativedelta(hours=-1)
+fra_dato= til_dato + relativedelta(hours=-12)
 
 # ordliste som knytter sammen streng som vises i drop-down meny knyttet til streng med datanavn som 
 # brukes til å hente data fra databasen 
@@ -37,11 +39,12 @@ målinger_dict={"Aktiv effekt" : "activePower",
                 "Frekvens" : "frequency",
                 "Kjøretid" : "runTime",              
 }
-
+"""
 #Knytter sammen streng i drop-down meny og streng som brukes til å velge container i database.
 sløyfer_dict={"Sløyfe 1":"heatTrace1",
               "Sløyfe 2":"heatTrace2",
 }
+"""
 #Brukes til å dynamisk skifte benemning på graf til målerelé.
 enhet_dict={"Aktiv effekt" : " Aktiv effekt [W]",
             "Reaktiv effekt" : " Reaktv effekt [VAr]",
@@ -54,16 +57,15 @@ enhet_dict={"Aktiv effekt" : " Aktiv effekt [W]",
             "Frekvens" : " Nettfrekvens [f]",
             "Kjøretid" : "Kjøretid [s]", 
 }
+
+def get_site_title(chosen_sløyfe):
+    site_title = html.Div(html.H1("Trendvindu for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
+    return site_title
+
 #Defninerer hvordan siden skal se ut. Med overskrifter, menyer, grafer osv...
 layout = html.Div([
     header,
-
-    html.Label('Sløyfe valg'),
-    dcc.Dropdown(
-        id='sløyfe-valg',
-        options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
-        value='Sløyfe 1'
-    ),    
+    html.Div(id='site-title-div'),
 
     html.Label('Fra dato'),
     dcc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
@@ -96,26 +98,33 @@ layout = html.Div([
 ])
 # Callbacks kjører hele tiden, og oppdater verdier som ble definert i layout. 
 def callbacks(app):
-    
+
     layout_callbacks(app)
+    update_sløyfe_callback(app, [['site-title-div', get_site_title]])
+
     # Live temperatur data
     @app.callback(Output('live-graph', 'figure'),
             [Input('graph-update', 'n_intervals'),
-            Input('sløyfe-valg', 'value'),
             Input('fra_Dato', 'value'),
-            Input('til_Dato','value')
+            Input('til_Dato','value')],
+            [State(component_id='url', component_property='pathname'),
             ])   
-    def update_graph_scatter(n,sløyfe_valg,fra_dato, til_dato):
-        try:          
+    def update_graph_scatter(n,fra_dato, til_dato, url):
+        try:   
+            
+            sløyfe_valg = pathname.split('/')[2]
+
+
+            print("tull")
+            print(sløyfe_valg)       
             if fra_dato == "":
                  return {'data': [], 'layout': {}}
             
+           
             else:
                 #henter inn ny data
-                ts_UTC, temp = update_tempData(sløyfer_dict[sløyfe_valg], fra_dato, til_dato)
+                ts_UTC, temp = update_tempData(sløyfe_valg, fra_dato, til_dato)
                 #tilordner X og Y
-                
-
                 X=ts_UTC
                 Y=temp
                 data = plotly.graph_objs.Scatter(
@@ -139,7 +148,7 @@ def callbacks(app):
     
     @app.callback(Output('live-graph2', 'figure'),
                 [Input('graph-update2', 'n_intervals'),
-                Input('sløyfe-valg', 'value'),
+                Input('site-title', 'value'),
                 Input('fra_Dato', 'value'),
                 Input('til_Dato','value'),
                 Input('måle-valg', 'value')
