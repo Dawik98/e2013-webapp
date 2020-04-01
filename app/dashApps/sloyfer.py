@@ -23,7 +23,7 @@ from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pa
 from dashApps.layout import callbacks as layout_callbacks
 
 
-til_dato = pd.datetime.now()
+til_dato = datetime.now()
 fra_dato= til_dato + relativedelta(hours=-6)
 
 # ordliste som knytter sammen streng som vises i drop-down meny knyttet til streng med datanavn som 
