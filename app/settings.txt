@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"heatTrace1": {"devices": [{"device_eui": "70-b3-d5-80-a0-10-94-3a", "deviceType": "tempSensor"}, {"device_eui": "70-b3-d5-80-a0-10-94-3d", "deviceType": "tempSensor"}, {"device_eui": "70-b3-d5-80-a0-10-94-46", "deviceType": "Temperatur sensor"}]}, "heatTrace2": {"devices": [], "alarm_values": []}}
+=======
+{"heatTrace1": {"devices": [{"device_eui": "70-b3-d5-80-a0-10-94-3a", "deviceType": "tempSensor"}, {"device_eui": "70-b3-d5-80-a0-10-94-3d", "deviceType": "tempSensor"}], "alarm_values": {"min_val": 13, "max_val": 21}}, "heatTrace2": {"devices": [], "alarm_values": {"min_val": -9, "max_val": 45}}}
+>>>>>>> 74f33d77345947ea1fd8c7a1415d56efbc5f04d5

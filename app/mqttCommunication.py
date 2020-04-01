@@ -124,4 +124,11 @@ def deactivateHeatTrace(devicePlacement):
 
 controller1 = PI_controller('heatTrace1', activateHeatTrace, deactivateHeatTrace, claimMeterdata)
 
+<<<<<<< HEAD
 # def createControllers()
+=======
+controller1 = PI_controller('heatTrace1', activateHeatTrace, deactivateHeatTrace)
+# controller1.set_dutycycle(10.0/60)
+#controller1.update_parameters(3.0, 0.0)
+#controller1.update_setpoint(20.0)
+>>>>>>> 74f33d77345947ea1fd8c7a1415d56efbc5f04d5

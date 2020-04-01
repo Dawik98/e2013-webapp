@@ -1,26 +1,9 @@
 import json
 
-#data = {'heatTrace1' : 
-#            {'devices' : [{'device_eui':'70-b3-d5-80-a0-10-94-3a', 'deviceType': 'tempSensor'}],
-#            'alarm_values' : [10,30]}
-#        }
-
-#data = {'device_eui':'70-b3-d5-80-a0-10-94-3d', 'deviceType': 'tempSensor'}
-
-#data = {'heatTrace2' : 
-#            {'devices' : [],
-#            'alarm_values' : []}
-#        }
-
-{"heatTrace1": {"devices": [{"device_eui": "70-b3-d5-80-a0-10-94-3a", "deviceType": "tempSensor"}, {"device_eui": "70-b3-d5-80-a0-10-94-3d", "deviceType": "tempSensor"}]}, "heatTrace2": {"devices": [], "alarm_values": []}}
-
-data = [11,30]
-
-#with open('app/settings.txt', 'r+') as settings_file:
-#    settings = json.load(settings_file)
-#    settings['heatTrace1']['alarm_values'] = data
-#    settings_file.seek(0)
-#    json.dump(settings, settings_file)
+def print_settings():
+    with open('app/settings.txt') as json_file:
+        data = json.load(json_file)
+        print(json.dumps(data, indent=4))
 
 def add_sløyfe(sløyfe):
     data = {sløyfe : 
@@ -33,38 +16,31 @@ def add_sløyfe(sløyfe):
         settings_file.seek(0)
         json.dump(settings, settings_file)
 
-def remove_sløyfe(sløyfe):
+#def update_alarms(sløyfe, max_value, min_value):
+#    alarm_data = {'max_val':max_value, 'min_val': min_value}
+#    with open('app/settings.txt', 'r+') as settings_file:
+#        settings = json.load(settings_file)
+#        settings[sløyfe]['alarm_values'].append(device_data)
+#        settings_file.seek(0)
+#        json.dump(settings, settings_file)
+
+def change_alarm_values(sløyfe, min_value, max_value):
+    alarm_values = {'min_val':min_value, 'max_val': max_value}
     with open('app/settings.txt', 'r+') as settings_file:
         settings = json.load(settings_file)
-        #del settings[sløyfe]
-        settings.pop(sløyfe, None)
-        settings_file.seek(0)
-        settings_file.truncate(0) #clear file
-        json.dump(settings, settings_file)
-
-def add_device(sløyfe, device_eui, device_type):
-    device_data = {'device_eui':device_eui, 'deviceType': device_type}
-    with open('app/settings.txt', 'r+') as settings_file:
-        settings = json.load(settings_file)
-        settings[sløyfe]['devices'].append(device_data)
+        settings[sløyfe]['alarm_values'] = alarm_values
         settings_file.seek(0)
         json.dump(settings, settings_file)
 
-def remove_device(sløyfe, device_eui):
-    with open('app/settings.txt', 'r+') as settings_file:
-        settings = json.load(settings_file)
-        n = 0
-        for i in settings[sløyfe]['devices']:
-            if i['device_eui'] == device_eui:
-                del settings[sløyfe]['devices'][n]
-            n+=1
-        settings_file.seek(0)
-        settings_file.truncate(0) #clear file
-        json.dump(settings, settings_file)
+def get_alarms(sløyfe):
+    alarms = []
+    with open('app/settings.txt') as json_file:
+        data = json.load(json_file)
+        for key, value in data[sløyfe]['alarm_values'].items():
+            alarms.append(value)
 
-#add_device('heatTrace2', '111', 'test')
-#remove_device('heatTrace2', '111')
+    return alarms
 
-with open('app/settings.txt') as json_file:
-    data = json.load(json_file)
-    print(json.dumps(data, indent=4))
+change_alarm_values('heatTrace1', 10, 40)
+print_settings()
+print(get_alarms('heatTrace1'))
