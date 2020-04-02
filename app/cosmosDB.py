@@ -41,11 +41,7 @@ def read_from_db(container_name, query):
     items = list(items) # save result as list
     return items
 
-def read_item_from_db(_self):
-    cosmos = connect_to_db()
-    item = cosmos.ReadItem(_self, {'enableCrossPartitionQuery': True})
-    return item
-
+# new data må inneholde id
 def replace_in_db(item_id, container_name, new_data):
     item_path = collection_link + container_name + '/docs/' + item_id
     cosmos = connect_to_db()
