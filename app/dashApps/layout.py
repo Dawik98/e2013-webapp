@@ -9,19 +9,6 @@ import json
 
 current_url = ""
 
-#def get_url():
-#    url = current_url.split('/')[0]
-#    print("url = " + url)
-#    return url
-
-#def get_chosen_sløyfe():
-#    print(current_url)
-#    try: 
-#        chosen_sløyfe = current_url.split('/')[2]
-#        return chosen_sløyfe
-#    except:
-#        return "blablabal"
-
 def get_sløyfer():
     sløyfer = []
     with open('app/settings.txt') as json_file:
@@ -37,7 +24,7 @@ def choose_sløyfe_dropdown(main_url, chosen_sløyfe):
     for sløyfe in sløyfer:
         href = "/{}/{}/".format(main_url, sløyfe)
         print(href)
-        items.append(dbc.DropdownMenuItem(dbc.NavLink(sløyfe, href=href, external_link=True), id=sløyfe, className='ml'))
+        items.append(dbc.DropdownMenuItem(dbc.NavLink(sløyfe, href=href, external_link=True, className='dropdown-item'), id=sløyfe, className='ml'))
 
     label = chosen_sløyfe
     print("label = " + label)
@@ -50,7 +37,7 @@ def choose_sløyfe_dropdown(main_url, chosen_sløyfe):
 def get_navbar_items(chosen_sløyfe):
 
     navbar_items = [
-        dbc.NavLink("Home", href="/Home/", external_link=True),
+        dbc.NavLink("Home", href="/Home/{}".format(chosen_sløyfe), external_link=True),
         dbc.NavLink("Sløyfer", href="/sløyfer/{}".format(chosen_sløyfe), external_link=True, id='sløyfe-nav-link'),
         dbc.NavLink("Alarmer", href="/alarmer/{}".format(chosen_sløyfe), external_link=True, id='alarmer-nav-link'),
         dbc.NavLink("Innstillinger", href="/innstillinger/{}".format(chosen_sløyfe), external_link=True, id='innstillinger-nav-link'),

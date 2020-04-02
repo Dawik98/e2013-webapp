@@ -1,6 +1,7 @@
 from datetime import datetime
 import pytz
 
+
 def decoder(payload):
     devices = {
         '70-b3-d5-80-a0-10-94-3a': ['heatTrace1', 'tempSensor'],
@@ -25,6 +26,21 @@ def decoder(payload):
             packetData['batteryLevel'] = int.from_bytes(data[1:2], byteorder='big', signed=False) * 100/256
         dataLength = len(data)
         packetData['temperature'] = int.from_bytes(data[dataLength-2:dataLength], byteorder='big', signed=True) / 16
+
+        # Håndtering av alarm-verdier
+        from dashApps.innstillinger import get_alarms
+        sløyfe = packetData['devicePlacement']
+        alarm_values = get_alarms(sløyfe)
+        temp = packetData['temperature']
+        if temp <= alarm_values[0] or temp >= alarm_values[1]:
+            packetData['alarmValue'] = True
+            packetData['alarmConfirmed'] = False
+        else:
+            packetData['alarmValue'] = False
+
+
+
+
 
     elif (packetData['deviceType'] == 'powerSwitch'):
         # Decode sending time
