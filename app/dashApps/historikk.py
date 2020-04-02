@@ -5,7 +5,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
-import time
+from dash.exceptions import PreventUpdate
 import plotly
 import pytz
 import plotly.graph_objs as go
@@ -82,7 +82,6 @@ layout = html.Div([
             dcc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
     ]),
     
-    
     html.Div([dcc.Dropdown(
                             id='måle-valg',
                             options=[{'label': s,'value':s} for s in målinger_dict.keys()],
@@ -91,9 +90,8 @@ layout = html.Div([
                             multi=True
                             )
     ]),
-
     
-    html.Div([html.Div(id='historisk-data')]),
+    html.Div([html.Div(id='historisk-data',children=historiskData)]),
     html.Div([dcc.Graph(id="my-graph")]),
 
     #Hidden div inside the app that stores the intermediate value
@@ -113,11 +111,13 @@ def callbacks(app):
                     ])
 
     def update_refreshData(n):
-        historiskData, til_dato, fra_dato = site_refreshed()
-        til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
-        fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
-
-        return historiskData, til_dato, fra_dato
+        if n is None:
+            raise PreventUpdate
+        else:
+            historiskData, til_dato, fra_dato = site_refreshed()
+            til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
+            fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
+            return historiskData, til_dato, fra_dato
 
     @app.callback(
         dash.dependencies.Output('my-graph', 'figure'),
