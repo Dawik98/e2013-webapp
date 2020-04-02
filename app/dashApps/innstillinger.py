@@ -56,37 +56,6 @@ def add_device(sløyfe, device_eui, device_type):
 def remove_device(sløyfe, device_eui):
     with open(settingsFile, 'r+') as settings_file:
         settings = json.load(settings_file)
-def print_settings():
-    with open(settingsFile) as json_file:
-        data = json.load(json_file)
-        print(json.dumps(data, indent=4))
-
-def get_settings():
-    with open(settingsFile) as json_file:
-        data = json.load(json_file)
-        return data
-
-# kopiert til layout.py
-def get_sløyfer():
-    sløyfer = []
-    with open(settingsFile) as json_file:
-        data = json.load(json_file)
-        for key, value in data.items():
-            sløyfer.append(key)
-
-    return sløyfer
-
-def add_device(sløyfe, device_eui, device_type):
-    device_data = {'device_eui':device_eui, 'deviceType': device_type}
-    with open(settingsFile, 'r+') as settings_file:
-        settings = json.load(settings_file)
-        settings[sløyfe]['devices'].append(device_data)
-        settings_file.seek(0)
-        json.dump(settings, settings_file)
-
-def remove_device(sløyfe, device_eui):
-    with open(settingsFile, 'r+') as settings_file:
-        settings = json.load(settings_file)
         n = 0
         for i in settings[sløyfe]['devices']:
             if i['device_eui'] == device_eui:
