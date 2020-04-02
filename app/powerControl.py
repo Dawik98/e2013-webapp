@@ -3,11 +3,9 @@ from time import time, ctime, sleep
 
 import sys
 
-#from mqttCommunication import activateHeatTrace, deactivateHeatTrace
-
 class PI_controller:
-    def __init__(self, reg_name, activate_func, deactivate_func, claim_func, mode='Auto', duty_cycle=1.0, log_results=False):
-        self.name = reg_name
+    def __init__(self, devicePlacement, activate_func, deactivate_func, mode='Auto', duty_cycle=1.0, log_results=False):
+        self.devicePlacement = devicePlacement
         self.log_results = log_results
 
         self.Kp = 0.0 # Proportional forsterkning
@@ -39,14 +37,13 @@ class PI_controller:
 
         self.activate_func = activate_func
         self.deactivate_func = deactivate_func
-        self.claim_func = claim_func
 
-    def get_reg_name(self):
-        return self.name
+    def get_device_placement(self):
+        return self.devicePlacement
 
     # Skriv til loggen
     def writer(self, data):
-         file = open(self.name+'_log.txt', 'a')
+         file = open(self.devicePlacement+'_log.txt', 'a')
          for i in data:
              file.write(str(i))
              file.write('|')
@@ -65,7 +62,6 @@ class PI_controller:
 
     def update_setpoint(self, setpoint):
         self.setpoint = round(setpoint,2)
-        print("New setpoint is set: {} °C".format(self.setpoint))
         self.calculate_u_tot()
 
     def get_sample_time(self):
@@ -130,7 +126,7 @@ class PI_controller:
             if self.log_results:
                 self.writer(results)
 
-    # Duty cycle i minutter
+    # Dutycycle i minutter
     def actuationControl(self):
         while True:
             if (self.run_actuation == True):
@@ -149,8 +145,8 @@ class PI_controller:
                         try:
                             if(t_on != 0):
                                 # Skru varmekabel på
-                                self.activate_func(self.name)
-                                print("{} will be on for {} seconds".format(self.name, t_on))
+                                self.activate_func(self.devicePlacement)
+                                print("{} will be on for {} seconds".format(self.devicePlacement, t_on))
                                 sleep(t_on)
                                 print("Woke up from on-time sleep")
                         except:
@@ -161,8 +157,8 @@ class PI_controller:
                         try:
                             if(t_off != 0):
                                 # Skru av varmekabel
-                                self.deactivate_func(self.name)
-                                print("{} will be off for {} seconds".format(self.name, t_off))
+                                self.deactivate_func(self.devicePlacement)
+                                print("{} will be off for {} seconds".format(self.devicePlacement, t_off))
                                 sleep(t_off)
                                 print("Woke up from off-time sleep")
                         except:

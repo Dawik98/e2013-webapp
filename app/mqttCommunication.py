@@ -122,6 +122,8 @@ def deactivateHeatTrace(devicePlacement):
     else:
         return ("Deaktiveringsmelding ble sendt til gateway. Bekreftelse ble mottatt etter {}. forsøk.".format(attempts))
 
-controller1 = PI_controller('heatTrace1', activateHeatTrace, deactivateHeatTrace, claimMeterdata)
+controller1 = PI_controller('heatTrace1', activateHeatTrace, deactivateHeatTrace)
 
-# def createControllers()
+def createControllers(devicePlacement):
+    controller = PI_controller(devicePlacement, activateHeatTrace, deactivateHeatTrace)
+    return controller

@@ -3,6 +3,7 @@ from dash.dependencies import Input, Output, State
 import dash_core_components as dcc 
 import dash_html_components as html 
 from dash.exceptions import PreventUpdate
+from dash.dash import no_update
 import dash_bootstrap_components as dbc
 
 import json
@@ -17,7 +18,7 @@ prew_setpoint_confirm_count = 0
 prew_Kp_confirm_count = 0
 prew_Ti_confirm_count = 0
 prew_dutycycle_confirm_count = 0
-prew_manual_actuation_confirm_count = 0
+prew_actuation_confirm_count = 0
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
 # settingsFile = 'settings.txt' # Azure
@@ -153,16 +154,15 @@ def confirm_controller_buttons(button_id, button_collapse_id):
     button_confirm_controller_collapse = dbc.Collapse(button_confirm_controller, id=button_collapse_id, is_open=False, className='collapsing-no-slide-animation')
     return button_confirm_controller_collapse
 
-def manual_actuation_input():
-    manual_actuation_input_field_collapse = dbc.Collapse([dbc.Row([
-        dbc.Col(html.P("Manuelt pådrag: [%]", id='manual-actuation-input-label'), width=6),
-        dbc.Col(dbc.Input(type='number', step=0.1, id='manual-actuation-input', value=controller1.get_u_tot()), width=2),
-        dbc.Col(confirm_controller_buttons('manual-actuation-confirm-button', 'manual-actuation-confirm-button-collapse')),
-    ], form=True)
-    ], id='manual-actuation-input-field-collapse', is_open=False, className='collapsing-no-slide-animation')
-    return manual_actuation_input_field_collapse
-
 def controller_settings():
+    if (controller1.run_actuation == True):
+        auto = [True]
+    else:
+        auto = []
+    if (controller1.mode == 'Auto'):
+        disabled = True
+    else:
+        disabled = False
     controller_settings = html.Div([
         dbc.Row([
             html.H2("Regulator-innstillinger"),
@@ -172,14 +172,14 @@ def controller_settings():
         ]),
         dbc.Row([
             dbc.Col(html.P("Automatisk AV/PÅ-styring", id='auto-actuation-label'), width=6),
-            dbc.Col(dbc.Checklist(options=[{'value': True}], id='auto-actuation-checklist', switch=True)),
+            dbc.Col(dbc.Checklist(options=[{'value': True}], id='auto-actuation-checklist', switch=True, value=auto)),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Manuell styring", id='manual-actuation-label'), width=6),
             dbc.Col(dbc.RadioItems(options=[
                 {'label': "AV", 'value': False, 'disabled': False},
                 {'label': "PÅ", 'value': True, 'disabled': False},
-            ], id='manual-actuation-radioitems', inline=True)),
+            ], id='manual-actuation-radioitems', inline=True, value=(not get_output_state('heatTrace1')[0]))),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Regulatormodus", id='controller-mode-label'), width=6),
@@ -189,7 +189,10 @@ def controller_settings():
             ], id='controller-mode-radioitems', inline=True, value=controller1.mode)),
         ], form=True),
         dbc.Row([
-            dbc.Col(manual_actuation_input())
+            # dbc.Col(manual_actuation_input())
+            dbc.Col(html.P("Pådrag: [%]", id='actuation-label'), width=6),
+            dbc.Col(dbc.Input(type='number', step=0.1, id='actuation-input', value=controller1.get_u_tot(), disabled=disabled), width=2),
+            dbc.Col(confirm_controller_buttons('actuation-confirm-button', 'actuation-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Setpunkt: [°C]", id='setpoint-label'), width=6),
@@ -214,30 +217,33 @@ def controller_settings():
     ])
     return controller_settings
 
-layout = html.Div([
-    header,
-    dbc.Container([
-        dbc.Row([
-            dbc.Col(site_title),
-            dbc.Col(choose_sløyfe_dropdown()),
-        ]),
-        dbc.Row([
-            dbc.Col([
-                dbc.Row(html.Div(id='table', className='tableFixHead', children = [get_settings_table()])),
-                dbc.Row([add_device_button()]),
-                dbc.Row([confirm_buttons()]),
+def serve_layout():
+    layout = html.Div([
+        header,
+        dbc.Container([
+            dbc.Row([
+                dbc.Col(site_title),
+                dbc.Col(choose_sløyfe_dropdown()),
             ]),
-            dbc.Col([    
-                controller_settings(),
-                dbc.Row([
-                    html.H2("Alarm-innstillinger")
+            dbc.Row([
+                dbc.Col([
+                    dbc.Row(html.Div(id='table', className='tableFixHead', children = [get_settings_table()])),
+                    dbc.Row([add_device_button()]),
+                    dbc.Row([confirm_buttons()]),
+                ]),
+                dbc.Col([    
+                    controller_settings(),
+                    dbc.Row([
+                        html.H2("Alarm-innstillinger")
+                    ])
                 ])
-            ])
-        ]),
-    ]),# Container
-    dcc.Interval(id='interval-component', interval=5000, n_intervals=0),
-])# Div
+            ]),
+        ]),# Container
+        dcc.Interval(id='interval-component', interval=3000, n_intervals=0),
+    ])# Div
+    return layout
 
+layout = serve_layout
 
 def callbacks(app):
     layout_callbacks(app)
@@ -372,6 +378,7 @@ def callbacks(app):
             else:
                 return True
         elif (button_clicks > prew_setpoint_confirm_count):
+            print("Nytt settpunkt: {}".format(setpoint_input))
             prew_setpoint_confirm_count = button_clicks
             controller1.update_setpoint(setpoint_input)
             return False
@@ -394,6 +401,7 @@ def callbacks(app):
             else:
                 return True
         elif (button_clicks > prew_Kp_confirm_count):
+            print("Ny Kp: {}".format(Kp_input))
             prew_Kp_confirm_count = button_clicks
             controller1.Kp = Kp_input
             print("New gain: {}".format(Kp_input))
@@ -417,6 +425,7 @@ def callbacks(app):
             else:
                 return True
         elif (button_clicks > prew_Ti_confirm_count):
+            print("Ny Ti: {}".format(Ti_input))
             prew_Ti_confirm_count = button_clicks
             controller1.Ti = Ti_input
             print("New integral time: {} sekunds".format(Ti_input))
@@ -440,6 +449,7 @@ def callbacks(app):
             else:
                 return True
         elif (button_clicks > prew_dutycycle_confirm_count):
+            print("Ny dutycycle: {}".format(dutycycle_input))
             prew_dutycycle_confirm_count = button_clicks
             controller1.set_dutycycle(dutycycle_input)
             return False
@@ -447,23 +457,25 @@ def callbacks(app):
     
     # Oppdatering av manuelt pådrag fra input
     @app.callback(
-        Output(component_id='manual-actuation-confirm-button-collapse', component_property='is_open'),
+        Output(component_id='actuation-confirm-button-collapse', component_property='is_open'),
         [
-            Input(component_id='manual-actuation-input', component_property='value'),
-            Input(component_id='manual-actuation-confirm-button', component_property='n_clicks'),
+            Input(component_id='actuation-input', component_property='value'),
+            Input(component_id='actuation-confirm-button', component_property='n_clicks'),
         ]
     )
-    def display_dutycycle_confirm(manual_actuation_input, button_clicks):
-        global prew_manual_actuation_confirm_count
+    def display_manual_actuation_confirm(actuation_input, button_clicks):
+        global prew_actuation_confirm_count
         if (button_clicks == None):
-            prew_manual_actuation_confirm_count = 0
-            if (manual_actuation_input == controller1.get_u_tot()):
+            prew_actuation_confirm_count = 0
+            print("Får inn actuation_input: {}, og get_u_tot() gir: {}".format(actuation_input, controller1.get_u_tot()))
+            if (actuation_input == controller1.get_u_tot()):
                 return False
             else:
                 return True
-        elif (button_clicks > prew_manual_actuation_confirm_count):
-            prew_manual_actuation_confirm_count = button_clicks
-            controller1.set_u_tot(manual_actuation_input)
+        elif (button_clicks > prew_actuation_confirm_count):
+            print("Nytt manuelt pådrag: {}".format(actuation_input))
+            prew_actuation_confirm_count = button_clicks
+            controller1.set_u_tot(actuation_input)
             return False
         return True
 
@@ -521,51 +533,32 @@ def callbacks(app):
 
     # Regulatormodus
     @app.callback(
-        Output(component_id='manual-actuation-input-field-collapse', component_property='is_open'),
+        Output(component_id='actuation-input', component_property='disabled'),
         [
             Input(component_id='controller-mode-radioitems', component_property='value'),
         ],
         [
-            State(component_id='manual-actuation-input', component_property='value')
+            State(component_id='actuation-input', component_property='value')
         ]
     )
-    def show_hide_manual_actuation_field(mode, manual_actuation_input):
+    def enable_disable_actuation_input(mode, actuation_input):
         print("Innkommende modus: {}".format(mode))
         if (mode != controller1.mode):
-            controller1.change_mode(mode, manual_actuation_input)
+            controller1.change_mode(mode, actuation_input)
         if (mode == 'Auto'):
-            return False
-        else:
             return True
+        else:
+            return False
 
-    # Oppdater input/verdier hvert sekund
+    # Oppdater pådraget i input-en til manuelt pådrag, når regulatoren er i auto-modus. (Sikrer rykkfri overgang)
     @app.callback(
+        Output(component_id='actuation-input', component_property='value'),
         [
-            Output(component_id='auto-actuation-checklist', component_property='value'),
-            Output(component_id='controller-mode-radioitems', component_property='value'),
-            Output(component_id='manual-actuation-input', component_property='value'),
-            Output(component_id='setpoint-input', component_property='value'),
-            Output(component_id='Kp-input', component_property='value'),
-            Output(component_id='Ti-input', component_property='value'),
-            Output(component_id='dutycycle-input', component_property='value'),
-        ],
-        [
-            Input(component_id='interval-component', component_property='n_intervals'),
+            Input(component_id='interval-component', component_property='n_intervals')
         ]
     )
-    def update_input_fields(value):
-        print("Oppdaterer inputs")
-        if (controller1.run_actuation == True):
-            auto = [True]
+    def update_manual_actuation_in_background(n_intervals):
+        if (controller1.mode == 'Auto'):
+            return controller1.get_u_tot()
         else:
-            auto = []
-        print("Tilstand på auto: {}".format(auto))
-        return (
-            auto,
-            controller1.mode,
-            controller1.get_u_tot(),
-            controller1.setpoint,
-            controller1.Kp,
-            controller1.Ti,
-            controller1.dutycycle,
-        )
+            return no_update
