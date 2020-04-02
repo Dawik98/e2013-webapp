@@ -5,6 +5,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
+import time
 import plotly
 import pytz
 import plotly.graph_objs as go
@@ -70,24 +71,32 @@ layout = html.Div([
     html.Div(id='site-title-div'),
 
     html.Div([
-    html.Label('Fra dato'),
-    dcc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
-
-    html.Label('Til dato'),
-    dcc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),]),
+            dbc.Button(id='trigger-refresh'),
+            #,style={'display':'none'}
+            dcc.Loading(id = "loading-icon", 
+                    children=[html.Div([
+                    html.Label('Fra dato'),
+                    dcc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
+                    ])],type="graph", fullscreen=True),
+            html.Label('Til dato'),
+            dcc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
+    ]),
+    
+    
     html.Div([dcc.Dropdown(
                             id='måle-valg',
                             options=[{'label': s,'value':s} for s in målinger_dict.keys()],
-                            #value='Aktiv effekt',
+                            #value='Temperatur',
                             placeholder="Velg en eller flere målinger",
                             multi=True
                             )
     ]),
+
+    
+    html.Div([html.Div(id='historisk-data')]),
     html.Div([dcc.Graph(id="my-graph")]),
 
-
-    # Hidden div inside the app that stores the intermediate value
-    dbc.Button(id='historisk-data', style={'display': 'none'}),
+    #Hidden div inside the app that stores the intermediate value
     
 
 ])  
@@ -99,14 +108,15 @@ def callbacks(app):
     #Refresh dato og data ved refresh side
     @app.callback([Output('historisk-data', 'children'),
                     Output('til_Dato', 'value'),
-                    Output('fra_Dato', 'value')],
-                    [Input('historisk-data', 'n_clicks'),
+                    Output('loading-icon', 'value')],
+                    [Input('trigger-refresh', 'n_clicks'),
                     ])
 
-    def update_refresh(n):
+    def update_refreshData(n):
         historiskData, til_dato, fra_dato = site_refreshed()
         til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
         fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
+
         return historiskData, til_dato, fra_dato
 
     @app.callback(
