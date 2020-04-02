@@ -28,16 +28,36 @@ prew_manual_actuation_confirm_count = 0
 settingsFile = 'app/settings.txt' # Lokalt
 
 def print_settings():
+    """
+    print_settings printer innstillinger som ligger i 'settings.txt' på en lesbar måte
+    """
     with open(settingsFile) as json_file:
         data = json.load(json_file)
         print(json.dumps(data, indent=4))
 
 def get_settings():
+    """
+    get_settings returnerer innstillinger som ligger i 'settings.txt' 
+    
+    Returns:
+        dictionary -- med alle sløyfer og den sine innstillinger. Hver sløyfe innstilinger har følgende struktur:
+                        'sløyfe_navn' : {'devices' : [ {'device_eui' : string -- eui til enheten, 'device_type' : string -- type enhet}, ...],
+                                         'alarm_values' : {'min_val' : int -- laveste alarm grense, 'max_val' : int -- høyeste alarm grense}}
+                        . 
+                        .
+                        .
+    """
     with open(settingsFile) as json_file:
         data = json.load(json_file)
         return data
 
 def get_sløyfer():
+    """
+     get_sløyfer returnerer alle sløyfer som ligger i 'settings.txt' filen
+    
+    Returns:
+        list -- liste med navn til alle sløyfer
+    """
     sløyfer = []
     with open(settingsFile) as json_file:
         data = json.load(json_file)
@@ -46,6 +66,14 @@ def get_sløyfer():
     return sløyfer
 
 def add_device(sløyfe, device_eui, device_type):
+    """
+    add_device legger til en ny enhet i valgt sløfe i 'settings.txt' fila
+    
+    Arguments:
+        sløyfe {string} -- navn på sløyfen hvor ny enhets skal legges til
+        device_eui {string} -- eui til den nye enheten, den samme som registreres i gatewayen
+        device_type {string} -- type enhet som legges til, foreløpig Temperatur Sensor eller Power Switch
+    """
     device_data = {'device_eui':device_eui, 'deviceType': device_type}
     with open(settingsFile, 'r+') as settings_file:
         settings = json.load(settings_file)
@@ -54,6 +82,13 @@ def add_device(sløyfe, device_eui, device_type):
         json.dump(settings, settings_file)
 
 def remove_device(sløyfe, device_eui):
+    """
+    remove_device sletter en enhet fra 'settings.txt' fila
+    
+    Arguments:
+        sløyfe {string} -- navn på hvilken sløyfe enheten skal fjernes ifra
+        device_eui {string} -- eui til enheten som skal slettes
+    """
     with open(settingsFile, 'r+') as settings_file:
         settings = json.load(settings_file)
         n = 0
@@ -66,6 +101,12 @@ def remove_device(sløyfe, device_eui):
         json.dump(settings, settings_file)
 
 def add_sløyfe(sløyfe):
+    """
+    add_sløyfe legger til en ny sløyfe i 'settings.txt' filen
+
+    Arguments:
+        sløyfe {string} -- navn på sløyfen som skal legges til
+    """
     data = {sløyfe : 
                 {'devices' : [],
                 'alarm_values' : []}
@@ -77,6 +118,12 @@ def add_sløyfe(sløyfe):
         json.dump(settings, settings_file)
 
 def remove_sløyfe(sløyfe):
+    """
+    remove_sløyfe sletter en sløyfe i 'settings.txt' filen
+
+    Arguments:
+        sløyfe {string} -- navn på sløyfen som skal slettes
+    """
     with open(settingsFile, 'r+') as settings_file:
         settings = json.load(settings_file)
         #del settings[sløyfe]
@@ -86,6 +133,14 @@ def remove_sløyfe(sløyfe):
         json.dump(settings, settings_file)
 
 def change_alarm_values(sløyfe, min_value, max_value):
+    """
+    change_alarm_values forandrer på alarmerdier som ligger i 'settings.txt' filen
+    
+    Arguments:
+        sløyfe {string} -- navn på sløyfen som det skal byttes alarm verdier til
+        min_value {int} -- laveste alarm grense
+        max_value {int} -- høyeste alarm grense
+    """
     alarm_values = {'min_val':min_value, 'max_val': max_value}
     with open(settingsFile, 'r+') as settings_file:
         settings = json.load(settings_file)
@@ -95,6 +150,15 @@ def change_alarm_values(sløyfe, min_value, max_value):
         json.dump(settings, settings_file)
 
 def get_alarms(sløyfe):
+    """
+    get_alarms returnerer alarmverdier til valgt sløyfe
+    
+    Arguments:
+        sløyfe {string} -- navn på sløfen man skal hente alarmer til
+    
+    Returns:
+        list -- liste med alarmverdier på formen: [laveste_grense, høyeste grense]
+    """
     alarms = []
     with open(settingsFile) as json_file:
         data = json.load(json_file)
@@ -105,8 +169,16 @@ def get_alarms(sløyfe):
 
 #---------------------------------------------------- Site components --------------------------------------------------------------------
 
-# alle mulige rader må være definert på forhånd pga hvordan dash callbacks fungerer
 def make_id_dict():
+    """
+    make_id_dict lager 20 slettknapper med hver sin unik ID som skal brukes til å kunne slette enheter fra enhets-tabellen. 
+    Grunnen til at alle må defineres på forhånd er at alle id-er/html elementer må eksistere når nettsiden startes for at callback skal kunne kjøres.
+    Det kan derfor være nødvendig å definere flere  kanpper hvis sløfen skal ha mer enn 20 enheter
+    
+    Returns:
+        remove_buttons_ids {dictionary} -- innehloder id-er til alle knapper som 'keys' og hvilken enhet de er tilknyttet (eui) som 'value', None i utgangspunktet
+        remove_buttons {dictionary} -- innehloder id-er til alle knapper som 'keys' og selve knappen i html som 'value'
+    """
     remove_buttons_ids = {}
     remove_buttons = {}
 
@@ -117,10 +189,20 @@ def make_id_dict():
     
     return remove_buttons_ids, remove_buttons
     
+# lag alle slett knappene når nettsiden startes
 remove_buttons_ids, remove_buttons = make_id_dict()
 
 
 def get_site_title(chosen_sløyfe):
+    """
+    get_site_title returner side tittel som vises helt øvers på siden og sier hvilken sløyfe som vises på siden 
+    
+    Arguments:
+        chosen_sløyfe {string} -- navn på sløyfen som er valgt
+    
+    Returns:
+        html.element -- En H1 header som inneholder side tittel
+    """
     site_title = html.Div(html.H1("Innstillinger for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
     return site_title
 
