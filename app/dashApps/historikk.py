@@ -271,5 +271,6 @@ def callbacks(app):
                                     #autosize=False,
                                     #width=1700,
                                     height=800,
+                                    showlegend=True,
                                     #margin={'l':100,'r':100,'t':100,'b':100},
                                                     )}
