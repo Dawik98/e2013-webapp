@@ -64,42 +64,60 @@ def get_site_title(chosen_sløyfe):
 #Defninerer hvordan siden skal se ut. Med overskrifter, menyer, grafer osv...
 layout = html.Div([
     header,
-    html.Div(id='site-title-div'),
+dbc.Container([
+    dbc.Row([html.Div(id='site-title-div')]),
+    dbc.Row([
+        dbc.Col([
+        html.H5('Fra dato'),
+        dbc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True)
+        ], width=2),
 
-    html.Label('Fra dato'),
-    dcc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
+        dbc.Col([
+        html.H5('Til dato'),
+        dbc.Input(id='til_Dato', value='', type='text',placeholder="YYYY-MM-DD HH:MM:SS, ' <Empty> ' for live",debounce=True)
+        ], width=2),
 
-    html.Label('Til dato'),
-    dcc.Input(id='til_Dato', value='', type='text',placeholder="YYYY-MM-DD HH:MM:SS,'-' for live",debounce=True),
-
-    dcc.Graph(id='live-graph', animate=False),
-        dcc.Interval(
-            id='graph-update',
-            #Oppdaterer hvert 15. sekund. Gri tid til å lese fra database
-            interval=15*1000,
-            n_intervals = 1
-    ),
-    html.Label('Målerelé'),
-    dcc.Dropdown(
-        id='måle-valg',
-        options=[{'label': s,'value': s} for s in målinger_dict.keys()],
-        value='Aktiv effekt',
-        #multi=True
-    ),
-    #Graf til målerelé
-    dcc.Graph(id='live-graph2', animate=False),
-        dcc.Interval(
-            id='graph-update2',
-            #Oppdater hvert 17. sekund, vil ikke overlappe.
-            interval=27*1000,
-            n_intervals = 1
-    ),
-
-    # Hidden div inside the app that stores the intermediate value
+        dbc.Col([
+            html.H5('Måle valg, relé'),
+            dcc.Dropdown(
+                    id='måle-valg',
+                    options=[{'label': s,'value': s} for s in målinger_dict.keys()],
+                    value='Aktiv effekt',
+                ),
+            ], width=5),
+    
+    ])
+    ]),
+dbc.Container([
+    dbc.Row([
+        dbc.Col([
+            dcc.Graph(id='live-graph', animate=False),
+                dcc.Interval(
+                    id='graph-update',
+                    #Oppdaterer hvert 15. sekund. Gri tid til å lese fra database
+                    interval=15*1000,
+                    n_intervals = 1
+            )
+      ],width={'size':6,'order':1}),
+        dbc.Col([
+                dcc.Graph(id='live-graph2', animate=False),
+                                dcc.Interval(
+                                    id='graph-update2',
+                                    #Oppdater hvert 17. sekund, vil ikke overlappe.
+                                    interval=27*1000,
+                                    n_intervals = 1
+                            )
+                ],width={'size':6,'order':2}
+                )
+    ],no_gutters=True)
+], fluid=True),      
+#Graf til målerelé
+    # Skjult knapp som triggrer ved refresh av siden
+    # Brukes til å oppdatere dato feltene
     dbc.Button(id='refresh-dato', style={'display': 'none'}),
-
-
 ])
+
+
 # Callbacks kjører hele tiden, og oppdater verdier som ble definert i layout. 
 def callbacks(app):
 
@@ -147,11 +165,9 @@ def callbacks(app):
                         mode= 'lines+markers'
                         )
                 return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                            yaxis=dict(range=[0,120],
-                                                                        title='Temperatur [°C]'),
+                                                            yaxis=dict(range=[0,120],title='Temperatur [°C]'),
                                                             title='Temperatur Måling',
-                                                            margin={'l':100,'r':100,'t':50,'b':50},
-
+                                                            #margin={'l':300,'r':100,'t':5,'b':50},
                                                             )}
         except Exception as e:
             with open('errors.txt','a') as f:
@@ -192,7 +208,7 @@ def callbacks(app):
                                                             yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
                                                                         title=enhet_dict[måle_valg], tickangle=0,),
                                                             title='{}'.format(måle_valg),
-                                                            margin={'l':100,'r':100,'t':50,'b':50},
+                                                            #margin={'l':100,'r':100,'t':50,'b':50},
                                                             )}                                                                                                                                                            
         except Exception as e:
             with open('errors.txt','a') as f:

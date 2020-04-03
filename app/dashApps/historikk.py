@@ -68,36 +68,64 @@ historiskData, til_dato, fra_dato = site_refreshed()
 
 layout = html.Div([
     header,
-    html.Div(id='site-title-div'),
-    html.Label('Fra dato'),
-    dcc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
-    html.Label('Til dato'),
-    dcc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
-    html.Div([dcc.Dropdown(
-                            id='måle-valg',
-                            options=[{'label': s,'value':s} for s in målinger_dict.keys()],
-                            #value='Temperatur',
-                            placeholder="Velg en eller flere målinger",
-                            multi=True
-                            )
+    dbc.Row([
+        dbc.Col([
+        html.Div(id='site-title-div')
+        ], align="center")
+    ]
+    ),
+    dbc.Row([
+        dbc.Col([
+                html.Div(dbc.Button("Oppdater data",
+                        id='trigger-refresh',
+                        color="secondary")
+                        )
+        ])
     ]),
-    html.Div([dbc.Button(id='trigger-refresh'),
-    #,style={'display':'none'}
-            dcc.Loading(id = "loading-icon",
-                children=[
-                    dcc.Input(id='Loading-icon',style={'display':'none'})
-                ],
-                type="graph", fullscreen=True),
+    dbc.Row([
+        dbc.Col([
+        html.H5('Fra dato:'),
+        dbc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True)
+        ], width=2),
+
+        dbc.Col([
+        html.H5('Til dato:'),
+        dbc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True)
+        ], width=2),
+
+        dbc.Col([
+        html.H5('Måle valg:'),
+        dcc.Dropdown(id='måle-valg',
+                        options=[{'label': s,'value':s} for s in målinger_dict.keys()],
+                        #value='Temperatur',
+                        placeholder="Velg en eller flere målinger",
+                        multi=True
+                        ),
+        ], width=5),
     ]),
 
+    #Returenerer graf
+    html.Div([dcc.Graph(id="my-graph")]),
+
+    #### Tomme divs for callbacks og datalagring ########
+    #Bruker skjult input felt, som er avhenig av en verdi som blir oppdatert
+    #sammtidig som historisk data, til å trigge loading icon.
+    html.Div([dcc.Loading(
+        id = "loading-icon",
+        children=[
+            dcc.Input(id='Loading-icon',style={'display':'none'})
+                ],
+        type="graph", fullscreen=True),
+    ]),
+    #Locale storages som holder lagret data
     html.Div([dcc.Store(id='historisk-data-store', storage_type='local')]),
     html.Div([dcc.Store(id='til-dato-store', storage_type='local')]),
     html.Div([dcc.Store(id='fra-dato-store', storage_type='local')]),
-    #Hidden div inside the app that stores the intermediate value
-   
+
+    #Skjult div som holder dataen som plottes
     html.Div([html.Div(id='historisk-data',children=historiskData)]),
-    #Returenerer graf
-    html.Div([dcc.Graph(id="my-graph")]),
+    
+    
 ])  
 
 def callbacks(app):
@@ -241,7 +269,7 @@ def callbacks(app):
                 "layout": go.Layout(xaxis=dict(range=[fra_dato,til_dato]),
                                     title="Historikk",
                                     autosize=False,
-                                    width=2100,
-                                    height=900,
-                                    margin={'l':100,'r':100,'t':50,'b':50},
+                                    width=1700,
+                                    height=800,
+                                    margin={'l':100,'r':100,'t':100,'b':100},
                                                     )}
