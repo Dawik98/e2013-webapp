@@ -1,7 +1,5 @@
-from threading import Timer, Thread, Lock
+from threading import Thread, Lock
 from time import time, ctime, sleep
-
-import sys
 
 class PI_controller:
     def __init__(self, devicePlacement, activate_func, deactivate_func, mode='Auto', duty_cycle=1.0, log_results=False):
@@ -126,46 +124,66 @@ class PI_controller:
             if self.log_results:
                 self.writer(results)
 
-    # Dutycycle i minutter
+    # # Dutycycle i minutter
+    # def actuationControl(self):
+    #     while True:
+    #         if (self.run_actuation == True):
+    #             if not self.lock.acquire(False):
+    #                 print("Failed to lock the Lock")
+    #             else:
+    #                 try:
+    #                     print("Lock acquired")
+    #                     dutycycle = self.dutycycle*60 # Konverterer til sekunder
+    #                     actuation = self.u_tot
+    #                 finally:
+    #                     self.lock.release()
+    #                     print("Lock released")
+    #                     t_on = (actuation/100)*dutycycle
+    #                     t_off = dutycycle - t_on
+    #                     try:
+    #                         if(t_on != 0):
+    #                             # Skru varmekabel på
+    #                             self.activate_func(self.devicePlacement)
+    #                             print("{} will be on for {} seconds".format(self.devicePlacement, t_on))
+    #                             sleep(t_on)
+    #                             print("Woke up from on-time sleep")
+    #                     except:
+    #                         print("Could not activate heat trace")
+    #                         print(sys.exc_info()[0])
+    #                         sleep(5)
+    #                         continue
+    #                     try:
+    #                         if(t_off != 0):
+    #                             # Skru av varmekabel
+    #                             self.deactivate_func(self.devicePlacement)
+    #                             print("{} will be off for {} seconds".format(self.devicePlacement, t_off))
+    #                             sleep(t_off)
+    #                             print("Woke up from off-time sleep")
+    #                     except:
+    #                         print("Could not deactivate heattrace")
+    #                         print(sys.exc_info()[0])
+    #                         sleep(5)
+    #                         continue
+    #         else:
+    #             sleep(1)
+
     def actuationControl(self):
         while True:
-            if (self.run_actuation == True):
-                if not self.lock.acquire(False):
-                    print("Failed to lock the Lock")
-                else:
-                    try:
-                        print("Lock acquired")
-                        dutycycle = self.dutycycle*60 # Konverterer til sekunder
-                        actuation = self.u_tot
-                    finally:
-                        self.lock.release()
-                        print("Lock released")
-                        t_on = (actuation/100)*dutycycle
-                        t_off = dutycycle - t_on
-                        try:
-                            if(t_on != 0):
-                                # Skru varmekabel på
-                                self.activate_func(self.devicePlacement)
-                                print("{} will be on for {} seconds".format(self.devicePlacement, t_on))
-                                sleep(t_on)
-                                print("Woke up from on-time sleep")
-                        except:
-                            print("Could not activate heat trace")
-                            print(sys.exc_info()[0])
-                            sleep(5)
-                            continue
-                        try:
-                            if(t_off != 0):
-                                # Skru av varmekabel
-                                self.deactivate_func(self.devicePlacement)
-                                print("{} will be off for {} seconds".format(self.devicePlacement, t_off))
-                                sleep(t_off)
-                                print("Woke up from off-time sleep")
-                        except:
-                            print("Could not deactivate heattrace")
-                            print(sys.exc_info()[0])
-                            sleep(5)
-                            continue
+            if self.run_actuation:
+                dutycycle = self.get_dutycycle
+                actuation = self.get_u_tot
+                t_on = (actuation/100) * dutycycle
+                t_off = dutycycle - t_on
+                if (t_on != 0):
+                    self.activate_func(self.devicePlacement)
+                    print("{} will be on for {} seconds.".format(self.devicePlacement, t_on))
+                    sleep(t_on)
+                    print("Woke up from on-time sleep")
+                if (t_off != 0):
+                    self.deactivate_func(self.devicePlacement)
+                    print("{} will be off for {} seconds.".format(self.devicePlacement, t_off))
+                    sleep(t_off)
+                    print("Woke up from off-time sleep")
             else:
                 sleep(1)
 

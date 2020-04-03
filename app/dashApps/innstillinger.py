@@ -11,7 +11,7 @@ import dash_bootstrap_components as dbc
 import json
 import re
 from itertools import zip_longest
-from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace, controller1, get_output_state
+from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace, get_output_state, get_controller
 
 # Importer standard layout
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
@@ -65,6 +65,20 @@ def get_sløyfer():
         for key, value in data.items():
             sløyfer.append(key)
     return sløyfer
+
+def get_devices():
+    devices = {}
+    with open(settingsFile) as json_file:
+        data = json.load(json_file)
+        for sløyfe in data:
+            for device in data[sløyfe]['devices']:
+                deviceType = device['deviceType']
+                if (deviceType == 'Temperatur sensor'):
+                    deviceType = 'tempSensor'
+                elif (deviceType == 'Power Switch'):
+                    deviceType = 'powerSwitch'
+                devices[device['device_eui']] = [sløyfe, deviceType]
+    return devices
 
 def add_device(sløyfe, device_eui, device_type):
     """
@@ -209,7 +223,6 @@ def get_site_title(chosen_sløyfe):
 
 
 def get_settings_table(chosen_sløyfe):
-
     print('chosens sløyfe = '+chosen_sløyfe)
     settings = get_settings()
     settings = settings[chosen_sløyfe]['devices']
@@ -271,12 +284,13 @@ def confirm_controller_buttons(button_id, button_collapse_id):
     button_confirm_controller_collapse = dbc.Collapse(button_confirm_controller, id=button_collapse_id, is_open=False, className='collapsing-no-slide-animation')
     return button_confirm_controller_collapse
 
-def controller_settings():
-    if (controller1.run_actuation == True):
+def controller_settings(chosen_sløyfe):
+    controller = get_controller(chosen_sløyfe)
+    if (controller.run_actuation == True):
         auto = [True]
     else:
         auto = []
-    if (controller1.mode == 'Auto'):
+    if (controller.mode == 'Auto'):
         disabled = True
     else:
         disabled = False
@@ -296,69 +310,43 @@ def controller_settings():
             dbc.Col(dbc.RadioItems(options=[
                 {'label': "AV", 'value': False, 'disabled': False},
                 {'label': "PÅ", 'value': True, 'disabled': False},
-            ], id='manual-actuation-radioitems', inline=True, value=(not get_output_state('heatTrace1')[0]))),
+            ], id='manual-actuation-radioitems', inline=True, value=(not get_output_state(chosen_sløyfe)[0]))),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Regulatormodus", id='controller-mode-label'), width=6),
             dbc.Col(dbc.RadioItems(options=[
                 {'label': "Auto", 'value': 'Auto'},
                 {'label': "Manuell", 'value': 'Manual'},
-            ], id='controller-mode-radioitems', inline=True, value=controller1.mode)),
+            ], id='controller-mode-radioitems', inline=True, value=controller.mode)),
         ], form=True),
         dbc.Row([
-            # dbc.Col(manual_actuation_input())
             dbc.Col(html.P("Pådrag: [%]", id='actuation-label'), width=6),
-            dbc.Col(dbc.Input(type='number', step=0.1, id='actuation-input', value=controller1.get_u_tot(), disabled=disabled), width=2),
+            dbc.Col(dbc.Input(type='number', step=0.1, id='actuation-input', value=controller.get_u_tot(), disabled=disabled), width=2),
             dbc.Col(confirm_controller_buttons('actuation-confirm-button', 'actuation-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Setpunkt: [°C]", id='setpoint-label'), width=6),
-            dbc.Col(dbc.Input(type='number', step=0.1, id='setpoint-input', value=controller1.setpoint), width=2),
+            dbc.Col(dbc.Input(type='number', step=0.1, id='setpoint-input', value=controller.setpoint), width=2),
             dbc.Col(confirm_controller_buttons('setpoint-confirm-button', 'setpoint-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Proporsjonalforsterkning, Kp:", id='Kp-label'), width=6),
-            dbc.Col(dbc.Input(type='number', step=0.01, id='Kp-input', value=controller1.Kp), width=2),
+            dbc.Col(dbc.Input(type='number', step=0.01, id='Kp-input', value=controller.Kp), width=2),
             dbc.Col(confirm_controller_buttons('Kp-confirm-button', 'Kp-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Integraltid, Ti [s]:", id='Ti-label'), width=6),
-            dbc.Col(dbc.Input(type='number', id='Ti-input', value=controller1.Ti), width=2),
+            dbc.Col(dbc.Input(type='number', step=10, id='Ti-input', value=controller.Ti), width=2),
             dbc.Col(confirm_controller_buttons('Ti-confirm-button', 'Ti-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
             dbc.Col(html.P("Dutycycle [min]:", id='dutycycle-label'), width=6),
-            dbc.Col(dbc.Input(type='number', step=0.1, id='dutycycle-input', value=controller1.get_dutycycle()), width=2),
+            dbc.Col(dbc.Input(type='number', step=0.1, id='dutycycle-input', value=controller.get_dutycycle()), width=2),
             dbc.Col(confirm_controller_buttons('dutycycle-confirm-button', 'dutycycle-confirm-button-collapse')),
         ], form=True),
     ])
     return controller_settings
 
-def serve_layout():
-    layout = html.Div([
-        header,
-        dbc.Container([
-            dbc.Row([
-                dbc.Col(site_title),
-                dbc.Col(choose_sløyfe_dropdown()),
-            ]),
-            dbc.Row([
-                dbc.Col([
-                    dbc.Row(html.Div(id='table', className='tableFixHead', children = [get_settings_table()])),
-                    dbc.Row([add_device_button()]),
-                    dbc.Row([confirm_buttons()]),
-                ]),
-                dbc.Col([    
-                    controller_settings(),
-                    dbc.Row([
-                        html.H2("Alarm-innstillinger")
-                    ])
-                ])
-            ]),
-        ]),# Container
-        dcc.Interval(id='interval-component', interval=3000, n_intervals=0),
-    ])# Div
-    return layout
 def get_alarm_settings_inputs(chosen_sløyfe):
     print("Running get alarms input")
     curr_alarm_val = get_alarms(chosen_sløyfe)
@@ -384,25 +372,29 @@ def get_alarm_settings(chosen_sløyfe):
     ]
     return alarm_settings_div
 
-layout = html.Div([
-    header,
-    dbc.Container([
-        dbc.Row([dbc.Col(html.Div(id='site-title-div'))]),
-        dbc.Row(className='mt-3', children=[
-            dbc.Col([
-                dbc.Row(html.H2("Enheter i sløyfen")),
-                dbc.Row(html.Div(html.Div(id='table-div'), id='table', className='tableFixHead')),
-                dbc.Row([add_device_button()]),
-                dbc.Row([confirm_buttons()])
+def serve_layout():
+    layout = html.Div([
+        header,
+        dbc.Container([
+            dbc.Row([
+                dbc.Col(html.Div(id='site-title-div'))
             ]),
-            dbc.Col([    
-                controller_settings(),
-                html.Div(id='alarm-settings-div'),
+            dbc.Row(className='mt-3', children=[
+                dbc.Col([
+                    dbc.Row(html.H2("Enheter i sløyfen")),
+                    dbc.Row(html.Div(html.Div(id='table-div'), id='table', className='tableFixHead')),
+                    dbc.Row([add_device_button()]),
+                    dbc.Row([confirm_buttons()]),
+                ]),
+                dbc.Col([
+                    html.Div(id='controller-settings-div'),
+                    html.Div(id='alarm-settings-div'),
                 ])
-            ])
-    ]),# Container
-    dcc.Interval(id='interval-component', interval=5000, n_intervals=0),
+            ]),
+        ]),# Container
+        dcc.Interval(id='interval-component', interval=2000, n_intervals=0),
     ])# Div
+    return layout
 
 layout = serve_layout
 
@@ -411,7 +403,8 @@ def callbacks(app):
 
     update_sløyfe_callback(app, [['site-title-div', get_site_title],
                                  ['table-div', get_settings_table],
-                                 ['alarm-settings-div', get_alarm_settings]])
+                                 ['alarm-settings-div', get_alarm_settings],
+                                 ['controller-settings-div', controller_settings]])
 
     # Vis / skjul tabellraden for å leggen inn ny enhet
     @app.callback(
@@ -608,20 +601,25 @@ def callbacks(app):
         [
             Input(component_id='setpoint-input', component_property='value'),
             Input(component_id='setpoint-confirm-button', component_property='n_clicks'),
+        ],
+        [
+            State(component_id='url', component_property='pathname'),
         ]
     )
-    def display_setpoint_confirm(setpoint_input, button_clicks):
+    def display_setpoint_confirm(setpoint_input, button_clicks, pathname):
         global prew_setpoint_confirm_count
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        controller = get_controller(chosen_sløyfe)
         if (button_clicks == None):
             prew_setpoint_confirm_count = 0
-            if (setpoint_input == controller1.setpoint):
+            if (setpoint_input == controller.setpoint):
                 return False
             else:
                 return True
         elif (button_clicks > prew_setpoint_confirm_count):
             print("Nytt settpunkt: {}".format(setpoint_input))
             prew_setpoint_confirm_count = button_clicks
-            controller1.update_setpoint(setpoint_input)
+            controller.update_setpoint(setpoint_input)
             return False
         return True
 
@@ -631,20 +629,25 @@ def callbacks(app):
         [
             Input(component_id='Kp-input', component_property='value'),
             Input(component_id='Kp-confirm-button', component_property='n_clicks'),
+        ],
+        [
+            State(component_id='url', component_property='pathname'),
         ]
     )
-    def display_Kp_confirm(Kp_input, button_clicks):
+    def display_Kp_confirm(Kp_input, button_clicks, pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        controller = get_controller(chosen_sløyfe)
         global prew_Kp_confirm_count
         if (button_clicks == None):
             prew_Kp_confirm_count = 0
-            if (Kp_input == controller1.Kp):
+            if (Kp_input == controller.Kp):
                 return False
             else:
                 return True
         elif (button_clicks > prew_Kp_confirm_count):
             print("Ny Kp: {}".format(Kp_input))
             prew_Kp_confirm_count = button_clicks
-            controller1.Kp = Kp_input
+            controller.Kp = Kp_input
             print("New gain: {}".format(Kp_input))
             return False
         return True
@@ -655,20 +658,25 @@ def callbacks(app):
         [
             Input(component_id='Ti-input', component_property='value'),
             Input(component_id='Ti-confirm-button', component_property='n_clicks'),
+        ],
+        [
+            State(component_id='url', component_property='pathname'),
         ]
     )
-    def display_Ti_confirm(Ti_input, button_clicks):
+    def display_Ti_confirm(Ti_input, button_clicks, pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        controller = get_controller(chosen_sløyfe)
         global prew_Ti_confirm_count
         if (button_clicks == None):
             prew_Ti_confirm_count = 0
-            if (Ti_input == controller1.Ti):
+            if (Ti_input == controller.Ti):
                 return False
             else:
                 return True
         elif (button_clicks > prew_Ti_confirm_count):
             print("Ny Ti: {}".format(Ti_input))
             prew_Ti_confirm_count = button_clicks
-            controller1.Ti = Ti_input
+            controller.Ti = Ti_input
             print("New integral time: {} sekunds".format(Ti_input))
             return False
         return True
@@ -679,20 +687,25 @@ def callbacks(app):
         [
             Input(component_id='dutycycle-input', component_property='value'),
             Input(component_id='dutycycle-confirm-button', component_property='n_clicks'),
+        ],
+        [
+            State(component_id='url', component_property='pathname'),
         ]
     )
-    def display_dutycycle_confirm(dutycycle_input, button_clicks):
+    def display_dutycycle_confirm(dutycycle_input, button_clicks, pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        controller = get_controller(chosen_sløyfe)
         global prew_dutycycle_confirm_count
         if (button_clicks == None):
             prew_dutycycle_confirm_count = 0
-            if (dutycycle_input == controller1.get_dutycycle()):
+            if (dutycycle_input == controller.get_dutycycle()):
                 return False
             else:
                 return True
         elif (button_clicks > prew_dutycycle_confirm_count):
             print("Ny dutycycle: {}".format(dutycycle_input))
             prew_dutycycle_confirm_count = button_clicks
-            controller1.set_dutycycle(dutycycle_input)
+            controller.set_dutycycle(dutycycle_input)
             return False
         return True
     
@@ -702,21 +715,26 @@ def callbacks(app):
         [
             Input(component_id='actuation-input', component_property='value'),
             Input(component_id='actuation-confirm-button', component_property='n_clicks'),
+        ],
+        [
+            State(component_id='url', component_property='pathname'),
         ]
     )
-    def display_manual_actuation_confirm(actuation_input, button_clicks):
+    def display_manual_actuation_confirm(actuation_input, button_clicks, pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        controller = get_controller(chosen_sløyfe)
         global prew_actuation_confirm_count
         if (button_clicks == None):
             prew_actuation_confirm_count = 0
-            print("Får inn actuation_input: {}, og get_u_tot() gir: {}".format(actuation_input, controller1.get_u_tot()))
-            if (actuation_input == controller1.get_u_tot()):
+            print("Får inn actuation_input: {}, og get_u_tot() gir: {}".format(actuation_input, controller.get_u_tot()))
+            if (actuation_input == controller.get_u_tot()):
                 return False
             else:
                 return True
         elif (button_clicks > prew_actuation_confirm_count):
             print("Nytt manuelt pådrag: {}".format(actuation_input))
             prew_actuation_confirm_count = button_clicks
-            controller1.set_u_tot(actuation_input)
+            controller.set_u_tot(actuation_input)
             return False
         return True
 
@@ -728,20 +746,25 @@ def callbacks(app):
         ],
         [
             Input(component_id='auto-actuation-checklist', component_property='value'),
+        ],
+        [
+            State(component_id='url', component_property='pathname'),
         ]
     )
-    def enable_disable_manual_actuation(auto_actuation):
-        outputState = get_output_state('heatTrace1')[0]
+    def enable_disable_manual_actuation(auto_actuation, pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        controller = get_controller(chosen_sløyfe)
+        outputState = get_output_state(chosen_sløyfe)[0]
         print('Tilstand på "auto_actuation": {}, "outputState": {}'.format(auto_actuation, outputState))
         if auto_actuation:
             print("Starter automatisk av-på-styring.")
-            controller1.start()
+            controller.start()
             return ([
                 {'label': "AV", 'value': False, 'disabled': True},
                 {'label': "PÅ", 'value': True, 'disabled': True}
             ], not outputState)
         else:
-            controller1.stop()
+            controller.stop()
             print("Stopper automatisk av-på-styring.")
             return ([
                 {'label': "AV", 'value': False, 'disabled': False},
@@ -755,20 +778,22 @@ def callbacks(app):
             Input(component_id='manual-actuation-radioitems', component_property='value'),
         ],
         [
-            State(component_id='auto-actuation-checklist', component_property='value')
+            State(component_id='auto-actuation-checklist', component_property='value'),
+            State(component_id='url', component_property='pathname'),
         ]
     )
-    def activate_deactivate_heat_trace(on_off, auto):
-        outputState = get_output_state('heatTrace1')[0]
+    def activate_deactivate_heat_trace(on_off, auto, pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        outputState = get_output_state(chosen_sløyfe)[0]
         print("on_off: {}, auto: {}, outputState: {}".format(on_off, auto, outputState))
         if ((on_off == None) or (auto == None)):
             return "Oppdaterer..."
         if (on_off and not auto and outputState):
             print("Aktiverer varmekabel")
-            return activateHeatTrace('heatTrace1')
+            return activateHeatTrace(chosen_sløyfe)
         elif (not on_off and not auto and not outputState):
             print("Deaktiverer varmekabel")
-            return deactivateHeatTrace('heatTrace1')
+            return deactivateHeatTrace(chosen_sløyfe)
         else:
             return "Siden er oppdatert"
 
@@ -779,13 +804,16 @@ def callbacks(app):
             Input(component_id='controller-mode-radioitems', component_property='value'),
         ],
         [
-            State(component_id='actuation-input', component_property='value')
+            State(component_id='actuation-input', component_property='value'),
+            State(component_id='url', component_property='pathname'),
         ]
     )
-    def enable_disable_actuation_input(mode, actuation_input):
+    def enable_disable_actuation_input(mode, actuation_input, pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        controller = get_controller(chosen_sløyfe)
         print("Innkommende modus: {}".format(mode))
-        if (mode != controller1.mode):
-            controller1.change_mode(mode, actuation_input)
+        if (mode != controller.mode):
+            controller.change_mode(mode, actuation_input)
         if (mode == 'Auto'):
             return True
         else:
@@ -796,10 +824,15 @@ def callbacks(app):
         Output(component_id='actuation-input', component_property='value'),
         [
             Input(component_id='interval-component', component_property='n_intervals')
+        ],
+        [
+            State(component_id='url', component_property='pathname'),
         ]
     )
-    def update_manual_actuation_in_background(n_intervals):
-        if (controller1.mode == 'Auto'):
-            return controller1.get_u_tot()
+    def update_manual_actuation_in_background(n_intervals, pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        controller = get_controller(chosen_sløyfe)
+        if (controller.mode == 'Auto'):
+            return controller.get_u_tot()
         else:
             return no_update

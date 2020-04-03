@@ -1,21 +1,10 @@
 from decoder import decoder
 from flask_mqtt import Mqtt
 from powerControl import PI_controller
-
 from cosmosDB import connect_to_db, write_to_db
 import json, time, datetime, pytz
 
 mqtt = None
-packetData = {}
-# Initialiserer utgangstilstand i tilfelle strømbrudd
-outputState = {
-    'heatTrace1': [False, datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo'))]
-}
-timeOslo = datetime.time()
-
-def get_output_state(devicePlacement):
-    global outputState
-    return outputState[devicePlacement]
 
 def connect_mosquitto(server):
     global mqtt
@@ -33,7 +22,7 @@ def connect_mosquitto(server):
         topic = message.topic
         payload = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
     
-        print("\nNew message recieved at topic " + topic + " :")
+        print("\nNew message recieved at topic {}:".format(topic))
         # print(payload)
         global timeOslo
         global packetData
@@ -41,12 +30,10 @@ def connect_mosquitto(server):
         print(packetData)
         if (packetData['messageType'] == 'ioData'):
             global outputState
-            outputState = {
-                packetData['devicePlacement']: [packetData['output'], timeOslo]
-            }
-            print("outputState: {}".format(outputState['heatTrace1'][0]))
+            outputState[packetData['devicePlacement']] = [packetData['output'], timeOslo]
+            print("outputState: {}".format(outputState[packetData['devicePlacement']][0]))
         elif (packetData['messageType'] == 'dataLog'):
-            controller1.update_value(packetData['temperature'])
+            controller[packetData['devicePlacement']].update_value(packetData['temperature'])
             
         # Write data to database if this isn't a powerdata-message or if active power is not zero.
         if (packetData['messageType'] != 'powerData'):
@@ -122,8 +109,27 @@ def deactivateHeatTrace(devicePlacement):
     else:
         return ("Deaktiveringsmelding ble sendt til gateway. Bekreftelse ble mottatt etter {}. forsøk.".format(attempts))
 
-controller1 = PI_controller('heatTrace1', activateHeatTrace, deactivateHeatTrace)
-
 def createControllers(devicePlacement):
-    controller = PI_controller(devicePlacement, activateHeatTrace, deactivateHeatTrace)
+    controller[devicePlacement] = PI_controller(devicePlacement, activateHeatTrace, deactivateHeatTrace)
     return controller
+
+def get_controller(devicePlacement):
+    global controller
+    return controller[devicePlacement]
+
+def get_output_state(devicePlacement):
+    global outputState
+    return outputState[devicePlacement]
+
+def Initialisation():
+    from dashApps.innstillinger import get_sløyfer
+    global controller, outputState
+    for sløyfe in get_sløyfer():
+        controller[sløyfe] = PI_controller(sløyfe, activateHeatTrace, deactivateHeatTrace)
+        outputState[sløyfe] = [False, datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo'))]
+
+packetData = {}
+timeOslo = datetime.time()
+controller = {}
+outputState = {}
+Initialisation()

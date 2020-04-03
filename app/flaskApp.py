@@ -3,7 +3,7 @@ from flask_mqtt import Mqtt
 from forms import RegistrationForm, LoginForm
 
 from cosmosDB import read_from_db
-from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace, controller1
+from mqttCommunication import claimMeterdata
 
 import json, os, io
 
@@ -12,22 +12,6 @@ app=Blueprint('app', __name__)
 @app.route('/claimMeterdata')
 def runClaimDataFunction():
     return claimMeterdata('heatTrace1')
-
-@app.route('/activateHeatTrace')
-def runActivationFunction():
-    return activateHeatTrace('heatTrace1')
-
-@app.route('/deactivateHeatTrace')
-def runDeactivationFunction():
-    return deactivateHeatTrace('heatTrace1')
-
-@app.route('/activateController')
-def startController():
-    return controller1.start()
-
-@app.route('/deactivateController')
-def stopController():
-    return controller1.stop()
 
 målinger=[
     {

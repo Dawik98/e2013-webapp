@@ -3,11 +3,8 @@ import pytz
 
 
 def decoder(payload):
-    devices = {
-        '70-b3-d5-80-a0-10-94-3a': ['heatTrace1', 'tempSensor'],
-        '70-b3-d5-80-a0-10-94-46': ['heatTrace1', 'tempSensor'],
-        '70-b3-d5-8f-f1-00-1e-78': ['heatTrace1', 'powerSwitch'],
-    }
+    from dashApps.innstillinger import get_devices
+    devices = get_devices()
     timeUTC = datetime.strptime(payload['time'], '%Y-%m-%dT%H:%M:%S.%f%z')
     timeOslo = timeUTC.astimezone(pytz.timezone('Europe/Oslo'))
     
