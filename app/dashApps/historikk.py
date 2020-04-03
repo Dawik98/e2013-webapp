@@ -68,6 +68,7 @@ historiskData, til_dato, fra_dato = site_refreshed()
 
 layout = html.Div([
     header,
+dbc.Container([   
     dbc.Row([
         dbc.Col([
         html.Div(id='site-title-div')
@@ -103,29 +104,28 @@ layout = html.Div([
                         ),
         ], width=5),
     ]),
-
-    #Returenerer graf
-    html.Div([dcc.Graph(id="my-graph")]),
-
-    #### Tomme divs for callbacks og datalagring ########
-    #Bruker skjult input felt, som er avhenig av en verdi som blir oppdatert
-    #sammtidig som historisk data, til å trigge loading icon.
-    html.Div([dcc.Loading(
-        id = "loading-icon",
-        children=[
-            dcc.Input(id='Loading-icon',style={'display':'none'})
-                ],
-        type="graph", fullscreen=True),
-    ]),
-    #Locale storages som holder lagret data
-    html.Div([dcc.Store(id='historisk-data-store', storage_type='local')]),
-    html.Div([dcc.Store(id='til-dato-store', storage_type='local')]),
-    html.Div([dcc.Store(id='fra-dato-store', storage_type='local')]),
-
-    #Skjult div som holder dataen som plottes
-    html.Div([html.Div(id='historisk-data',children=historiskData)]),
-    
-    
+    dbc.Row([
+        dbc.Col([
+            html.Div([dcc.Graph(id="my-graph")]),
+        ],width={'size':12,'order':1}),
+    ],no_gutters=True)
+]),
+#### Tomme divs for callbacks og datalagring ########
+#Bruker skjult input felt, som er avhenig av en verdi som blir oppdatert
+#sammtidig som historisk data, til å trigge loading icon.
+html.Div([dcc.Loading(
+    id = "loading-icon",
+    children=[
+        dcc.Input(id='Loading-icon',style={'display':'none'})
+            ],
+    type="graph", fullscreen=True),
+]),
+#Locale storages som holder lagret data
+html.Div([dcc.Store(id='historisk-data-store', storage_type='local')]),
+html.Div([dcc.Store(id='til-dato-store', storage_type='local')]),
+html.Div([dcc.Store(id='fra-dato-store', storage_type='local')]),
+#Skjult div som holder dataen som plottes
+html.Div([html.Div(id='historisk-data',children=historiskData)]),   
 ])  
 
 def callbacks(app):
@@ -202,74 +202,74 @@ def callbacks(app):
                                     x=historiskData[sløyfe_valg]["Temperatur-Sensor"]["timeReceived"],
                                     mode='lines+markers',
                                     marker={"size": 3.5} ,
-                                    name="Temperatur")
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))
             if måling == "Aktiv effekt":
                 trace2 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["activePower"],
                                     x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"],
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Aktiv effekt")
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))
             if måling == "Reaktiv effekt":
                 trace3 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["reactivePower"],
                                     x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"] ,
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Reaktiv effekt")
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))
             if måling == "Tilsynelatende effekt":
                 trace4 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["apparentPower"],
                                     x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"] ,
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Tilsynelatende effekt")
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))
             if måling == "Aktiv energi":
                 trace5 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["activeEnergy"],
                                     x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"],
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Aktiv energi")
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))
             if måling == "Tilsynelatende energi":
                 trace6 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["apparentEnergy"],
                                     x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Tilsynelatende energi")      
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))  
             if måling == "Reaktiv energi":
                 trace7 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["reactiveEnergy"],
                                     x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Reaktiv energi") 
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))
             if måling == "Spenning":
                 trace8 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["voltage"],
                                     x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Spenning") 
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))
             if måling == "Strøm":
                 trace9 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["current"],
                                     x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Strøm") 
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))
             if måling == "Frekvens":
                 trace10 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["frequency"],
                                      x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"], 
                                      mode='lines+markers',
                                      marker={"size": 3.5},
-                                     name="Frekvens") 
+                                     name="{0} {1}".format(måling, enhet_dict[måling]))
             if måling == "Kjøretid":
                 trace11 = go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["runTime"],
                                     x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"], 
                                     mode='lines+markers',
                                     marker={"size": 3.5},
-                                    name="Kjøretid") 
+                                    name="{0} {1}".format(måling, enhet_dict[måling]))
 
         data = [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9,trace10,trace11]
         return {"data": data,
                 "layout": go.Layout(xaxis=dict(range=[fra_dato,til_dato]),
                                     title="Historikk",
-                                    autosize=False,
-                                    width=1700,
+                                    #autosize=False,
+                                    #width=1700,
                                     height=800,
-                                    margin={'l':100,'r':100,'t':100,'b':100},
+                                    #margin={'l':100,'r':100,'t':100,'b':100},
                                                     )}

@@ -23,7 +23,7 @@ from dashApps.layout import callbacks as layout_callbacks
 
 
 til_dato = datetime.now()
-fra_dato= til_dato + relativedelta(days=-6)
+fra_dato= til_dato + relativedelta(hours=-6)
 
 # ordliste som knytter sammen streng som vises i drop-down meny knyttet til streng med datanavn som 
 # brukes til å hente data fra databasen 
@@ -76,16 +76,6 @@ dbc.Container([
         html.H5('Til dato'),
         dbc.Input(id='til_Dato', value='', type='text',placeholder="YYYY-MM-DD HH:MM:SS, ' <Empty> ' for live",debounce=True)
         ], width=2),
-
-        dbc.Col([
-            html.H5('Måle valg, relé'),
-            dcc.Dropdown(
-                    id='måle-valg',
-                    options=[{'label': s,'value': s} for s in målinger_dict.keys()],
-                    value='Aktiv effekt',
-                ),
-            ], width=5),
-    
     ])
     ]),
 dbc.Container([
@@ -98,7 +88,24 @@ dbc.Container([
                     interval=15*1000,
                     n_intervals = 1
             )
-      ],width={'size':6,'order':1}),
+      ],width={'size':12,'order':1}),
+],no_gutters=True)
+]),
+
+dbc.Container([
+    dbc.Row([
+        dbc.Col([
+            html.H5('Måle valg, relé'),
+            dcc.Dropdown(
+                    id='måle-valg',
+                    options=[{'label': s,'value': s} for s in målinger_dict.keys()],
+                    value='Aktiv effekt',
+                ),
+            ], width=5)
+    ])
+]),
+dbc.Container([
+    dbc.Row([
         dbc.Col([
                 dcc.Graph(id='live-graph2', animate=False),
                                 dcc.Interval(
@@ -107,10 +114,10 @@ dbc.Container([
                                     interval=27*1000,
                                     n_intervals = 1
                             )
-                ],width={'size':6,'order':2}
-                )
-    ],no_gutters=True)
-], fluid=True),      
+                ],width={'size':12,'order':1}),
+],no_gutters=True)
+]),
+
 #Graf til målerelé
     # Skjult knapp som triggrer ved refresh av siden
     # Brukes til å oppdatere dato feltene
@@ -130,7 +137,7 @@ def callbacks(app):
 
     def update_refresh(n):
         til_dato = datetime.now()
-        fra_dato= til_dato + relativedelta(days=-6)
+        fra_dato= til_dato + relativedelta(hours=-6)
         fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
         return fra_dato
 
@@ -207,7 +214,7 @@ def callbacks(app):
                 return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
                                                             yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
                                                                         title=enhet_dict[måle_valg], tickangle=0,),
-                                                            title='{}'.format(måle_valg),
+                                                            title='målerelé: {}'.format(måle_valg),
                                                             #margin={'l':100,'r':100,'t':50,'b':50},
                                                             )}                                                                                                                                                            
         except Exception as e:
