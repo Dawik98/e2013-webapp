@@ -214,7 +214,7 @@ def callbacks(app):
                 return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
                                                             yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
                                                                         title=enhet_dict[måle_valg], tickangle=0,),
-                                                            title='målerelé: {}'.format(måle_valg),
+                                                            title='Målerelé: {}'.format(måle_valg),
                                                             #margin={'l':100,'r':100,'t':50,'b':50},
                                                             )}                                                                                                                                                            
         except Exception as e:
