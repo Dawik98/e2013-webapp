@@ -19,6 +19,7 @@ from historie_data import update_historiskData
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname, get_sløyfer
 from dashApps.layout import callbacks as layout_callbacks
 
+#knytter sammen string som brukes til listene med data, og synlig tekst i meny
 målinger_dict={ "Temperatur" : "temperature",
                 "Aktiv effekt" : "activePower",
                 "Reaktiv effekt" : "reactivePower",
@@ -48,11 +49,12 @@ enhet_dict={"Temperatur" : "[°C]",
 #Dager måledata med 5 min samplerate
 #antall_målinger = 288*1 
 
+#Funksjon for å printe overskrift basert på sløyfevalg
 def get_site_title(chosen_sløyfe):
     site_title = html.Div(html.H1("Historisk graf for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
     return site_title
 
-############ NB get_sløyfer MÅ LEGGES INN TIL SLUTT!!!!!!###################################################
+############ NB get_sløyfer MÅ LEGGES INN TIL SLUTT!!!!!!################################################### Trenger først data til søyfene i db og settings fil.
 def site_refreshed ():
     til_dato = datetime.now()
     fra_dato= til_dato + relativedelta(months=-1)
@@ -63,14 +65,17 @@ def site_refreshed ():
     for i in sløyfer:
         historiskData[i] = update_historiskData(i)
     return historiskData, til_dato, fra_dato
-
+#Laster inn midlertidig data når appen kjøres første gang. Layout er avhening av å ha ferider. 
 historiskData, til_dato, fra_dato = site_refreshed()
 
+# Definerer hvordan siden skal se ut
 layout = html.Div([
+    #Header lastet inn fra layout
     header,
 dbc.Container([   
     dbc.Row([
         dbc.Col([
+        #Site title genereres av funksjon
         html.Div(id='site-title-div')
         ], align="center")
     ]
@@ -78,9 +83,9 @@ dbc.Container([
     dbc.Row([
         dbc.Col([
                 html.Div(dbc.Button("Oppdater data",
-                        id='trigger-refresh',
-                        color="secondary")
-                        )
+                id='trigger-refresh',
+                color="secondary")
+                )
         ])
     ]),
     dbc.Row([
@@ -120,7 +125,7 @@ html.Div([dcc.Loading(
             ],
     type="graph", fullscreen=True),
 ]),
-#Locale storages som holder lagret data
+#Locale storages som holder lagret data, tar for lang tid å laste inn hver gang. Overskiver intialverdiene ved start
 html.Div([dcc.Store(id='historisk-data-store', storage_type='local')]),
 html.Div([dcc.Store(id='til-dato-store', storage_type='local')]),
 html.Div([dcc.Store(id='fra-dato-store', storage_type='local')]),
@@ -129,6 +134,7 @@ html.Div([html.Div(id='historisk-data',children=historiskData)]),
 ])  
 
 def callbacks(app):
+    #Callbacks importert fra layout til meny og overskrift
     layout_callbacks(app)
     update_sløyfe_callback(app, [['site-title-div', get_site_title]])
     # Oppdater minne
@@ -139,9 +145,10 @@ def callbacks(app):
                     Output('loading-icon', 'value')],
                     [Input('trigger-refresh', 'n_clicks'),
                     ])
-
+    #Bruker kanppen til å laste inn ny data. 
     def update_refreshData(n):
         if n is None:
+            #Stopper for å laste inn data ved refresh av side
             raise PreventUpdate
         else:
             historiskData, til_dato, fra_dato = site_refreshed()
@@ -160,6 +167,7 @@ def callbacks(app):
     )
 
     def update_data(fra_dato_store, til_dato_store, historiskData_store):
+        #Dersom data har blitt opdatert etter koden ble lastet opp til server, brukes disse.
         if fra_dato_store != None:
             print("oppdaterer data")
             print(til_dato_store)
@@ -168,7 +176,7 @@ def callbacks(app):
             til_dato=til_dato_store
             print(til_dato)
         return historiskData, til_dato, fra_dato
-
+    #Plotter data
     @app.callback(
         dash.dependencies.Output('my-graph', 'figure'),
         [Input('fra_Dato', 'value'),
@@ -179,7 +187,7 @@ def callbacks(app):
         ])
 
     def update_figure(fra_dato, til_dato, måle_valg, historiskData, url):
-        
+        #definerer en trace for hver måling.
         trace1=[]
         trace2=[]
         trace3=[]
@@ -191,11 +199,12 @@ def callbacks(app):
         trace9=[]
         trace10=[]
         trace11=[]
+        #Henter in pathname, og finner sløyfevalg som skal plottes
         ctx = dash.callback_context
         states = ctx.states
         pathname = states['url.pathname']
         sløyfe_valg = get_sløyfe_from_pathname(pathname)
-
+        #Plotter alle valgte målinger
         for måling in måle_valg:
             if måling == "Temperatur":
                 trace1 = go.Scatter(y=historiskData[sløyfe_valg]["Temperatur-Sensor"]["temperature"],
@@ -263,7 +272,7 @@ def callbacks(app):
                                     mode='lines+markers',
                                     marker={"size": 3.5},
                                     name="{0} {1}".format(måling, enhet_dict[måling]))
-
+        #Returnerer data som skal plottes, traces som ikke blir fyllt med data plottes blankt. 
         data = [trace1,trace2,trace3,trace4,trace5,trace6,trace7,trace8,trace9,trace10,trace11]
         return {"data": data,
                 "layout": go.Layout(xaxis=dict(range=[fra_dato,til_dato]),

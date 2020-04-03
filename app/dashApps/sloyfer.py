@@ -21,7 +21,7 @@ from opp_meter import update_meterData
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
 
-
+#Henter inn intialverider som brukes første gang koden kjøres
 til_dato = datetime.now()
 fra_dato= til_dato + relativedelta(hours=-6)
 
@@ -38,12 +38,7 @@ målinger_dict={"Aktiv effekt" : "activePower",
                 "Frekvens" : "frequency",
                 "Kjøretid" : "runTime",              
 }
-"""
-#Knytter sammen streng i drop-down meny og streng som brukes til å velge container i database.
-sløyfer_dict={"Sløyfe 1":"heatTrace1",
-              "Sløyfe 2":"heatTrace2",
-}
-"""
+
 #Brukes til å dynamisk skifte benemning på graf til målerelé.
 enhet_dict={"Aktiv effekt" : " Aktiv effekt [W]",
             "Reaktiv effekt" : " Reaktv effekt [VAr]",
@@ -57,14 +52,17 @@ enhet_dict={"Aktiv effekt" : " Aktiv effekt [W]",
             "Kjøretid" : "Kjøretid [s]", 
 }
 
+#Funksjon for å printe overskrift basert på sløyfevalg
 def get_site_title(chosen_sløyfe):
     site_title = html.Div(html.H1("Trendvindu for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
     return site_title
 
 #Defninerer hvordan siden skal se ut. Med overskrifter, menyer, grafer osv...
 layout = html.Div([
+    #Header lastet inn fra layout
     header,
 dbc.Container([
+    #Site title genereres av funksjon
     dbc.Row([html.Div(id='site-title-div')]),
     dbc.Row([
         dbc.Col([
@@ -91,7 +89,7 @@ dbc.Container([
       ],width={'size':12,'order':1}),
 ],no_gutters=True)
 ]),
-
+#Graf for tempsensorer
 dbc.Container([
     dbc.Row([
         dbc.Col([
@@ -104,6 +102,7 @@ dbc.Container([
             ], width=5)
     ])
 ]),
+#Graf for målerele
 dbc.Container([
     dbc.Row([
         dbc.Col([
@@ -117,31 +116,29 @@ dbc.Container([
                 ],width={'size':12,'order':1}),
 ],no_gutters=True)
 ]),
-
-#Graf til målerelé
-    # Skjult knapp som triggrer ved refresh av siden
-    # Brukes til å oppdatere dato feltene
-    dbc.Button(id='refresh-dato', style={'display': 'none'}),
+# Skjult knapp som triggrer ved refresh av siden
+# Brukes til å oppdatere dato feltene hver gang siden lastes inn
+dbc.Button(id='refresh-dato', style={'display': 'none'}),
 ])
 
 
 # Callbacks kjører hele tiden, og oppdater verdier som ble definert i layout. 
 def callbacks(app):
-
+    #Callbacks importert fra layout til meny og overskrift
     layout_callbacks(app)
     update_sløyfe_callback(app, [['site-title-div', get_site_title]])
-
+    #Laster inn ny data i datofeltet som kjøres når siden lastes inn
     @app.callback(Output('fra_Dato', 'value'),
                     [Input('refresh-dato', 'n_clicks'),
                     ])
-
+    #Funksjon for å finne nåtid
     def update_refresh(n):
         til_dato = datetime.now()
         fra_dato= til_dato + relativedelta(hours=-6)
         fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
         return fra_dato
 
-    # Live temperatur data
+    #Live temperatur data
     @app.callback(Output('live-graph', 'figure'),
             [Input('graph-update', 'n_intervals'),
             Input('fra_Dato', 'value'),
@@ -151,18 +148,20 @@ def callbacks(app):
     
 
     def update_graph_scatter(n,fra_dato, til_dato, url):
-        try:   
+        try:  
+            #Finner sløyfevalg
             ctx = dash.callback_context
             states = ctx.states
             pathname = states['url.pathname']
             sløyfe_valg = get_sløyfe_from_pathname(pathname)
-      
+            #Dersom datofletet er tomt returnerer vi tom graf.
+            #Hindrer at siden fryser
             if fra_dato == "":
                  return {'data': [], 'layout': {}}
             else:
-                #henter inn ny data
+                #henter inn ny data fra database
                 ts_UTC, temp = update_tempData(sløyfe_valg, fra_dato, til_dato)
-                #tilordner X og Y
+                #tilordner X og Y på graf
                 X=ts_UTC
                 Y=temp
                 data = plotly.graph_objs.Scatter(
@@ -175,13 +174,13 @@ def callbacks(app):
                                                             yaxis=dict(range=[0,120],title='Temperatur [°C]'),
                                                             title='Temperatur Måling',
                                                             #margin={'l':300,'r':100,'t':5,'b':50},
-                                                            )}
+                                                           )}
+        #Ved feilmelding skrives det til error txt fil.                                                 
         except Exception as e:
             with open('errors.txt','a') as f:
                 f.write(str(e))
                 f.write('\n')
-    #Live målerelé data
-    
+    #Live målerelé graf
     @app.callback(Output('live-graph2', 'figure'),
                 [Input('graph-update2', 'n_intervals'),
                 Input('fra_Dato', 'value'),
@@ -189,22 +188,24 @@ def callbacks(app):
                 Input('måle-valg', 'value')],
                 [State(component_id='url', component_property='pathname'),
                 ]) 
+    #Funksjon som returnerer data som skal plottes
     def update_graph_scatter2(n,fra_dato, til_dato, måle_valg, url):
         try:
             ctx = dash.callback_context
             states = ctx.states
             pathname = states['url.pathname']
             sløyfe_valg = get_sløyfe_from_pathname(pathname)
-      
+            #Dersom datofletet er tomt returnerer vi tom graf.
+            #Hindrer at siden fryser
             if fra_dato == "":
                 return {'data': [], 'layout': {}}
             else: 
+                #Laster inn ny data fra database
                 meterData = update_meterData(sløyfe_valg,fra_dato, til_dato)
-                #Henter ut tidsstempeler og gjør omtil dato
-        
+                #Tilorder data til x og y etter målevalg
                 X=meterData["timeReceived"]
                 Y=meterData[målinger_dict[måle_valg]]
-
+                #Returnerer graf med data og layout
                 data = plotly.graph_objs.Scatter(
                         y=Y,
                         x=X,
