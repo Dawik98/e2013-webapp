@@ -66,6 +66,9 @@ def get_sløyfer():
             sløyfer.append(key)
     return sløyfer
 
+"""
+Funksjonen returnerer en dictionary til decoder() for å kunne bestemme devicePlacement og deviceType
+"""
 def get_devices():
     devices = {}
     with open(settingsFile) as json_file:
