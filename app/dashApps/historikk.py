@@ -69,19 +69,10 @@ historiskData, til_dato, fra_dato = site_refreshed()
 layout = html.Div([
     header,
     html.Div(id='site-title-div'),
-
-    html.Div([
-            dbc.Button(id='trigger-refresh'),
-            #,style={'display':'none'}
-            dcc.Loading(id = "loading-icon", 
-                    children=[html.Div([
-                    html.Label('Fra dato'),
-                    dcc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
-                    ])],type="graph", fullscreen=True),
-            html.Label('Til dato'),
-            dcc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
-    ]),
-    
+    html.Label('Fra dato'),
+    dcc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
+    html.Label('Til dato'),
+    dcc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True),
     html.Div([dcc.Dropdown(
                             id='måle-valg',
                             options=[{'label': s,'value':s} for s in målinger_dict.keys()],
@@ -90,22 +81,33 @@ layout = html.Div([
                             multi=True
                             )
     ]),
-    
-    html.Div([html.Div(id='historisk-data',children=historiskData)]),
-    html.Div([dcc.Graph(id="my-graph")]),
+    html.Div([dbc.Button(id='trigger-refresh'),
+    #,style={'display':'none'}
+            dcc.Loading(id = "loading-icon",
+                children=[
+                    dcc.Input(id='Loading-icon',style={'display':'none'})
+                ],
+                type="graph", fullscreen=True),
+    ]),
 
+    html.Div([dcc.Store(id='historisk-data-store', storage_type='local')]),
+    html.Div([dcc.Store(id='til-dato-store', storage_type='local')]),
+    html.Div([dcc.Store(id='fra-dato-store', storage_type='local')]),
     #Hidden div inside the app that stores the intermediate value
-    
-
+   
+    html.Div([html.Div(id='historisk-data',children=historiskData)]),
+    #Returenerer graf
+    html.Div([dcc.Graph(id="my-graph")]),
 ])  
 
 def callbacks(app):
     layout_callbacks(app)
     update_sløyfe_callback(app, [['site-title-div', get_site_title]])
-
+    # Oppdater minne
     #Refresh dato og data ved refresh side
-    @app.callback([Output('historisk-data', 'children'),
-                    Output('til_Dato', 'value'),
+    @app.callback([Output('historisk-data-store', 'data'),
+                    Output('til-dato-store', 'data'),
+                    Output('fra-dato-store', 'data'),
                     Output('loading-icon', 'value')],
                     [Input('trigger-refresh', 'n_clicks'),
                     ])
@@ -117,7 +119,27 @@ def callbacks(app):
             historiskData, til_dato, fra_dato = site_refreshed()
             til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
             fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
-            return historiskData, til_dato, fra_dato
+            a="Spinn!"
+            return historiskData, til_dato, fra_dato,a
+    #Flytt minne til data som plottes/ vises
+    @app.callback(
+            [Output('historisk-data', 'children'),
+            Output('til_Dato', 'value'),
+            Output('fra_Dato', 'value')],
+            [Input('fra-dato-store', 'data'),
+            Input('til-dato-store', 'data'),
+            Input('historisk-data-store', 'data')],
+    )
+
+    def update_data(fra_dato_store, til_dato_store, historiskData_store):
+        if fra_dato_store != None:
+            print("oppdaterer data")
+            print(til_dato_store)
+            historiskData=historiskData_store
+            fra_dato=fra_dato_store
+            til_dato=til_dato_store
+            print(til_dato)
+        return historiskData, til_dato, fra_dato
 
     @app.callback(
         dash.dependencies.Output('my-graph', 'figure'),
@@ -129,6 +151,7 @@ def callbacks(app):
         ])
 
     def update_figure(fra_dato, til_dato, måle_valg, historiskData, url):
+        
         trace1=[]
         trace2=[]
         trace3=[]
