@@ -37,6 +37,11 @@ def createServer():
     from dashApps.sloyfer import callbacks as callbacks_sloyfer
     addDashApp(server, '/sløyfer/', 'Sløyfer', layout_sloyfer, callbacks_sloyfer)
     
+    from dashApps.historikk import layout as layout_historikk
+    from dashApps.historikk import callbacks as callbacks_historikk
+    addDashApp(server, '/historikk/', 'historikk', layout_historikk, callbacks_historikk)
+
+
     from dashApps.alarmer import layout as layout_alarmer
     from dashApps.alarmer import callbacks as callbacks_alarmer
     addDashApp(server, '/alarmer/', 'Alarmer', layout_alarmer, callbacks_alarmer)
