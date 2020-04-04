@@ -7,11 +7,15 @@ import dash_bootstrap_components as dbc
 
 import json
 
+# Velges avhengig av om appen kjøres lokalt eller i Azure
+settingsFile = 'settings.txt' # Azure
+# settingsFile = 'app/settings.txt' # Lokalt
+
 current_url = ""
 
 def get_sløyfer():
     sløyfer = []
-    with open('app/settings.txt') as json_file:
+    with open(settingsFile) as json_file:
         data = json.load(json_file)
         for key, value in data.items():
             sløyfer.append(key)
