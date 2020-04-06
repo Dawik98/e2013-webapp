@@ -37,3 +37,7 @@
     -webkit-transition: none;
     transition: none;
 }
+
+.fa-window-close {
+    cursor: pointer;
+}

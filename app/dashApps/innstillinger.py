@@ -65,6 +65,16 @@ def get_sløyfer():
             sløyfer.append(key)
     return sløyfer
 
+def get_devices():
+    devices = {}
+    with open(settingsFile) as json_file:
+        data = json.load(json_file)
+        for sløyfe in data:
+
+            for device in data[sløyfe]['devices']:
+                devices[device['device_eui']] = [sløyfe, device['deviceType']]
+    return devices
+
 def add_device(sløyfe, device_eui, device_type):
     """
     add_device legger til en ny enhet i valgt sløfe i 'settings.txt' fila
