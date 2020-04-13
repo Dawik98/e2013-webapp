@@ -159,7 +159,7 @@ def callbacks(app):
         Input(component_id='month', component_property='n_clicks'),
         Input(component_id='Alle', component_property='n_clicks'),
         ])
-    def display_layout(n_day, n_week, n_month, n_Alle):
+    def update_label(n_day, n_week, n_month, n_Alle):
         id_lookup = {'day':'dag', 'week':'uke', 'month':'måned', 'Alle':'Alle'}
 
         ctx = dash.callback_context

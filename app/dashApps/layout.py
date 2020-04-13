@@ -34,7 +34,7 @@ def make_remove_sløyfe_buttons():
     for i in range(20):
         id_ = "delete-sløyfe-{}".format(i+1)
         remove_buttons_ids[id_] = None
-        remove_buttons[id_] = html.I(className="fas fa-window-close fa-pull-right fa-lg ", id=id_)
+        remove_buttons[id_] = html.I(className="fas fa-window-close fa-pull-right fa-lg ", id=id_, style={'padding-top':'0.9em'})
     
     return remove_buttons_ids, remove_buttons
 
@@ -63,7 +63,7 @@ def choose_sløyfe_dropdown(main_url, chosen_sløyfe):
     for sløyfe, (key, status) in zip_longest(sløyfer, remove_buttons_ids.items()):
         if sløyfe:
             href = "/{}/{}/".format(main_url, sløyfe)
-            nav_link = dbc.NavLink(sløyfe, href=href, external_link=True, className='dropdown-item')
+            nav_link = dbc.NavLink(sløyfe, href=href, external_link=True, className='dropdown-item', style={'width':'80%', 'display':'inline-block'})
 
             delete_button = remove_buttons[key]
             remove_buttons_ids[key]=sløyfe

@@ -14,9 +14,10 @@ from dashApps.layout import callbacks as layout_callbacks
 layout = html.Div([
     header,
     dbc.Container(
-        html.Div(className="jumbotron", children =
-            html.H1("Home")
-        )#Article
+        html.Div(className="jumbotron", children =[
+            html.H1("Home"),
+        ]
+        )#Div
     ),# Container
     ])# Div
 
