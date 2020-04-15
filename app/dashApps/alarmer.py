@@ -68,7 +68,7 @@ def get_alarm_table(time_interval, chosen_sløyfe):
     min_val = alarms[0]
     max_val = alarms[1]
 
-    print("updateing frrom " + time_range)
+    print("updating from " + time_range)
 
     if (time_interval != "Alle"):
         #get data where temp is <10 or >30
@@ -146,6 +146,7 @@ def callbacks(app):
         if triggered == None or ctx.triggered[0]['value'] == None:
             return [get_alarm_table(time_range, chosen_sløyfe)]
         elif triggered == 'button-confirm':
+            print('confirming_alarms')
             confirm_alarms(chosen_sløyfe)
             return [get_alarm_table(time_range, chosen_sløyfe)]
         else:

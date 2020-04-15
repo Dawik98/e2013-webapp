@@ -13,8 +13,8 @@ from itertools import zip_longest
 from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace, controller1, get_output_state
 
 # Importer standard layout
-from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
-from dashApps.layout import callbacks as layout_callbacks
+#from dashApps.layout import get_sløyfe_from_pathname
+#from dashApps.layout import callbacks as layout_callbacks
 
 # GLOBALE VARIABLER
 prew_setpoint_confirm_count = 0
@@ -119,7 +119,7 @@ def add_sløyfe(sløyfe):
     """
     data = {sløyfe : 
                 {'devices' : [],
-                'alarm_values' : []}
+                'alarm_values' : {"min_val":None, "max_val":None}}
             }
     with open(settingsFile, 'r+') as settings_file:
         settings = json.load(settings_file)
@@ -136,8 +136,8 @@ def remove_sløyfe(sløyfe):
     """
     with open(settingsFile, 'r+') as settings_file:
         settings = json.load(settings_file)
-        #del settings[sløyfe]
-        settings.pop(sløyfe, None)
+        del settings[sløyfe]
+        #settings.pop(sløyfe, None)
         settings_file.seek(0)
         settings_file.truncate(0) #clear file
         json.dump(settings, settings_file)
@@ -366,28 +366,34 @@ def get_alarm_settings(chosen_sløyfe):
     ]
     return alarm_settings_div
 
-layout = html.Div([
-    header,
-    dbc.Container([
-        dbc.Row([dbc.Col(html.Div(id='site-title-div'))]),
-        dbc.Row(className='mt-3', children=[
-            dbc.Col([
-                dbc.Row(html.H2("Enheter i sløyfen")),
-                dbc.Row(html.Div(html.Div(id='table-div'), id='table', className='tableFixHead')),
-                dbc.Row([add_device_button()]),
-                dbc.Row([confirm_buttons()])
-            ]),
-            dbc.Col([    
-                controller_settings(),
-                html.Div(id='alarm-settings-div'),
+def serve_layout():
+    from dashApps.layout import header
+    layout = html.Div([
+        header,
+        dbc.Container([
+            dbc.Row([dbc.Col(html.Div(id='site-title-div'))]),
+            dbc.Row(className='mt-3', children=[
+                dbc.Col([
+                    dbc.Row(html.H2("Enheter i sløyfen")),
+                    dbc.Row(html.Div(html.Div(id='table-div'), id='table', className='tableFixHead')),
+                    dbc.Row([add_device_button()]),
+                    dbc.Row([confirm_buttons()])
+                ]),
+                dbc.Col([    
+                    controller_settings(),
+                    html.Div(id='alarm-settings-div'),
+                    ])
                 ])
-            ])
-    ]),# Container
-    dcc.Interval(id='interval-component', interval=5000, n_intervals=0),
-    ])# Div
+        ]),# Container
+        dcc.Interval(id='interval-component', interval=5000, n_intervals=0),
+        ])# Div
+    return layout
 
+layout = serve_layout
 
 def callbacks(app):
+    from dashApps.layout import update_sløyfe_callback, get_sløyfe_from_pathname
+    from dashApps.layout import callbacks as layout_callbacks
     layout_callbacks(app)
 
     update_sløyfe_callback(app, [['site-title-div', get_site_title],
@@ -575,12 +581,11 @@ def callbacks(app):
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
 
         ctx = dash.callback_context
-        triggered_button = ctx.triggered[0]['prop_id'].split('.')[0]
 
-        if triggered_button == 'button-alarm-confirm':
-            change_alarm_values(chosen_sløyfe, min_temp, max_temp)
+        if not ctx.triggered:
             return get_alarm_settings_inputs(chosen_sløyfe)
-        else:
+        else: 
+            change_alarm_values(chosen_sløyfe, min_temp, max_temp)
             return get_alarm_settings_inputs(chosen_sløyfe)
 
     # Oppdatering a referanse fra input

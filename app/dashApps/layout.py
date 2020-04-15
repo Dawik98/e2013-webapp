@@ -2,6 +2,8 @@ import dash
 import dash_core_components as dcc 
 import dash_html_components as html 
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
+
 
 import dash_bootstrap_components as dbc
 
@@ -34,7 +36,7 @@ def make_remove_sløyfe_buttons():
     for i in range(20):
         id_ = "delete-sløyfe-{}".format(i+1)
         remove_buttons_ids[id_] = None
-        remove_buttons[id_] = html.I(className="fas fa-window-close fa-pull-right fa-lg ", id=id_, style={'padding-top':'0.9em'})
+        remove_buttons[id_] = html.I(className="fas fa-window-close fa-pull-right fa-lg ", style={'padding-top':'0.9em'}, id=id_)
     
     return remove_buttons_ids, remove_buttons
 
@@ -84,7 +86,7 @@ def choose_sløyfe_dropdown(main_url, chosen_sløyfe):
     if label == "":
         label = "Velg sløyfe"
 
-    dropdown = dbc.DropdownMenu(label = label, children=items, id='choose-sløyfe-dropdown')
+    dropdown = dbc.DropdownMenu(label = label, children=items)
     return dropdown
 
 def get_navbar_items(chosen_sløyfe):
@@ -99,7 +101,7 @@ def get_navbar_items(chosen_sløyfe):
     return dbc.Nav(navbar_items, className="mr-auto", navbar=True,)
 
 
-header = html.Div([dcc.Location(id='url', refresh=False), html.Div(id='dummy-label'),
+header = html.Div([dcc.Location(id='url', refresh=False), dcc.Location(id='update-url', refresh=True), #html.Div(id='dummy-label'),
     dbc.Navbar(dbc.Container(
         [
             dbc.NavbarBrand("E2013", href="/Home", external_link=True),
@@ -108,7 +110,7 @@ header = html.Div([dcc.Location(id='url', refresh=False), html.Div(id='dummy-lab
                 id="navbar-collapse",
                 navbar=True,
             ),
-            html.Div(id='choose-sløyfe'),
+            html.Div(choose_sløyfe_dropdown('', ''), id='choose-sløyfe'), # kjører choose_sløfe_dropdaown for at callbacks akal ha tilllgang til alle elementer
         ]),
     className="mb-5",
     color="primary",
@@ -128,19 +130,139 @@ def callbacks(app):
             return not is_open
         return is_open
 
-    @app.callback([
-        Output(component_id='choose-sløyfe', component_property='children'),
-        Output(component_id='navbar-collapse', component_property='children')],
-        [
-        Input(component_id='url', component_property='pathname'),])
+    @app.callback(
+        Output(component_id='navbar-collapse', component_property='children'),
+        [Input(component_id='url', component_property='pathname')])
     def update_navbar_by_sløyfe(pathname):
+
         main_url = pathname.split('/')[1]
         try:
             chosen_sløyfe = pathname.split('/')[2]
         except:
             chosen_sløyfe = ""
 
-        return choose_sløyfe_dropdown(main_url, chosen_sløyfe), get_navbar_items(chosen_sløyfe)
+        return get_navbar_items(chosen_sløyfe)
+
+    def delete_buttons_inputs():
+        inputs = []
+
+        for key, status in remove_buttons_ids.items():
+            inputs.append(Input(component_id=key, component_property='n_clicks'))
+        #print(inputs)
+        return inputs
+
+    @app.callback(
+        Output('choose-sløyfe', 'children'),
+        [Input('url', 'pathname'),
+        Input('confirm-add-sløyfe-button', 'n_clicks')] + delete_buttons_inputs(),
+        [State('url', 'pathname'),
+        State('add-sløyfe-input', 'value')])
+    def update_choose_sløyfe_dropdown(pathname_input, *args):
+        from dashApps.innstillinger import add_sløyfe, remove_sløyfe
+        print("running update_choose_sløyfe_dropdown")
+
+        ctx = dash.callback_context
+        try: 
+            triggered_by = ctx.triggered[0]['prop_id'].split('.')[0]
+            print("Triggered by {}".format(button_id))
+        except:
+            pass
+
+        states = ctx.states
+        inputs = ctx.inputs
+
+        pathname_state = states['url.pathname']
+        new_sløyfe_name = states['add-sløyfe-input.value']
+
+        def split_url(pathname):
+            main_url = pathname.split('/')[1]
+            try:
+                chosen_sløyfe = pathname.split('/')[2]
+            except:
+                chosen_sløyfe = ""
+            return main_url, chosen_sløyfe
+
+        #if not ctx.triggered:
+        if triggered_by == 'url':
+            main_url, chosen_sløyfe = split_url(pathname_input)
+            return choose_sløyfe_dropdown(main_url, chosen_sløyfe)
+        elif triggered_by == 'confirm-add-sløyfe-button' and (new_sløyfe_name != None or new_sløyfe_name == ""):
+            main_url, chosen_sløyfe = split_url(pathname_state)
+            print("Adding sløyfe {}".format(new_sløyfe_name))
+            add_sløyfe(new_sløyfe_name)
+            return choose_sløyfe_dropdown(main_url, chosen_sløyfe)
+        elif 'delete' in triggered_by:
+            main_url, chosen_sløyfe = split_url(pathname_state)
+            sløyfe = remove_buttons_ids[triggered_by]
+            print("Removing sløyfe {}".format(sløyfe))
+            remove_sløyfe(sløyfe)
+            return choose_sløyfe_dropdown(main_url, chosen_sløyfe)
+        else:
+            print("Prevent update")
+            raise PreventUpdate
+
+    @app.callback(
+        Output('update-url', 'pathname'),
+        delete_buttons_inputs(),
+        [State('url', 'pathname')]
+    )
+    def update_url(*args): #oppdater url når sløyfe slettes
+        from dashApps.innstillinger import get_sløyfer
+        from time import sleep
+        sleep(0.2)
+
+        ctx = dash.callback_context
+        states = ctx.states
+        pathname = states['url.pathname']
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        sløyfer = get_sløyfer()
+
+        if chosen_sløyfe in sløyfer or chosen_sløyfe == '':
+            raise PreventUpdate
+        else:
+            return '/Home/'
+
+
+    #@app.callback(
+    #    Output(component_id='choose-sløyfe-dropdown', component_property='children'),
+    #    [Input('confirm-add-sløyfe-button', 'n_clicks')] + delete_buttons_inputs(),
+    #    [State('url', 'pathname'),
+    #    State('add-sløyfe-input', 'value')])
+    #def add_sløyfe_update(confirm_button_clicks, *args):
+    #    from dashApps.innstillinger import add_sløyfe, remove_sløyfe
+
+    #    ctx = dash.callback_context
+    #    try: 
+    #        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    #        print("Triggered by {}".format(button_id))
+    #    except:
+    #        pass
+
+    #    states = ctx.states
+    #    inputs = ctx.inputs
+
+    #    pathname = states['url.pathname']
+    #    new_sløyfe_name = states['add-sløyfe-input.value']
+
+    #    main_url = pathname.split('/')[1]
+    #    try:
+    #        chosen_sløyfe = pathname.split('/')[2]
+    #    except:
+    #        chosen_sløyfe = ""
+
+    #    if not ctx.triggered:
+    #        print("Prevent update")
+    #        raise PreventUpdate
+    #    elif button_id == 'confirm-add-sløyfe-button' and (new_sløyfe_name != None or new_sløyfe_name == ""):
+    #        print("Adding sløyfe {}".format(new_sløyfe_name))
+    #        add_sløyfe(new_sløyfe_name)
+    #        return choose_sløyfe_dropdown(main_url, chosen_sløyfe)
+    #    elif 'delete' in button_id:
+    #        sløyfe = remove_buttons_ids[button_id]
+    #        print("Removing sløyfe {}".format(sløyfe))
+    #        remove_sløyfe(sløyfe)
+    #        return choose_sløyfe_dropdown(main_url, chosen_sløyfe)
+
 
     # Vis / skjul input for å leggen inn ny enhet
     @app.callback(
