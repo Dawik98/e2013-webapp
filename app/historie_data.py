@@ -63,8 +63,3 @@ def update_historiskData(sløyfe_valg):
             historiskData["Temperatur-Sensor"][key].append(i[key])
     
     return historiskData
-<<<<<<< HEAD
-
-historiskData=update_historiskData("heatTrace1")
-=======
->>>>>>> a9e3851bacbffcda120b9644ebe602ffa21eed99

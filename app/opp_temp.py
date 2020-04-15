@@ -21,14 +21,5 @@ def update_tempData(sløyfe_valg, fra_dato, til_dato):
             ts.append(i['timeReceived'])
     
     ts_UTC=ts
-<<<<<<< HEAD
-
-    #Gjør om til datatypen "Date-time" som blir brukt til plotting.
-    #ts_UTC= pd.to_datetime(ts, unit='s')
     
     return  ts_UTC,temp
-
-=======
-    
-    return  ts_UTC,temp
->>>>>>> a9e3851bacbffcda120b9644ebe602ffa21eed99
