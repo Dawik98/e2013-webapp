@@ -46,7 +46,7 @@ def get_time_range(time_interval):
 
 
 def confirm_alarms(chosen_sløyfe):
-    query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true".format(chosen_sløyfe)
+    query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false".format(chosen_sløyfe)
     unconfirmed_alarms = read_from_db(chosen_sløyfe, query)
 
     for alarm_data in unconfirmed_alarms:
@@ -57,7 +57,7 @@ def confirm_alarms(chosen_sløyfe):
         del alarm_data['_attachments']
         del alarm_data['_ts']
 
-        #prin3("confirming alarm with id = {} from {}".format(id_, alarm_data['timeReceived']))
+        #print("confirming alarm with id = {} from {}".format(id_, alarm_data['timeReceived']))
 
         alarm_data['alarmConfirmed'] = True
         while True:
