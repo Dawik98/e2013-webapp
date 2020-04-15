@@ -57,8 +57,15 @@ def confirm_alarms(chosen_sløyfe):
         del alarm_data['_attachments']
         del alarm_data['_ts']
 
+        #prin3("confirming alarm with id = {} from {}".format(id_, alarm_data['timeReceived']))
+
         alarm_data['alarmConfirmed'] = True
-        replace_in_db(id_, chosen_sløyfe, alarm_data)
+        while True:
+            try:
+                replace_in_db(id_, chosen_sløyfe, alarm_data)
+                break
+            except:
+                print("couldn't coonfirm alarm... trying again")
 
 
 def get_alarm_table(time_interval, chosen_sløyfe):
@@ -115,7 +122,7 @@ label_dropdown = html.Div("Alarmer fra siste:", className='label-dropdown')
 confirm_button = dbc.Button("Kvitter alarmer", id='button-confirm', color="success", className='ml-4')
 
 layout = html.Div([
-    dcc.Interval(id='refresh', n_intervals=0, interval=20*1000),
+    dcc.Interval(id='refresh', n_intervals=0, interval=120*1000),
     header,
     dbc.Container([
         dbc.Row(dbc.Col(html.Div(id='site-title'))),
