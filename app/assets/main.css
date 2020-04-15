@@ -1,0 +1,39 @@
+
+/* Definner vareiabler */
+:root {
+  --coll-width: 200px;
+}
+
+.tableFixHead table {
+    width: auto;
+}
+
+
+.tableFixHead tbody{
+    height: 450px;
+    overflow-y: auto;
+}
+
+.tableFixHead tbody, thead {
+    display:block;
+    width: 100%;
+}
+
+
+.tableFixHead thead th, tbody td{
+    width: var(--coll-width);  /* Optional */
+}
+
+/* Siste kolonne må være 12px kortere for å få plass til sccrollbar */
+.scrollBarColl {
+    width: calc(var(--coll-width) - 12px);
+}
+
+.label-dropdown {
+    padding: 8px
+}
+
+.collapsing-no-animation {
+    -webkit-transition: none;
+    transition: none;
+}

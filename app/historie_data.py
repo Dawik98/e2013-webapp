@@ -1,10 +1,11 @@
 from cosmosDB import read_from_db
 import pandas as pd
 
-#Funksjon som brukes til å laste ny data inn i plot til måle rele. Queryer databasen for alle målinger ettersom tilkoblingen er det som krever tid, så kan en bytte fritt mellom ulike målinger. 
-#Powerwitch data Må gjøres modulært
+#Funksjon som brukes til å laste ny data inn i historisk plot 
 def update_historiskData(sløyfe_valg):
-    query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'tempSensor' AND heatTrace1.deviceEui = '70-b3-d5-80-a0-10-94-46') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg)
+    #Deler inn i to querys for å skille mellom tidsstempelene
+    #henter tempdata
+    query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'tempSensor') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg)
     container_name = sløyfe_valg
     items_temp = read_from_db(container_name, query)
     #Hente meterData
@@ -62,5 +63,8 @@ def update_historiskData(sløyfe_valg):
             historiskData["Temperatur-Sensor"][key].append(i[key])
     
     return historiskData
+<<<<<<< HEAD
 
 historiskData=update_historiskData("heatTrace1")
+=======
+>>>>>>> a9e3851bacbffcda120b9644ebe602ffa21eed99

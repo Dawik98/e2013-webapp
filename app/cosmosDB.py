@@ -31,15 +31,22 @@ def write_to_db(container_name, data):
         else:
             raise e
 
-
     cosmos.CreateItem(collection_link + container_name, data)
     print("Created new Item")
 
+# skulle kanskje hette "query_from_db"
 def read_from_db(container_name, query):
     cosmos = connect_to_db()
     items = cosmos.QueryItems(collection_link+container_name, query, {'enableCrossPartitionQuery':True})
     items = list(items) # save result as list
     return items
+
+# new data må inneholde id
+def replace_in_db(item_id, container_name, new_data):
+    item_path = collection_link + container_name + '/docs/' + item_id
+    cosmos = connect_to_db()
+    cosmos.ReplaceItem(item_path, new_data)
+
 
 # return containers from cosmos db
 #def get_containers():
@@ -52,5 +59,5 @@ def read_from_db(container_name, query):
 #            pass
 #        else:
 #            list_of_containers.append(container)
-
+#
 #    return list_of_containers

@@ -3,33 +3,48 @@ from flask_mqtt import Mqtt
 from forms import RegistrationForm, LoginForm
 
 from cosmosDB import read_from_db
+from mqttCommunication import claimMeterdata
 
-import json
-import os
-import io
-
-from mqtt import mqtt, connect_to_db
+import json, os, io
 
 app=Blueprint('app', __name__)
 
 @app.route('/claimMeterdata')
-def claimMeterdata():
-    mqtt.publish('powerSwitch', bytes([4, 2, 0]))
+def runClaimDataFunction():
+    return claimMeterdata('heatTrace1')
 
-@app.route('/activateHeatTrace')
-def activateHeatTrace():
-    mqtt.publish('powerSwitch', bytes([4, 0, 0, 0, 0, 0, 1, 0, 0, 0]))
+målinger=[
+    {
+        'Enhet': 'Temperatur sensor 1',
+        'Temperatur': '31',
+        'Batteritilstand':'93.7%',
+        'Tidspunkt':'12:32:27'
+    },
+    {
+        'Enhet': 'Temperatur sensor 2',
+        'Temperatur': '30',
+        'Batteritilstand':'92.7%',
+        'Tidspunkt':'12:32:29'
+    }
+]
 
-@app.route('/deactivateHeatTrace')
-def deactivateHeatTrace():
-    mqtt.publish('powerSwitch', bytes([4, 0, 1, 0, 0, 0, 0, 0, 0, 0]))
-
-
-# main web page
-
-@app.route('/SensorData')
-def SensorData():
-    return render_template('SensorData.html', title='Målinger')
+## main web page
+#@app.route('/')
+#@app.route('/Home')
+#def Home():
+#    #query data from database
+#    query = "SELECT * FROM heatTrace1 WHERE heatTrace1.deviceType = 'tempSensor' ORDER BY heatTrace1.timeReceived DESC"
+#    container_name = "heatTrace1"
+#
+#    items = read_from_db(container_name, query)
+#
+#    val = items[0]['temperature']
+#
+#    return render_template('index.html',målinger=målinger, val=val)
+#
+#@app.route('/SensorData')
+#def SensorData():
+#    return render_template('SensorData.html', title='Målinger')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
