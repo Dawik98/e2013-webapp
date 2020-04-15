@@ -170,8 +170,8 @@ class PI_controller:
     def actuationControl(self):
         while True:
             if self.run_actuation:
-                dutycycle = self.get_dutycycle
-                actuation = self.get_u_tot
+                dutycycle = self.get_dutycycle() * 60
+                actuation = self.get_u_tot()
                 t_on = (actuation/100) * dutycycle
                 t_off = dutycycle - t_on
                 if (t_on != 0):

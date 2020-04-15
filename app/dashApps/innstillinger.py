@@ -66,10 +66,10 @@ def get_sløyfer():
             sløyfer.append(key)
     return sløyfer
 
-"""
-Funksjonen returnerer en dictionary til decoder() for å kunne bestemme devicePlacement og deviceType
-"""
 def get_devices():
+    """
+    Funksjonen returnerer en dictionary til decoder() for å kunne bestemme devicePlacement og deviceType
+    """
     devices = {}
     with open(settingsFile) as json_file:
         data = json.load(json_file)
@@ -283,11 +283,17 @@ def confirm_buttons():
     return button_collapse
 
 def confirm_controller_buttons(button_id, button_collapse_id):
+    """
+    Funksjonen genererer en bekreftelsesknapp som kan kollapses
+    """
     button_confirm_controller = dbc.Button("Bekreft", color='success', id=button_id)
     button_confirm_controller_collapse = dbc.Collapse(button_confirm_controller, id=button_collapse_id, is_open=False, className='collapsing-no-slide-animation')
     return button_confirm_controller_collapse
 
 def controller_settings(chosen_sløyfe):
+    """
+    All innstilling av regulator i layout-en
+    """
     controller = get_controller(chosen_sløyfe)
     if (controller.run_actuation == True):
         auto = [True]
@@ -376,6 +382,9 @@ def get_alarm_settings(chosen_sløyfe):
     return alarm_settings_div
 
 def serve_layout():
+    """
+    Layout-en genereres i en egen funksjon slik at den kjører hver gang nettsiden lastes inn på nytt
+    """
     layout = html.Div([
         header,
         dbc.Container([
@@ -598,7 +607,7 @@ def callbacks(app):
         else:
             return get_alarm_settings_inputs(chosen_sløyfe)
 
-    # Oppdatering a referanse fra input
+    # Oppdatering av referanse fra input
     @app.callback(
         Output(component_id='setpoint-confirm-button-collapse', component_property='is_open'),
         [
@@ -610,21 +619,20 @@ def callbacks(app):
         ]
     )
     def display_setpoint_confirm(setpoint_input, button_clicks, pathname):
-        global prew_setpoint_confirm_count
-        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-        controller = get_controller(chosen_sløyfe)
-        if (button_clicks == None):
-            prew_setpoint_confirm_count = 0
-            if (setpoint_input == controller.setpoint):
-                return False
-            else:
-                return True
-        elif (button_clicks > prew_setpoint_confirm_count):
-            print("Nytt settpunkt: {}".format(setpoint_input))
-            prew_setpoint_confirm_count = button_clicks
-            controller.update_setpoint(setpoint_input)
-            return False
-        return True
+        global prew_setpoint_confirm_count                                  # Definerer global tellevariabel
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)                  # Bestemmer valgt sløyfe ut ifra pathname
+        controller = get_controller(chosen_sløyfe)                          # Velger regulator avhengig av valgt sløyfe
+        if (button_clicks == None):                                         # button_clicks er None etter at siden lastes inn på nytt
+            prew_setpoint_confirm_count = 0                                 # Resetter tellevariabelen
+        elif (button_clicks > prew_setpoint_confirm_count):                 # Dersom knappen er trykt bekreftes setpunktet:
+            print("New setpoint: {} °C".format(setpoint_input))
+            prew_setpoint_confirm_count = button_clicks                     # Tellevariabel oppdateres
+            controller.update_setpoint(setpoint_input)                      # Setpunkt skrives til regulatoren
+            return False                                                    # Bekreftelsesknapp skjules etter bekreftelse
+        if (setpoint_input == controller.setpoint):                         # Kontrollerer om setpunktet er forandret
+            return False                                                    # Bekreftelsesknapp vises ikke dersom regulatorens setpunkt stemmer med input-verdien
+        else:
+            return True                                                     # Bekreftelsesknapp vises dersom setpunktet er forskjellig fra input-verdien
 
     # Oppdatering av forsterkningsfaktor Kp fra input
     @app.callback(
@@ -638,23 +646,21 @@ def callbacks(app):
         ]
     )
     def display_Kp_confirm(Kp_input, button_clicks, pathname):
-        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-        controller = get_controller(chosen_sløyfe)
-        global prew_Kp_confirm_count
-        if (button_clicks == None):
-            prew_Kp_confirm_count = 0
-            if (Kp_input == controller.Kp):
-                return False
-            else:
-                return True
-        elif (button_clicks > prew_Kp_confirm_count):
-            print("Ny Kp: {}".format(Kp_input))
-            prew_Kp_confirm_count = button_clicks
-            controller.Kp = Kp_input
+        global prew_Kp_confirm_count                                        # Definerer global tellevariabel
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)                  # Bestemmer valgt sløyfe ut ifra pathname
+        controller = get_controller(chosen_sløyfe)                          # Velger regulator avhengig av valgt sløyfe
+        if (button_clicks == None):                                         # button_clicks er None etter at siden lastes inn på nytt
+            prew_Kp_confirm_count = 0                                       # Resetter tellevariabelen
+        elif (button_clicks > prew_Kp_confirm_count):                       # Dersom knappen er trykt bekreftes ny forsterkningsfaktor, Kp:
             print("New gain: {}".format(Kp_input))
-            return False
-        return True
-
+            prew_Kp_confirm_count = button_clicks                           # Tellevariabel oppdateres
+            controller.Kp = Kp_input                                        # Kp skrives til regulatoren
+            return False                                                    # Bekreftelsesknapp skjules etter bekreftelse
+        if (Kp_input == controller.Kp):                                     # Kontrollerer om Kp er forandret
+            return False                                                    # Bekreftelsesknapp vises ikke dersom regulatorens Kp stemmer med input-verdien
+        else:
+            return True                                                     # Bekreftelsesknapp vises dersom Kp er forskjellig fra input-verdien
+        
     # Oppdatering av integraltid Ti fra input
     @app.callback(
         Output(component_id='Ti-confirm-button-collapse', component_property='is_open'),
@@ -667,22 +673,20 @@ def callbacks(app):
         ]
     )
     def display_Ti_confirm(Ti_input, button_clicks, pathname):
-        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-        controller = get_controller(chosen_sløyfe)
-        global prew_Ti_confirm_count
-        if (button_clicks == None):
-            prew_Ti_confirm_count = 0
-            if (Ti_input == controller.Ti):
-                return False
-            else:
-                return True
-        elif (button_clicks > prew_Ti_confirm_count):
-            print("Ny Ti: {}".format(Ti_input))
-            prew_Ti_confirm_count = button_clicks
-            controller.Ti = Ti_input
-            print("New integral time: {} sekunds".format(Ti_input))
-            return False
-        return True
+        global prew_Ti_confirm_count                                        # Definerer global tellevariabel
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)                  # Bestemmer valgt sløyfe ut ifra pathname
+        controller = get_controller(chosen_sløyfe)                          # Velger regulator avhengig av valgt sløyfe
+        if (button_clicks == None):                                         # button_clicks er None etter at siden lastes inn på nytt
+            prew_Ti_confirm_count = 0                                       # Resetter tellevariabelen
+        elif (button_clicks > prew_Ti_confirm_count):                       # Dersom knappen er trykt bekreftes ny integraltid, Ti:
+            print("New integral time: {} secunds".format(Ti_input))
+            prew_Ti_confirm_count = button_clicks                           # Tellevariabel oppdateres
+            controller.Ti = Ti_input                                        # Ti skrives til regulatoren
+            return False                                                    # Bekreftelsesknapp skjules etter bekreftelse
+        if (Ti_input == controller.Ti):                                     # Kontrollerer om Ti er forandret
+            return False                                                    # Bekreftelsesknapp vises ikke dersom regulatorens Ti stemmer med input-verdien
+        else:
+            return True                                                     # Bekreftelsesknapp vises dersom Ti er forskjellig fra input-verdien
 
     # Oppdatering av dutycycle fra input
     @app.callback(
@@ -696,22 +700,21 @@ def callbacks(app):
         ]
     )
     def display_dutycycle_confirm(dutycycle_input, button_clicks, pathname):
-        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-        controller = get_controller(chosen_sløyfe)
-        global prew_dutycycle_confirm_count
-        if (button_clicks == None):
-            prew_dutycycle_confirm_count = 0
-            if (dutycycle_input == controller.get_dutycycle()):
-                return False
-            else:
-                return True
-        elif (button_clicks > prew_dutycycle_confirm_count):
-            print("Ny dutycycle: {}".format(dutycycle_input))
-            prew_dutycycle_confirm_count = button_clicks
-            controller.set_dutycycle(dutycycle_input)
-            return False
-        return True
-    
+        global prew_dutycycle_confirm_count                                 # Definerer global tellevariabel
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)                  # Bestemmer valgt sløyfe ut ifra pathname
+        controller = get_controller(chosen_sløyfe)                          # Velger regulator avhengig av valgt sløyfe
+        if (button_clicks == None):                                         # button_clicks er None etter at siden lastes inn på nytt
+            prew_dutycycle_confirm_count = 0                                # Resetter tellevariabelen
+        elif (button_clicks > prew_dutycycle_confirm_count):                # Dersom knappen er trykt bekreftes ny syklustid:
+            print("New dutycycle: {} minute/-s".format(dutycycle_input))
+            prew_dutycycle_confirm_count = button_clicks                    # Tellevariabel oppdateres
+            controller.set_dutycycle(dutycycle_input)                       # Syklustid skrives til regulatoren
+            return False                                                    # Bekreftelsesknapp skjules etter bekreftelse
+        if (dutycycle_input == controller.get_dutycycle()):                 # Kontrollerer om syklustiden er forandret
+            return False                                                    # Bekreftelsesknapp vises ikke dersom regulatorens syklustid stemmer med input-verdien
+        else:
+            return True                                                     # Bekreftelsesknapp vises dersom syklustiden er forskjellig fra input-verdien
+
     # Oppdatering av manuelt pådrag fra input
     @app.callback(
         Output(component_id='actuation-confirm-button-collapse', component_property='is_open'),
@@ -720,26 +723,28 @@ def callbacks(app):
             Input(component_id='actuation-confirm-button', component_property='n_clicks'),
         ],
         [
+            State(component_id='controller-mode-radioitems', component_property='value'),
             State(component_id='url', component_property='pathname'),
         ]
     )
-    def display_manual_actuation_confirm(actuation_input, button_clicks, pathname):
-        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-        controller = get_controller(chosen_sløyfe)
-        global prew_actuation_confirm_count
-        if (button_clicks == None):
-            prew_actuation_confirm_count = 0
-            print("Får inn actuation_input: {}, og get_u_tot() gir: {}".format(actuation_input, controller.get_u_tot()))
-            if (actuation_input == controller.get_u_tot()):
-                return False
+    def display_manual_actuation_confirm(actuation_input, button_clicks, controller_mode, pathname):
+        if (controller_mode == 'Auto'):                                             # Kontrollerer regulatormodusen
+            return False                                                            # Skjuler knapp dersom regulatoren står i auto-modus
+        else:
+            global prew_actuation_confirm_count                                     # Definerer global tellevariabel
+            chosen_sløyfe = get_sløyfe_from_pathname(pathname)                      # Bestemmer valgt sløyfe ut ifra pathname
+            controller = get_controller(chosen_sløyfe)                              # Velger regulator avhengig av valgt sløyfe
+            if (button_clicks == None):                                             # button_clicks er None etter at siden lastes inn på nytt
+                prew_actuation_confirm_count = 0                                    # Resetter tellevariabelen
+            elif (button_clicks > prew_actuation_confirm_count):                    # Dersom knappen er trykt bekreftes nytt manuelt pådrag:
+                print("New manual actuation level: {} %".format(actuation_input))
+                prew_actuation_confirm_count = button_clicks                        # Tellevariabel oppdateres
+                controller.set_u_tot(actuation_input)                               # Manuelt pådrag skrives til regulatoren
+                return False                                                        # Bekreftelsesknapp skjules etter bekreftelse
+            if (actuation_input == controller.get_u_tot()):                         # Kontrollerer om manuelt er forandret
+                return False                                                        # Bekreftelsesknapp vises ikke dersom regulatorens Ti stemmer med input-verdien
             else:
-                return True
-        elif (button_clicks > prew_actuation_confirm_count):
-            print("Nytt manuelt pådrag: {}".format(actuation_input))
-            prew_actuation_confirm_count = button_clicks
-            controller.set_u_tot(actuation_input)
-            return False
-        return True
+                return True                                                         # Bekreftelsesknapp vises dersom Ti er forskjellig fra input-verdien
 
     # Aktivering/deaktivering av automatisk av/på-styring
     @app.callback(
@@ -755,24 +760,23 @@ def callbacks(app):
         ]
     )
     def enable_disable_manual_actuation(auto_actuation, pathname):
-        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-        controller = get_controller(chosen_sløyfe)
-        outputState = get_output_state(chosen_sløyfe)[0]
-        print('Tilstand på "auto_actuation": {}, "outputState": {}'.format(auto_actuation, outputState))
-        if auto_actuation:
-            print("Starter automatisk av-på-styring.")
-            controller.start()
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)              # Bestemmer valgt sløyfe ut ifra pathname
+        controller = get_controller(chosen_sløyfe)                      # Velger regulator avhengig av valgt sløyfe
+        outputState = get_output_state(chosen_sløyfe)[0]                # Henter inn siste loggede relétilstand
+        if auto_actuation:                                              # Kontrollerer om automatisk av/på-styring er aktivert
+            print("Starting automatic on/off-controlling.")
+            controller.start()                                          # Starter automatisk av/på-styring
             return ([
                 {'label': "AV", 'value': False, 'disabled': True},
                 {'label': "PÅ", 'value': True, 'disabled': True}
-            ], not outputState)
+            ], not outputState)                                         # Deaktiverer mulighet for manuell styring og oppdaterer utgangsverdi
         else:
-            controller.stop()
-            print("Stopper automatisk av-på-styring.")
+            controller.stop()                                           # Stopper automatick av/på-styring
+            print("Stoping automatic on/off-controlling.")
             return ([
                 {'label': "AV", 'value': False, 'disabled': False},
                 {'label': "PÅ", 'value': True, 'disabled': False}
-            ], not outputState)
+            ], not outputState)                                         # Aktiverer mulighet for manuell styring og oppdaterer utgangsverdi
         
     # Manuell av/på-styring
     @app.callback(
@@ -788,7 +792,6 @@ def callbacks(app):
     def activate_deactivate_heat_trace(on_off, auto, pathname):
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
         outputState = get_output_state(chosen_sløyfe)[0]
-        print("on_off: {}, auto: {}, outputState: {}".format(on_off, auto, outputState))
         if ((on_off == None) or (auto == None)):
             return "Oppdaterer..."
         if (on_off and not auto and outputState):
