@@ -1,20 +1,26 @@
+import json
 
-from datetime import datetime, timedelta
+settingsFile = 'app/settings.txt' # Lokalt
 
-def get_time_range(time_interval):
-    if time_interval == 'day':
-        interval = timedelta(days=1)
-    elif time_interval == 'week':
-        interval = timedelta(days=7)
-    elif time_interval == 'month':
-        interval = timedelta(days=31)
+def print_settings():
+    """
+    print_settings printer innstillinger som ligger i 'settings.txt' på en lesbar måte
+    """
+    with open(settingsFile) as json_file:
+        data = json.load(json_file)
+        print(json.dumps(data, indent=4))
 
-    now = datetime.now()
-    print(datetime.strftime(now, '%d.%m.%Y %H:%M'))
+def get_devices():
+    devices = {}
+    with open(settingsFile) as json_file:
+        data = json.load(json_file)
+        for sløyfe in data:
 
-    result = now-interval
-    result = datetime.strftime(result, '%d.%m.%Y %H:%M')
-    print(result)
-    return result
+            for device in data[sløyfe]['devices']:
+                devices[device['device_eui']] = [sløyfe, device['deviceType']]
+    return devices
 
-get_time_range("week")
+
+
+print_settings()
+print(get_devices())

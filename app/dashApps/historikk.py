@@ -16,8 +16,9 @@ from cosmosDB import read_from_db
 from historie_data import update_historiskData
 
 #import standard layout
-from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname, get_sløyfer
+from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
+from dashApps.innstillinger import get_sløyfer
 
 #knytter sammen string som brukes til listene med data, og synlig tekst i meny
 målinger_dict={ "Temperatur" : "temperature",

@@ -14,8 +14,8 @@ from itertools import zip_longest
 from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace, get_output_state, get_controller
 
 # Importer standard layout
-from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
-from dashApps.layout import callbacks as layout_callbacks
+#from dashApps.layout import get_sløyfe_from_pathname
+#from dashApps.layout import callbacks as layout_callbacks
 
 # GLOBALE VARIABLER
 prew_setpoint_confirm_count = 0
@@ -25,8 +25,8 @@ prew_dutycycle_confirm_count = 0
 prew_actuation_confirm_count = 0
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-settingsFile = 'settings.txt' # Azure
-# settingsFile = 'app/settings.txt' # Lokalt
+#settingsFile = 'settings.txt' # Azure
+settingsFile = 'app/settings.txt' # Lokalt
 
 def print_settings():
     """
@@ -127,7 +127,7 @@ def add_sløyfe(sløyfe):
     """
     data = {sløyfe : 
                 {'devices' : [],
-                'alarm_values' : []}
+                'alarm_values' : {"min_val":None, "max_val":None}}
             }
     with open(settingsFile, 'r+') as settings_file:
         settings = json.load(settings_file)
@@ -144,8 +144,8 @@ def remove_sløyfe(sløyfe):
     """
     with open(settingsFile, 'r+') as settings_file:
         settings = json.load(settings_file)
-        #del settings[sløyfe]
-        settings.pop(sløyfe, None)
+        del settings[sløyfe]
+        #settings.pop(sløyfe, None)
         settings_file.seek(0)
         settings_file.truncate(0) #clear file
         json.dump(settings, settings_file)
@@ -376,6 +376,7 @@ def get_alarm_settings(chosen_sløyfe):
     return alarm_settings_div
 
 def serve_layout():
+    from dashApps.layout import header
     layout = html.Div([
         header,
         dbc.Container([
@@ -402,6 +403,8 @@ def serve_layout():
 layout = serve_layout
 
 def callbacks(app):
+    from dashApps.layout import update_sløyfe_callback, get_sløyfe_from_pathname
+    from dashApps.layout import callbacks as layout_callbacks
     layout_callbacks(app)
 
     update_sløyfe_callback(app, [['site-title-div', get_site_title],
@@ -590,12 +593,11 @@ def callbacks(app):
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
 
         ctx = dash.callback_context
-        triggered_button = ctx.triggered[0]['prop_id'].split('.')[0]
 
-        if triggered_button == 'button-alarm-confirm':
-            change_alarm_values(chosen_sløyfe, min_temp, max_temp)
+        if not ctx.triggered:
             return get_alarm_settings_inputs(chosen_sløyfe)
-        else:
+        else: 
+            change_alarm_values(chosen_sløyfe, min_temp, max_temp)
             return get_alarm_settings_inputs(chosen_sløyfe)
 
     # Oppdatering a referanse fra input
