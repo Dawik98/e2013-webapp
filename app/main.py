@@ -28,6 +28,7 @@ def createServer():
     from mqttCommunication import connect_mosquitto
     connect_mosquitto(server)
 
+
     # legg til dashboard apper
     from dashApps.home import layout as layout_home
     from dashApps.home import callbacks as callbacks_home
@@ -52,6 +53,8 @@ def createServer():
 
 
     from flaskApp import app
+
+    
     server.register_blueprint(app)
 
     return server
