@@ -193,10 +193,15 @@ def callbacks(app):
             add_sløyfe(new_sløyfe_name)
             return choose_sløyfe_dropdown(main_url, chosen_sløyfe)
         elif 'delete' in triggered_by:
+            from mqttCommunication import deleteController
             main_url, chosen_sløyfe = split_url(pathname_state)
             sløyfe = remove_buttons_ids[triggered_by]
             print("Removing sløyfe {}".format(sløyfe))
             remove_sløyfe(sløyfe)
+            try:
+                deleteController(sløyfe)
+            except KeyError:
+                print('Deleting controller... Controller does not exsist')
             return choose_sløyfe_dropdown(main_url, chosen_sløyfe)
         else:
             print("Prevent update")
@@ -338,7 +343,7 @@ def get_sløyfe_from_pathname(pathname):
 
 def update_sløyfe_callback(app, item_list):
     # item_list skal inneholde lister med id til items som er avhengig av valgt sløyfe og funksjonen som returnerer den item
-    # hver elemnt i listen skal være liste: [id, func]...
+    # hver elemnt i listen skal være en liste: [id, func]...
     
     callback_outputs = []
 
