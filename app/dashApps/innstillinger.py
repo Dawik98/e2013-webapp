@@ -399,7 +399,7 @@ def serve_layout():
                     html.Div(id='alarm-settings-div'),
                 ])
             ]),
-        ]),# Container
+        ], id='main-container'),# Container
         dcc.Interval(id='interval-component', interval=2000, n_intervals=0),
     ])# Div
     return layout

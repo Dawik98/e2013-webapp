@@ -61,6 +61,7 @@ def get_site_title(chosen_sløyfe):
 layout = html.Div([
     #Header lastet inn fra layout
     header,
+dbc.Container(id='main-container', children = [
 dbc.Container([
     #Site title genereres av funksjon
     dbc.Row([html.Div(id='site-title-div')]),
@@ -119,6 +120,7 @@ dbc.Container([
 # Skjult knapp som triggrer ved refresh av siden
 # Brukes til å oppdatere dato feltene hver gang siden lastes inn
 dbc.Button(id='refresh-dato', style={'display': 'none'}),
+])
 ])
 
 

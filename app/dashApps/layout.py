@@ -329,6 +329,20 @@ def callbacks(app):
     def display_confirm_buttons(click_cancel_add, click_confirm_add):
         if click_cancel_add or click_confirm_add:
             return ""
+    
+    @app.callback(
+        Output('main-container', 'children'),
+        [Input('url', 'pathname')]
+    )
+    def got_sløyfe(pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        print("chosen sløyfe = '{}'".format(chosen_sløyfe))
+
+        if chosen_sløyfe == '':
+            notification = html.Div([html.H2(["Velg en sløyfe for å fortsette!", html.I(className="fas fa-arrow-up ml-3 mr-5")])], className="text-right text-info")
+            return notification
+        else:
+            raise PreventUpdate
 
 
 #------------------------------- Sløyfe valg funksjoner -------------------------------
