@@ -592,6 +592,33 @@ def callbacks(app):
             print("updating_settings_window")
             return controller_settings(chosen_sløyfe)
             
+    # Disable power switch valget når det allerede finnes en regulator
+    @app.callback(
+        Output('powerSwitch', 'disabled'),
+        [Input('add-device-button', 'n_clicks')],
+        [State('url', 'pathname')])
+    def disable_power_switch_choice(click, pathname):
+        ctx = dash.callback_context
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        settings = get_settings()
+        devices = settings[chosen_sløyfe]['devices']
+
+        regulator_in_sløyfe = False
+        for device in devices:
+            print("devices i sløyfe: {}".format(device.values()))
+            if 'Power Switch' in device.values():
+                print("Regulator i sløyfe!!!")
+                regulator_in_sløyfe =  True
+            else:
+                regulator_in_sløyfe =  False
+
+        if  ctx.triggered[0]['value'] == None:
+            raise PreventUpdate
+        elif regulator_in_sløyfe:
+            return True
+        else:
+            return False
+        
 
 
     # dummy update
