@@ -20,3 +20,4 @@ def get_users():
     #print(user)
     return users
 
+users= get_users()
