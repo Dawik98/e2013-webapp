@@ -1,19 +1,53 @@
 from flask import Flask
 from flask_mqtt import Mqtt
 import dash
+import flask_login
 import dash_bootstrap_components as dbc
-
 import logging
-
+from getUsers import get_users
 import sys
+
+
 sys.path.append("./dashApps")
 
 
+
+users=get_users()
+
 def createServer():
-
     server = Flask(__name__)
-
     server.config['SECRET_KEY']='019a82e56daaa961957770fc73e383e4'
+
+    #_Initialiserer login manager
+    login_manager=flask_login.LoginManager()
+    login_manager.init_app(server)
+    login_manager.login_view='app.login'
+
+    class User(flask_login.UserMixin):
+        pass
+
+    @login_manager.user_loader
+    def user_loader(email):
+        if email not in users:
+            print("Email not in users")
+            return
+        user = User()
+        user.id = email
+        return user
+
+    @login_manager.request_loader
+    def request_loader(request):
+        email = request.form.get('email')
+        if email not in users:
+            return
+        user = User()
+        user.id = email
+
+        # DO NOT ever store passwords in plaintext and always compare password
+        # hashes using constant-time comparison!
+        if request.form['password'] != users[email]['password']:
+            return 
+        return user
 
     # setup mqtt for mosquitto on vm
     server.config['MQTT_BROKER_URL'] = '13.74.42.218'
@@ -58,7 +92,10 @@ def createServer():
     server.register_blueprint(app)
 
     return server
-
+def _protect_dashviews(dashapp):
+    for view_func in dashapp.server.view_functions:
+        if view_func.startswith(dashapp.config.url_base_pathname):
+            dashapp.server.view_functions[view_func] = flask_login.login_required(dashapp.server.view_functions[view_func])
 
 def addDashApp(server, path, title, layout, callbacks):
 
@@ -97,12 +134,15 @@ def addDashApp(server, path, title, layout, callbacks):
                         #external_stylesheets=external_stylesheets)
                         external_stylesheets=[dbc.themes.SANDSTONE, font_awesome_stylesheets],
                         suppress_callback_exceptions=True)
+                        
 
     
     with server.app_context():
         dashApp.title = title
         dashApp.layout = layout
         callbacks(dashApp)
+    
+    _protect_dashviews(dashApp)
 
 if __name__ == '__main__':
 
