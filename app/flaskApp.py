@@ -12,11 +12,15 @@ from models import User, login_manager
 import json, os, io
 app=Blueprint('app', __name__)
 
+@app.route('/')
+def Index():
+    return render_template('index.html', title="Index")
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         print("authenticated?")
-        return redirect("/")
+        return redirect("/home/")
     form = LoginForm()
     if form.validate_on_submit():
         users=get_users()
@@ -28,7 +32,7 @@ def login():
             print("Authenitcating user")
             #login_user(user)
             login_user(user, remember=form.remember.data)
-            return redirect("/")
+            return redirect("/home/")
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', title="Login", form=form)
@@ -46,7 +50,7 @@ def runClaimDataFunction():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect("/")
+        return redirect("/home/")
     form = RegistrationForm()
     if form.validate_on_submit():
         flash(f'Account created for {form.username.data}!', 'success')

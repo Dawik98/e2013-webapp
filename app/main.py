@@ -36,7 +36,7 @@ def createServer():
     # legg til dashboard apper
     from dashApps.home import layout as layout_home
     from dashApps.home import callbacks as callbacks_home
-    addDashApp(server, '/', 'Home', layout_home, callbacks_home)
+    addDashApp(server, '/home/', 'Home', layout_home, callbacks_home)
 
     from dashApps.sloyfer import layout as layout_sloyfer
     from dashApps.sloyfer import callbacks as callbacks_sloyfer

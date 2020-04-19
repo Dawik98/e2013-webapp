@@ -37,11 +37,12 @@ def choose_sløyfe_dropdown(main_url, chosen_sløyfe):
 def get_navbar_items(chosen_sløyfe):
 
     navbar_items = [
-        dbc.NavLink("Home", href="/Home/{}".format(chosen_sløyfe), external_link=True),
-        dbc.NavLink("Sløyfer", href="/sløyfer/{}".format(chosen_sløyfe), external_link=True, id='sløyfe-nav-link'),
+        dbc.NavLink("Home", href="/home/{}".format(chosen_sløyfe), external_link=True),
+        dbc.NavLink("Trend", href="/sløyfer/{}".format(chosen_sløyfe), external_link=True, id='sløyfe-nav-link'),
         dbc.NavLink("Historikk", href="/historikk/{}".format(chosen_sløyfe), external_link=True, id='sløyfe-nav-link'),
         dbc.NavLink("Alarmer", href="/alarmer/{}".format(chosen_sløyfe), external_link=True, id='alarmer-nav-link'),
         dbc.NavLink("Innstillinger", href="/innstillinger/{}".format(chosen_sløyfe), external_link=True, id='innstillinger-nav-link'),
+        dbc.NavLink("Logg ut", href="/logout", external_link=True, id='logout-nav-link'),
         ]
 
     return dbc.Nav(navbar_items, className="mr-auto", navbar=True,)
@@ -50,7 +51,7 @@ def get_navbar_items(chosen_sløyfe):
 header = html.Div([dcc.Location(id='url', refresh=False), html.Div(id='dummy-label'),
     dbc.Navbar(dbc.Container(
         [
-            dbc.NavbarBrand("E2013", href="/Home", external_link=True),
+            dbc.NavbarBrand("E2013", href="/", external_link=True),
             dbc.NavbarToggler(id="navbar-toggler"),
             dbc.Collapse(
                 id="navbar-collapse",
