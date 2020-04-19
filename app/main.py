@@ -5,6 +5,7 @@ import flask_login
 import dash_bootstrap_components as dbc
 import logging
 from getUsers import get_users
+from models import User, login_manager
 import sys
 
 
@@ -19,35 +20,8 @@ def createServer():
     server.config['SECRET_KEY']='019a82e56daaa961957770fc73e383e4'
 
     #_Initialiserer login manager
-    login_manager=flask_login.LoginManager()
     login_manager.init_app(server)
     login_manager.login_view='app.login'
-
-    class User(flask_login.UserMixin):
-        pass
-
-    @login_manager.user_loader
-    def user_loader(email):
-        if email not in users:
-            print("Email not in users")
-            return
-        user = User()
-        user.id = email
-        return user
-
-    @login_manager.request_loader
-    def request_loader(request):
-        email = request.form.get('email')
-        if email not in users:
-            return
-        user = User()
-        user.id = email
-
-        # DO NOT ever store passwords in plaintext and always compare password
-        # hashes using constant-time comparison!
-        if request.form['password'] != users[email]['password']:
-            return 
-        return user
 
     # setup mqtt for mosquitto on vm
     server.config['MQTT_BROKER_URL'] = '13.74.42.218'

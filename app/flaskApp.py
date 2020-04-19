@@ -3,18 +3,14 @@ from flask import Flask, render_template, request, g, url_for, flash, redirect, 
 from flask_mqtt import Mqtt
 from forms import RegistrationForm, LoginForm
 from getUsers import get_users
-from flask_login import login_user, current_user, UserMixin, logout_user, login_required
+from flask_login import current_user, logout_user, login_required
 from cosmosDB import read_from_db
 from mqttCommunication import claimMeterdata
-
-
+from models import User, login_manager
     
 
 import json, os, io
 app=Blueprint('app', __name__)
-
-class User(UserMixin):
-    pass
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -35,13 +31,12 @@ def login():
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', title="Login", form=form)
-
+    
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect("/login")
-
 
 @app.route('/claimMeterdata')
 def runClaimDataFunction():
