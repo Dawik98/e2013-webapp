@@ -11,10 +11,6 @@ import sys
 
 sys.path.append("./dashApps")
 
-
-
-users=get_users()
-
 def createServer():
     server = Flask(__name__)
     server.config['SECRET_KEY']='019a82e56daaa961957770fc73e383e4'
@@ -66,6 +62,8 @@ def createServer():
     server.register_blueprint(app)
 
     return server
+
+#Funksjon som beskytter dashappene med at vi krever innlognings status.     
 def _protect_dashviews(dashapp):
     for view_func in dashapp.server.view_functions:
         if view_func.startswith(dashapp.config.url_base_pathname):
@@ -116,6 +114,7 @@ def addDashApp(server, path, title, layout, callbacks):
         dashApp.layout = layout
         callbacks(dashApp)
     
+    #Beskytter dashappene (dashboardet) med innloggning
     _protect_dashviews(dashApp)
 
 if __name__ == '__main__':

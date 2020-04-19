@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, g, url_for, flash, redirect, 
 from flask_mqtt import Mqtt
 from forms import RegistrationForm, LoginForm
 from getUsers import get_users
-from flask_login import current_user, logout_user, login_required
+from flask_login import current_user, logout_user, login_required, login_user
 from cosmosDB import read_from_db
 from mqttCommunication import claimMeterdata
 from models import User, login_manager
@@ -19,14 +19,15 @@ def login():
         return redirect("/")
     form = LoginForm()
     if form.validate_on_submit():
+        users=get_users()
         print(users[form.email.data]["password"])
         email = request.form.get('email')
         if form.password.data == users[form.email.data]["password"]:
             user = User()
             user.id = email
             print("Authenitcating user")
-            login_user(user)
-            #login_user(user, remember=form.remember.data)
+            #login_user(user)
+            login_user(user, remember=form.remember.data)
             return redirect("/")
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
@@ -43,7 +44,6 @@ def runClaimDataFunction():
     return claimMeterdata('heatTrace1')
 
 @app.route('/register', methods=['GET', 'POST'])
-@login_required
 def register():
     if current_user.is_authenticated:
         return redirect("/")

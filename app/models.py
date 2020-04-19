@@ -16,6 +16,8 @@ def user_loader(email):
     user.id = email
     return user
 
+#Tok bort dette, åsså virket det. Vet ikke hvorfor...    
+"""
 @login_manager.request_loader
 def request_loader(request):
     users=get_users()
@@ -30,3 +32,4 @@ def request_loader(request):
     if request.form['password'] != users[email]['password']:
         return 
     return user
+"""
