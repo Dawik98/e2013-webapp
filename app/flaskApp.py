@@ -18,7 +18,6 @@ class User(UserMixin):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    users=get_users()
     if current_user.is_authenticated:
         print("authenticated?")
         return redirect("/")
