@@ -1,5 +1,4 @@
 from cosmosDB import read_from_db
-import pandas as pd
 
 def get_users():
     query = "SELECT * FROM validUsers ORDER BY validUsers._ts DESC"
