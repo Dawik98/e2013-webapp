@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Home Page</h1>
+    <h1>Bachelorgruppe E2013</h1>
     <script>
         setTimeout(function() {
             // updates header 
@@ -11,21 +11,24 @@
     </script>
 
     <div id="header">
-    <h2>value =  {{ val }}</h2>
+    <h2>Oppgaven</h2>
     </div>
-    <h2>Nylige målinger</h2>
-    {% for måling in målinger %}
-  
+
+    <div id="Om gruppen">
+    <h2>Om gruppen</h2>
+    </div>
+
+    <h2>Gruppemedlemmer</h2>
         <article class="media content-section">
             <div class="media-body">
                 <div class="article-metadata">
-                <a class="mr-2" href="#">{{ måling.Enhet }}</a>
-                <small class="text-muted">{{ måling.Tidspunkt }}</small>
+                <a class="mr-2" href="#">"Bla"</a>
+                <small class="text-muted">"Bla bla"</small>
                 </div>
-                <h2><a class="article-title" href="#">{{måling.Temperatur}}</a></h2>
-                <p class="article-content">{{ måling.Batteritilstand}}</p>
+                <h2><a class="article-title" href="#">"Kristoffer"</a></h2>
+                <p class="article-content">"Fra"</p>
             </div>
         </article>
-    {% endfor %}
+    
 
 {% endblock content %}
