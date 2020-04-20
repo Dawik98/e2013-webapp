@@ -36,10 +36,16 @@ def write_to_db(container_name, data):
 
 # skulle kanskje hette "query_from_db"
 def read_from_db(container_name, query):
-    cosmos = connect_to_db()
-    items = cosmos.QueryItems(collection_link+container_name, query, {'enableCrossPartitionQuery':True})
-    items = list(items) # save result as list
-    return items
+    try:
+        cosmos = connect_to_db()
+        items = cosmos.QueryItems(collection_link+container_name, query, {'enableCrossPartitionQuery':True})
+        items = list(items) # save result as list
+        return items
+    except:
+        print("Could not read from database")
+        return []
+        
+        
 
 # new data må inneholde id
 def replace_in_db(item_id, container_name, new_data):

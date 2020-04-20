@@ -46,7 +46,7 @@ def get_time_range(time_interval):
 
 
 def confirm_alarms(chosen_sløyfe):
-    query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true".format(chosen_sløyfe)
+    query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false".format(chosen_sløyfe)
     unconfirmed_alarms = read_from_db(chosen_sløyfe, query)
 
     for alarm_data in unconfirmed_alarms:
@@ -57,8 +57,15 @@ def confirm_alarms(chosen_sløyfe):
         del alarm_data['_attachments']
         del alarm_data['_ts']
 
+        #print("confirming alarm with id = {} from {}".format(id_, alarm_data['timeReceived']))
+
         alarm_data['alarmConfirmed'] = True
-        replace_in_db(id_, chosen_sløyfe, alarm_data)
+        while True:
+            try:
+                replace_in_db(id_, chosen_sløyfe, alarm_data)
+                break
+            except:
+                print("couldn't coonfirm alarm... trying again")
 
 
 def get_alarm_table(time_interval, chosen_sløyfe):
@@ -68,7 +75,7 @@ def get_alarm_table(time_interval, chosen_sløyfe):
     min_val = alarms[0]
     max_val = alarms[1]
 
-    print("updateing frrom " + time_range)
+    print("updating from " + time_range)
 
     if (time_interval != "Alle"):
         #get data where temp is <10 or >30
@@ -115,7 +122,7 @@ label_dropdown = html.Div("Alarmer fra siste:", className='label-dropdown')
 confirm_button = dbc.Button("Kvitter alarmer", id='button-confirm', color="success", className='ml-4')
 
 layout = html.Div([
-    dcc.Interval(id='refresh', n_intervals=0, interval=20*1000),
+    dcc.Interval(id='refresh', n_intervals=0, interval=120*1000),
     header,
     dbc.Container([
         dbc.Row(dbc.Col(html.Div(id='site-title'))),
@@ -146,6 +153,7 @@ def callbacks(app):
         if triggered == None or ctx.triggered[0]['value'] == None:
             return [get_alarm_table(time_range, chosen_sløyfe)]
         elif triggered == 'button-confirm':
+            print('confirming_alarms')
             confirm_alarms(chosen_sløyfe)
             return [get_alarm_table(time_range, chosen_sløyfe)]
         else:
@@ -159,7 +167,7 @@ def callbacks(app):
         Input(component_id='month', component_property='n_clicks'),
         Input(component_id='Alle', component_property='n_clicks'),
         ])
-    def display_layout(n_day, n_week, n_month, n_Alle):
+    def update_label(n_day, n_week, n_month, n_Alle):
         id_lookup = {'day':'dag', 'week':'uke', 'month':'måned', 'Alle':'Alle'}
 
         ctx = dash.callback_context

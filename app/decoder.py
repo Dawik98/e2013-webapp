@@ -35,10 +35,6 @@ def decoder(payload):
         else:
             packetData['alarmValue'] = False
 
-
-
-
-
     elif (packetData['deviceType'] == 'powerSwitch'):
         # Decode sending time
         timeSent = {
