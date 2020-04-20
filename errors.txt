@@ -1271,3 +1271,6 @@ min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
 >>>>>>> 9a1fc628042e0376cdd1dda191479462c397db90
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
