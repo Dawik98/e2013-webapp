@@ -12,3 +12,23 @@ Status code: 400
 {"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: ad7acda1-c1cb-477b-b646-a51038f3112f, Microsoft.Azure.Documents.Common/2.10.0"}
 Status code: 400
 {"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 783ce5f1-0e78-444d-a234-5fb624675b9e, Microsoft.Azure.Documents.Common/2.10.0"}
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
