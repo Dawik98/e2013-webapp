@@ -4,10 +4,10 @@ from flask_mqtt import Mqtt
 from forms import RegistrationForm, LoginForm
 from getUsers import get_users
 from flask_login import current_user, logout_user, login_required, login_user
-from cosmosDB import read_from_db
+from cosmosDB import read_from_db, write_to_db
 from mqttCommunication import claimMeterdata
 from models import User, login_manager
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 import json
     
 
@@ -34,15 +34,18 @@ def login():
             json.dump(users, json_file)
 
         email = request.form.get('email')
-        if check_password_hash((users[form.email.data]["password"]), form.password.data):
-            user = User()
-            user.id = email
-            print("Authenitcating user")
-            #login_user(user)
-            login_user(user, remember=form.remember.data)
-            return redirect("/home/")
+        if users[email]['type'] == 'adminUser':
+            if check_password_hash((users[email]["password"]), form.password.data):
+                user = User()
+                user.id = email
+                print("Authenitcating user")
+                #login_user(user)
+                login_user(user, remember=form.remember.data)
+                return redirect("/home/")
+            else:
+                flash('Login Unsuccessful. Please check username and password', 'danger')
         else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
+            flash('Login Unsuccessful. Account awaits approval!', 'danger')
     return render_template('login.html', title="Login", form=form)
     
 @app.route("/logout")
@@ -61,6 +64,8 @@ def register():
         return redirect("/home/")
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
+        NewUser={"type":"NotApproved", "username":form.username.data, "email":form.email.data, "password":generate_password_hash(form.password.data)}
+        write_to_db('validUsers', NewUser)
+        flash(f'Account created for {form.username.data}. Waiting for approval!', 'success')
         return redirect("/login")
     return render_template('register.html', title="Register", form=form)
