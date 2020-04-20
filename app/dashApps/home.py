@@ -17,9 +17,7 @@ import dash_bootstrap_components as dbc
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
 
-sløyfer_dict={"Sløyfe 1":"heatTrace1",
-              #"Sløyfe 2":"heatTrace2",
-}
+
 
 setpoint='20'
 tilkobledeSløyfer=2
