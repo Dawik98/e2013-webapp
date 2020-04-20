@@ -18,5 +18,3 @@ def get_users():
     #user=users["kristoffer.hovland@hotmail.com"]["password"]
     #print(user)
     return users
-
-users= get_users()
