@@ -1252,3 +1252,10 @@ Status code: 400
 >>>>>>> 17a2f1e16cbe925ac89b69da8bb342abd9167299
 =======
 >>>>>>> 7d5897a91dfb01d50eb5c8f97e38d72b5f0813b5
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence

@@ -12,6 +12,10 @@ from datetime import datetime
 from collections import deque
 from cosmosDB import read_from_db, connect_to_db
 from opp_temp import update_tempData
+import dash_bootstrap_components as dbc
+
+from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
+from dashApps.layout import callbacks as layout_callbacks
 
 sløyfer_dict={"Sløyfe 1":"heatTrace1",
               #"Sløyfe 2":"heatTrace2",
@@ -29,7 +33,6 @@ layout = html.Div([
         ]
         )#Div
     ),# Container
-    ])# Div
 html.Div([
     html.Label('Sløyfe valg'),
     dcc.Dropdown(
@@ -39,40 +42,40 @@ html.Div([
     ),  
 ]),
 
-html.Div([
-daq.Indicator(
-    id='DB-indicator',
-    label="Connected",
-)]),
+    html.Div([
+    daq.Indicator(
+        id='DB-indicator',
+        label="Connected",
+    )]),
 
-html.Div([
-daq.Thermometer(
-        id='my-thermometer',
-        labelPosition='top',
-        min=0,
-        max=120,
-        style={
-            'margin-bottom': '5%',
-            'margin-top': '5%'},
-        showCurrentValue=True,
-        units="[°C]",
-        scale={'start': 0, 'interval':10, 'custom': {setpoint: 'Referanse'}} 
+    html.Div([
+    daq.Thermometer(
+            id='my-thermometer',
+            labelPosition='top',
+            min=0,
+            max=120,
+            style={
+                'margin-bottom': '5%',
+                'margin-top': '5%'},
+            showCurrentValue=True,
+            units="[°C]",
+            scale={'start': 0, 'interval':10, 'custom': {setpoint: 'Referanse'}} 
+            )
+    ]),
+
+    html.Div([
+        daq.Gauge(
+            id='Aktive-sløyfer',
+            label="Default",
+            color={"gradient":True,"ranges":{"green":[2,2],"yellow":[1,1],"red":[0,0]}},
+            value=tilkobledeSløyfer,
+            max=2,
+            min=0,
         )
-]),
+    
+    ]),
 
-html.Div([
-    daq.Gauge(
-        id='Aktive-sløyfer',
-        label="Default",
-        color={"gradient":True,"ranges":{"green":[2,2],"yellow":[1,1],"red":[0,0]}},
-        value=tilkobledeSløyfer,
-        max=2,
-        min=0,
-    )
- 
-]),
-
-])
+    ])
 
 
 def callbacks(app):
