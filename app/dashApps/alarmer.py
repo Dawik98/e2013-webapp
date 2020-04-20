@@ -80,11 +80,11 @@ def get_alarm_table(time_interval, chosen_sløyfe):
     if (time_interval != "Alle"):
         #get data where temp is <10 or >30
         #query = "SELECT * FROM {0} WHERE {0}.timeReceived > '{1}' AND {0}.deviceType = 'tempSensor' AND ({0}.temperature < {2} OR {0}.temperature > {3} ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range, min_val, max_val)
-        query = "SELECT * FROM {0} WHERE {0}.timeReceived > '{1}' AND {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range, min_val, max_val)
+        query = "SELECT * FROM {0} WHERE {0}.timeReceived > '{1}' AND {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range)
         abnormal_values = read_from_db(chosen_sløyfe, query)
     else:
         #query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < {1} OR {0}.temperature > {2} ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, min_val, max_val)
-        query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range, min_val, max_val)
+        query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range)
         abnormal_values = read_from_db(chosen_sløyfe, query)
 
     table_header = [html.Thead(html.Tr([html.Th("Tid"), html.Th("Enhetens plassering"), html.Th("Enhetens Eui"), html.Th("Verdi"),]))]

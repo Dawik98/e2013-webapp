@@ -87,7 +87,7 @@ def get_navbar_items(chosen_sløyfe):
         dbc.NavLink("Historikk", href="/historikk/{}".format(chosen_sløyfe), external_link=True, id='sløyfe-nav-link'),
         dbc.NavLink("Alarmer", href="/alarmer/{}".format(chosen_sløyfe), external_link=True, id='alarmer-nav-link'),
         dbc.NavLink("Innstillinger", href="/innstillinger/{}".format(chosen_sløyfe), external_link=True, id='innstillinger-nav-link'),
-        dbc.NavLink("Logg ut", href="/logout", external_link=True, id='logout-nav-link'),
+        dbc.NavLink("Logg ut", href="/logout", external_link=True, id='logout-nav-link', className='ml-5'),
         ]
 
     return dbc.Nav(navbar_items, className="mr-auto", navbar=True,)

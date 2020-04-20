@@ -32,7 +32,6 @@ def createServer():
     from mqttCommunication import connect_mosquitto
     connect_mosquitto(server)
 
-
     # legg til dashboard apper
     from dashApps.home import layout as layout_home
     from dashApps.home import callbacks as callbacks_home
