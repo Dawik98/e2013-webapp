@@ -63,12 +63,11 @@ layout = html.Div([
             min=0,
         )
     
-    ]),
-
-    ])
+    ]), ])
 
 
 def callbacks(app):
+    layout_callbacks(app)
     
     @app.callback([Output('DB-indicator', 'label'),
                     Output('DB-indicator', 'value'),
