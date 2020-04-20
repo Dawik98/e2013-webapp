@@ -55,14 +55,12 @@ def get_site_title(chosen_sløyfe):
     site_title = html.Div(html.H1("Historisk graf for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
     return site_title
 
-############ NB get_sløyfer MÅ LEGGES INN TIL SLUTT!!!!!!#### Trenger først data til søyfene i db og settings fil.
+
 def site_refreshed ():
     til_dato = datetime.now()
     fra_dato= til_dato + relativedelta(months=-1)
     historiskData={}
-    #sløyfer=['heatTrace1']
     sløyfer=get_sløyfer()
-    print(sløyfer)
     for i in sløyfer:
         historiskData[i] = update_historiskData(i)
     return historiskData, til_dato, fra_dato
