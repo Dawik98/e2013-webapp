@@ -8,27 +8,3 @@ Status code: 404
 {"code":"NotFound","message":"Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: 92d17384-9e0d-4918-8122-126411b0e19b, Request URI: /apps/4d629cad-2fb0-4b4c-aaab-86d3f9ccc3fd/services/8fa78f5a-66f1-4500-98b6-11dfa75cd6cc/partitions/8ad8dd32-3bb8-4c0a-8ded-b69f3faa8460/replicas/132294167401669560s, RequestStats: \r\nRequestStartTime: 2020-03-23T16:26:19.2257122Z, RequestEndTime: 2020-03-23T16:26:19.2357378Z,  Number of regions attempted:1\r\nResponseTime: 2020-03-23T16:26:19.2357378Z, StoreResult: StorePhysicalAddress: rntbd://10.0.0.31:11300/apps/4d629cad-2fb0-4b4c-aaab-86d3f9ccc3fd/services/8fa78f5a-66f1-4500-98b6-11dfa75cd6cc/partitions/8ad8dd32-3bb8-4c0a-8ded-b69f3faa8460/replicas/132294167401669560s, LSN: 27, GlobalCommittedLsn: 27, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#27, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\nResponseTime: 2020-03-23T16:26:19.2357378Z, StoreResult: StorePhysicalAddress: rntbd://10.0.0.28:11000/apps/4d629cad-2fb0-4b4c-aaab-86d3f9ccc3fd/services/8fa78f5a-66f1-4500-98b6-11dfa75cd6cc/partitions/8ad8dd32-3bb8-4c0a-8ded-b69f3faa8460/replicas/132291274128854393s, LSN: 27, GlobalCommittedLsn: 27, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#27, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.10.0"}
 Status code: 404
 {"code":"NotFound","message":"Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: c2f3b164-0a27-4e51-a550-a131ef16973d, Request URI: /apps/4d629cad-2fb0-4b4c-aaab-86d3f9ccc3fd/services/8fa78f5a-66f1-4500-98b6-11dfa75cd6cc/partitions/8ad8dd32-3bb8-4c0a-8ded-b69f3faa8460/replicas/132291274128854393s, RequestStats: \r\nRequestStartTime: 2020-03-23T16:26:21.0911562Z, RequestEndTime: 2020-03-23T16:26:21.0911562Z,  Number of regions attempted:1\r\nResponseTime: 2020-03-23T16:26:21.0911562Z, StoreResult: StorePhysicalAddress: rntbd://10.0.0.28:11000/apps/4d629cad-2fb0-4b4c-aaab-86d3f9ccc3fd/services/8fa78f5a-66f1-4500-98b6-11dfa75cd6cc/partitions/8ad8dd32-3bb8-4c0a-8ded-b69f3faa8460/replicas/132291274128854393s, LSN: 27, GlobalCommittedLsn: 27, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#27, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\nResponseTime: 2020-03-23T16:26:21.0911562Z, StoreResult: StorePhysicalAddress: rntbd://10.0.0.27:11300/apps/4d629cad-2fb0-4b4c-aaab-86d3f9ccc3fd/services/8fa78f5a-66f1-4500-98b6-11dfa75cd6cc/partitions/8ad8dd32-3bb8-4c0a-8ded-b69f3faa8460/replicas/132292322760752903s, LSN: 27, GlobalCommittedLsn: 27, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#27, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.10.0"}
-Status code: 400
-{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: ad7acda1-c1cb-477b-b646-a51038f3112f, Microsoft.Azure.Documents.Common/2.10.0"}
-Status code: 400
-{"code":"BadRequest","message":"Message: {\"errors\":[{\"severity\":\"Error\",\"location\":{\"start\":12,\"end\":13},\"code\":\"SC1001\",\"message\":\"Syntax error, incorrect syntax near '*'.\"}]}\r\nActivityId: 783ce5f1-0e78-444d-a234-5fb624675b9e, Microsoft.Azure.Documents.Common/2.10.0"}
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence
-min() arg is an empty sequence

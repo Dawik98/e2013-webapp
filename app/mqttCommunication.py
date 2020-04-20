@@ -50,6 +50,7 @@ def claimMeterdata(devicePlacement):
     # Kjør while-løkke så lenge siste pakketype er ulik "powerData" || eller pakken tilhører en annen heat trace sløyfe || eller siste mottatte pakke er eldre enn
     # starttidspunktet til denne løkken || og det er gjennomført inntil 5 forsøk.
     while (((packetData['messageType'] != 'powerData') or (packetData['devicePlacement'] != devicePlacement) or (timeOslo < startTime)) and (attempts < 5)):
+        print("packetDate['messageType']: {}, packetDate['devicePlacement']: {}, timeOslo: {}, startTime: {}".format(packetData['messageType'], packetData['devicePlacement'], timeOslo, startTime))
         mqtt.publish('powerSwitch', bytes([4, 2, 0])) # Pakke sendes til Mosquitto MQTT Broker, videre til Node-Red og til slutt til målereléet.
         attempts += 1 # Øker verdien til forsøkstelleren.
         print("Meterdata request were sent. This is the {}. attempt.".format(attempts))

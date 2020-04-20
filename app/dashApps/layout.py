@@ -10,16 +10,6 @@ import dash_bootstrap_components as dbc
 import json
 from itertools import zip_longest
 
-# kopiert fra innstillinger
-#def get_sløyfer():
-#    sløyfer = []
-#    with open('app/settings.txt') as json_file:
-#        data = json.load(json_file)
-#        for key, value in data.items():
-#            sløyfer.append(key)
-#
-#    return sløyfer
-
 def make_remove_sløyfe_buttons():
     """
     make_remove_sløyfe_buttons lager 20 slettknapper med hver sin unik ID som skal brukes til å kunne slette sløyfer. 
