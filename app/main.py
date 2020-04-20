@@ -1,19 +1,23 @@
 from flask import Flask
 from flask_mqtt import Mqtt
 import dash
+import flask_login
 import dash_bootstrap_components as dbc
-
 import logging
-
+from getUsers import get_users
+from models import User, login_manager
 import sys
+
+
 sys.path.append("./dashApps")
 
-
 def createServer():
-
     server = Flask(__name__)
-
     server.config['SECRET_KEY']='019a82e56daaa961957770fc73e383e4'
+
+    #_Initialiserer login manager
+    login_manager.init_app(server)
+    login_manager.login_view='app.login'
 
     # setup mqtt for mosquitto on vm
     server.config['MQTT_BROKER_URL'] = '13.74.42.218'
@@ -28,10 +32,11 @@ def createServer():
     from mqttCommunication import connect_mosquitto
     connect_mosquitto(server)
 
+
     # legg til dashboard apper
     from dashApps.home import layout as layout_home
     from dashApps.home import callbacks as callbacks_home
-    addDashApp(server, '/', 'Home', layout_home, callbacks_home)
+    addDashApp(server, '/home/', 'Home', layout_home, callbacks_home)
 
     from dashApps.sloyfer import layout as layout_sloyfer
     from dashApps.sloyfer import callbacks as callbacks_sloyfer
@@ -52,10 +57,17 @@ def createServer():
 
 
     from flaskApp import app
+
+    
     server.register_blueprint(app)
 
     return server
 
+#Funksjon som beskytter dashappene med at vi krever innlognings status.     
+def _protect_dashviews(dashapp):
+    for view_func in dashapp.server.view_functions:
+        if view_func.startswith(dashapp.config.url_base_pathname):
+            dashapp.server.view_functions[view_func] = flask_login.login_required(dashapp.server.view_functions[view_func])
 
 def addDashApp(server, path, title, layout, callbacks):
 
@@ -94,12 +106,16 @@ def addDashApp(server, path, title, layout, callbacks):
                         #external_stylesheets=external_stylesheets)
                         external_stylesheets=[dbc.themes.SANDSTONE, font_awesome_stylesheets],
                         suppress_callback_exceptions=True)
+                        
 
     
     with server.app_context():
         dashApp.title = title
         dashApp.layout = layout
         callbacks(dashApp)
+    
+    #Beskytter dashappene (dashboardet) med innloggning
+    _protect_dashviews(dashApp)
 
 if __name__ == '__main__':
 
