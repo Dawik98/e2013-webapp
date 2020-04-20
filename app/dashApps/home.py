@@ -32,15 +32,7 @@ layout = html.Div([
             html.H1("Home"),
         ]
         )#Div
-    ),# Container
-html.Div([
-    html.Label('Sløyfe valg'),
-    dcc.Dropdown(
-        id='sløyfe-valg',
-        options=[{'label': s,'value': s} for s in sløyfer_dict.keys()],
-        value='Sløyfe 1'
-    ),  
-]),
+    ),
 
     html.Div([
     daq.Indicator(

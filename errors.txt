@@ -1262,6 +1262,12 @@ min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
+<<<<<<< HEAD
 =======
 >>>>>>> 48df53858f813d9894232ed67869e7b53a019a82
 >>>>>>> d8741c1cf8e77b31b2adea9db6008a537c37963a
+=======
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+>>>>>>> 9a1fc628042e0376cdd1dda191479462c397db90
