@@ -1,5 +1,6 @@
 from flask_login import UserMixin, LoginManager
 from getUsers import get_users
+import json
 
 login_manager=LoginManager()
 
@@ -8,7 +9,14 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def user_loader(email):
-    users=get_users()
+    
+    #Laster brukere fra tekst fil.
+    from main import usersFile
+    users={}
+    #Denne kjøres hele tiden, laster derfor brukere inn fra fil, i stedet for database query.
+    #Slik programmet kjører bedre
+    with open(usersFile) as json_file:
+        users = json.load(json_file)
     if email not in users:
         print("Email not in users")
         return

@@ -6,10 +6,15 @@ import dash_bootstrap_components as dbc
 import logging
 from getUsers import get_users
 from models import User, login_manager
+import json
 import sys
 
 
 sys.path.append("./dashApps")
+
+# Velges avhengig av om appen kjøres lokalt eller i Azure
+#usersFile = 'users.txt' # Azure
+usersFile = 'app/users.txt' # Lokalt
 
 def createServer():
     server = Flask(__name__)
@@ -18,6 +23,10 @@ def createServer():
     #_Initialiserer login manager
     login_manager.init_app(server)
     login_manager.login_view='app.login'
+    users=get_users()
+
+    with open(usersFile, 'r+') as json_file:
+        json.dump(users, json_file)
 
     # setup mqtt for mosquitto on vm
     server.config['MQTT_BROKER_URL'] = '13.74.42.218'

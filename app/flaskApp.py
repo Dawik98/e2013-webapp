@@ -7,9 +7,13 @@ from flask_login import current_user, logout_user, login_required, login_user
 from cosmosDB import read_from_db
 from mqttCommunication import claimMeterdata
 from models import User, login_manager
+from werkzeug.security import check_password_hash
+import json
     
 
 import json, os, io
+
+
 app=Blueprint('app', __name__)
 
 @app.route('/')
@@ -19,14 +23,18 @@ def Index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        print("authenticated?")
+        print("authenticated")
         return redirect("/home/")
     form = LoginForm()
     if form.validate_on_submit():
+        from main import usersFile
         users=get_users()
-        print(users[form.email.data]["password"])
+        with open(usersFile,'r+') as json_file:
+            json_file.seek(0)
+            json.dump(users, json_file)
+
         email = request.form.get('email')
-        if form.password.data == users[form.email.data]["password"]:
+        if check_password_hash((users[form.email.data]["password"]), form.password.data):
             user = User()
             user.id = email
             print("Authenitcating user")
