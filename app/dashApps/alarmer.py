@@ -129,7 +129,7 @@ layout = html.Div([
         dbc.Row(html.Div(id='table', className='tableFixHead')),
         dbc.Row([dbc.Col(label_dropdown, width='auto'), dbc.Col(dropdown), dbc.Col(confirm_button)], justify='start', no_gutters=True),
 
-    ]),# Container
+    ], id='main-container'),# Container
     ])# Div
 
 

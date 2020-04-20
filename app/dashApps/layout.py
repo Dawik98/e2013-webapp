@@ -184,10 +184,15 @@ def callbacks(app):
             add_sløyfe(new_sløyfe_name)
             return choose_sløyfe_dropdown(main_url, chosen_sløyfe)
         elif 'delete' in triggered_by:
+            from mqttCommunication import deleteController
             main_url, chosen_sløyfe = split_url(pathname_state)
             sløyfe = remove_buttons_ids[triggered_by]
             print("Removing sløyfe {}".format(sløyfe))
             remove_sløyfe(sløyfe)
+            try:
+                deleteController(sløyfe)
+            except KeyError:
+                print('Deleting controller... Controller does not exsist')
             return choose_sløyfe_dropdown(main_url, chosen_sløyfe)
         else:
             print("Prevent update")
@@ -315,6 +320,20 @@ def callbacks(app):
     def display_confirm_buttons(click_cancel_add, click_confirm_add):
         if click_cancel_add or click_confirm_add:
             return ""
+    
+    @app.callback(
+        Output('main-container', 'children'),
+        [Input('url', 'pathname')]
+    )
+    def got_sløyfe(pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        print("chosen sløyfe = '{}'".format(chosen_sløyfe))
+
+        if chosen_sløyfe == '':
+            notification = html.Div([html.H2(["Velg en sløyfe for å fortsette!", html.I(className="fas fa-arrow-up ml-3 mr-5")])], className="text-right text-info")
+            return notification
+        else:
+            raise PreventUpdate
 
 
 #------------------------------- Sløyfe valg funksjoner -------------------------------
@@ -329,7 +348,7 @@ def get_sløyfe_from_pathname(pathname):
 
 def update_sløyfe_callback(app, item_list):
     # item_list skal inneholde lister med id til items som er avhengig av valgt sløyfe og funksjonen som returnerer den item
-    # hver elemnt i listen skal være liste: [id, func]...
+    # hver elemnt i listen skal være en liste: [id, func]...
     
     callback_outputs = []
 

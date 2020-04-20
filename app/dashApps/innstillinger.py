@@ -294,7 +294,11 @@ def controller_settings(chosen_sløyfe):
     """
     All innstilling av regulator i layout-en
     """
-    controller = get_controller(chosen_sløyfe)
+    try:
+        controller = get_controller(chosen_sløyfe)
+    except:
+        return ""
+
     if (controller.run_actuation == True):
         auto = [True]
     else:
@@ -352,7 +356,7 @@ def controller_settings(chosen_sløyfe):
             dbc.Col(html.P("Dutycycle [min]:", id='dutycycle-label'), width=6),
             dbc.Col(dbc.Input(type='number', step=0.1, id='dutycycle-input', value=controller.get_dutycycle()), width=2),
             dbc.Col(confirm_controller_buttons('dutycycle-confirm-button', 'dutycycle-confirm-button-collapse')),
-        ], form=True),
+        ], form=True, className='mb-5'),
     ])
     return controller_settings
 
@@ -373,7 +377,7 @@ def get_alarm_settings_inputs(chosen_sløyfe):
 
 def get_alarm_settings(chosen_sløyfe):
     alarm_settings_div = [
-        dbc.Row([html.H2("Alarm innstillinger")], className='mt-5'),
+        dbc.Row([html.H2("Alarm innstillinger")]),
         html.Div(get_alarm_settings_inputs(chosen_sløyfe), id='alarm-settings'),
         dbc.Row(
             dbc.Collapse(dbc.Button("Oppdater alarm innstillinger", id='button-alarm-confirm'), id='collapse-alarm-confirm', is_open=False)
@@ -400,11 +404,11 @@ def serve_layout():
                     dbc.Row([confirm_buttons()]),
                 ]),
                 dbc.Col([
-                    html.Div(id='controller-settings-div'),
+                    html.Div(html.Div(id='controller-settings-div'), id='controller-settings'),
                     html.Div(id='alarm-settings-div'),
                 ])
             ]),
-        ]),# Container
+        ], id='main-container'),# Container
         dcc.Interval(id='interval-component', interval=2000, n_intervals=0),
     ])# Div
     return layout
@@ -514,7 +518,7 @@ def callbacks(app):
         #print(inputs)
         return inputs
 
-    # Oppdater tabellen
+    # Oppdater tabellen med enheter
     @app.callback(
         Output(component_id='table', component_property='children'),
         [Input(component_id='confirm-add-device-button', component_property='n_clicks')]+delete_buttons_inputs(),
@@ -529,6 +533,7 @@ def callbacks(app):
         inputs = ctx.inputs
 
         pathname = states['url.pathname']
+        device_type = states['add-type.label']
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
 
         triggered_button = ctx.triggered[0]['prop_id'].split('.')[0]
@@ -542,20 +547,87 @@ def callbacks(app):
             return get_settings_table(chosen_sløyfe)
         elif triggered_button == 'confirm-add-device-button':
             add_device(chosen_sløyfe, device_eui, device_type)
+            if device_type == 'Power Switch':
+                from mqttCommunication import createController
+                createController(chosen_sløyfe)
             return get_settings_table(chosen_sløyfe)
         elif triggered_button != 'confirm-add-device-button':
+            devices = get_devices()
             eui = remove_buttons_ids[triggered_button]
+            if 'powerSwitch' in  devices[eui]:
+                from mqttCommunication import deleteController
+                deleteController(chosen_sløyfe)
+
             print(eui)
             remove_device(chosen_sløyfe, eui)
             return get_settings_table(chosen_sløyfe)
 
-        print("states")
-        print(ctx.states)
-        print("inputs")
-        print(ctx.inputs)
+       # print("states")
+       # print(ctx.states)
+       # print("inputs")
+       # print(ctx.inputs)
 
-        print("Args:")
-        print(args)
+       # print("Args:")
+       # print(args)
+
+    # Last inn innstillinger på nytt når en regulator blir lagt til
+    @app.callback(
+        Output('controller-settings', 'children'),
+        [#Input('url', 'pathname'),
+        Input('confirm-add-device-button', 'n_clicks')]+delete_buttons_inputs(),
+        [State(component_id='add-type', component_property='label'),
+        State('url', 'pathname')],
+        )
+    def update_controller_settings_div(*args):
+        ctx = dash.callback_context
+        states = ctx.states
+        inputs = ctx.inputs
+
+        triggered_by = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        pathname = states['url.pathname']
+        chosen_sløyfe=get_sløyfe_from_pathname(pathname)
+
+            
+        if triggered_by == None or ctx.triggered[0]['value'] == None:
+            raise PreventUpdate
+        elif triggered_by == 'confirm-add-device-button' and states['add-type.label'] == 'Power Switch':
+            from time import sleep
+            sleep(0.5)
+            return controller_settings(chosen_sløyfe)
+        elif 'delete' in triggered_by and 'powerSwitch' in get_devices()[remove_buttons_ids[triggered_by]]:
+            from time import sleep
+            sleep(0.5)
+            print("updating_settings_window")
+            return controller_settings(chosen_sløyfe)
+            
+    # Disable power switch valget når det allerede finnes en regulator
+    @app.callback(
+        Output('powerSwitch', 'disabled'),
+        [Input('add-device-button', 'n_clicks')],
+        [State('url', 'pathname')])
+    def disable_power_switch_choice(click, pathname):
+        ctx = dash.callback_context
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        settings = get_settings()
+        devices = settings[chosen_sløyfe]['devices']
+
+        regulator_in_sløyfe = False
+        for device in devices:
+            print("devices i sløyfe: {}".format(device.values()))
+            if 'Power Switch' in device.values():
+                print("Regulator i sløyfe!!!")
+                regulator_in_sløyfe =  True
+            else:
+                regulator_in_sløyfe =  False
+
+        if  ctx.triggered[0]['value'] == None:
+            raise PreventUpdate
+        elif regulator_in_sløyfe:
+            return True
+        else:
+            return False
+        
 
 
     # dummy update
@@ -623,7 +695,10 @@ def callbacks(app):
     def display_setpoint_confirm(setpoint_input, button_clicks, pathname):
         global prew_setpoint_confirm_count                                  # Definerer global tellevariabel
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)                  # Bestemmer valgt sløyfe ut ifra pathname
-        controller = get_controller(chosen_sløyfe)                          # Velger regulator avhengig av valgt sløyfe
+        try:
+            controller = get_controller(chosen_sløyfe)                      # Velger regulator avhengig av valgt sløyfe
+        except:
+            raise PreventUpdate
         if (button_clicks == None):                                         # button_clicks er None etter at siden lastes inn på nytt
             prew_setpoint_confirm_count = 0                                 # Resetter tellevariabelen
         elif (button_clicks > prew_setpoint_confirm_count):                 # Dersom knappen er trykt bekreftes setpunktet:
@@ -650,7 +725,10 @@ def callbacks(app):
     def display_Kp_confirm(Kp_input, button_clicks, pathname):
         global prew_Kp_confirm_count                                        # Definerer global tellevariabel
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)                  # Bestemmer valgt sløyfe ut ifra pathname
-        controller = get_controller(chosen_sløyfe)                          # Velger regulator avhengig av valgt sløyfe
+        try:
+            controller = get_controller(chosen_sløyfe)                      # Velger regulator avhengig av valgt sløyfe
+        except:
+            raise PreventUpdate                  
         if (button_clicks == None):                                         # button_clicks er None etter at siden lastes inn på nytt
             prew_Kp_confirm_count = 0                                       # Resetter tellevariabelen
         elif (button_clicks > prew_Kp_confirm_count):                       # Dersom knappen er trykt bekreftes ny forsterkningsfaktor, Kp:
@@ -677,7 +755,10 @@ def callbacks(app):
     def display_Ti_confirm(Ti_input, button_clicks, pathname):
         global prew_Ti_confirm_count                                        # Definerer global tellevariabel
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)                  # Bestemmer valgt sløyfe ut ifra pathname
-        controller = get_controller(chosen_sløyfe)                          # Velger regulator avhengig av valgt sløyfe
+        try:
+            controller = get_controller(chosen_sløyfe)                      # Velger regulator avhengig av valgt sløyfe
+        except:
+            raise PreventUpdate                         
         if (button_clicks == None):                                         # button_clicks er None etter at siden lastes inn på nytt
             prew_Ti_confirm_count = 0                                       # Resetter tellevariabelen
         elif (button_clicks > prew_Ti_confirm_count):                       # Dersom knappen er trykt bekreftes ny integraltid, Ti:
@@ -704,7 +785,10 @@ def callbacks(app):
     def display_dutycycle_confirm(dutycycle_input, button_clicks, pathname):
         global prew_dutycycle_confirm_count                                 # Definerer global tellevariabel
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)                  # Bestemmer valgt sløyfe ut ifra pathname
-        controller = get_controller(chosen_sløyfe)                          # Velger regulator avhengig av valgt sløyfe
+        try:
+            controller = get_controller(chosen_sløyfe)                      # Velger regulator avhengig av valgt sløyfe
+        except:
+            raise PreventUpdate                    
         if (button_clicks == None):                                         # button_clicks er None etter at siden lastes inn på nytt
             prew_dutycycle_confirm_count = 0                                # Resetter tellevariabelen
         elif (button_clicks > prew_dutycycle_confirm_count):                # Dersom knappen er trykt bekreftes ny syklustid:
@@ -735,7 +819,10 @@ def callbacks(app):
         else:
             global prew_actuation_confirm_count                                     # Definerer global tellevariabel
             chosen_sløyfe = get_sløyfe_from_pathname(pathname)                      # Bestemmer valgt sløyfe ut ifra pathname
-            controller = get_controller(chosen_sløyfe)                              # Velger regulator avhengig av valgt sløyfe
+            try:
+                controller = get_controller(chosen_sløyfe)                              # Velger regulator avhengig av valgt sløyfe
+            except:
+                raise PreventUpdate                                                   
             if (button_clicks == None):                                             # button_clicks er None etter at siden lastes inn på nytt
                 prew_actuation_confirm_count = 0                                    # Resetter tellevariabelen
             elif (button_clicks > prew_actuation_confirm_count):                    # Dersom knappen er trykt bekreftes nytt manuelt pådrag:
@@ -763,7 +850,10 @@ def callbacks(app):
     )
     def enable_disable_manual_actuation(auto_actuation, pathname):
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)              # Bestemmer valgt sløyfe ut ifra pathname
-        controller = get_controller(chosen_sløyfe)                      # Velger regulator avhengig av valgt sløyfe
+        try:
+            controller = get_controller(chosen_sløyfe)                  # Velger regulator avhengig av valgt sløyfe
+        except:
+            raise PreventUpdate                  
         outputState = get_output_state(chosen_sløyfe)[0]                # Henter inn siste loggede relétilstand
         if auto_actuation:                                              # Kontrollerer om automatisk av/på-styring er aktivert
             print("Starting automatic on/off-controlling.")
@@ -818,7 +908,10 @@ def callbacks(app):
     )
     def enable_disable_actuation_input(mode, actuation_input, pathname):
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-        controller = get_controller(chosen_sløyfe)
+        try:
+            controller = get_controller(chosen_sløyfe)
+        except:
+            raise PreventUpdate
         print("Innkommende modus: {}".format(mode))
         if (mode != controller.mode):
             controller.change_mode(mode, actuation_input)
@@ -839,7 +932,10 @@ def callbacks(app):
     )
     def update_manual_actuation_in_background(n_intervals, pathname):
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-        controller = get_controller(chosen_sløyfe)
+        try:
+            controller = get_controller(chosen_sløyfe)
+        except:
+            raise PreventUpdate
         if (controller.mode == 'Auto'):
             return controller.get_u_tot()
         else:

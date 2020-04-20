@@ -110,27 +110,41 @@ def deactivateHeatTrace(devicePlacement):
     else:
         return ("Deaktiveringsmelding ble sendt til gateway. Bekreftelse ble mottatt etter {}. forsøk.".format(attempts))
 
-def createControllers(devicePlacement):
+def createController(devicePlacement):
+    global controller
     controller[devicePlacement] = PI_controller(devicePlacement, activateHeatTrace, deactivateHeatTrace)
-    return controller
+    outputState[devicePlacement] = [False, datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo'))]
+    print("making new controller")
+
+def deleteController(devicePlacement):
+    global controller
+    print("deleting controller from: {}".format(devicePlacement))
+    del controller[devicePlacement]
 
 def get_controller(devicePlacement):
     global controller
+    print("Got controllers: {}".format(controller))
     return controller[devicePlacement]
+
 
 def get_output_state(devicePlacement):
     global outputState
     return outputState[devicePlacement]
 
-def Initialisation():
-    from dashApps.innstillinger import get_sløyfer
+def initialisation():
+    from dashApps.innstillinger import get_sløyfer, get_settings, get_devices
     global controller, outputState
+    controller = {}
+    outputState = {}
+
+    settings = get_settings()
+
     for sløyfe in get_sløyfer():
-        controller[sløyfe] = PI_controller(sløyfe, activateHeatTrace, deactivateHeatTrace)
-        outputState[sløyfe] = [False, datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo'))]
+        for device in settings[sløyfe]['devices']:
+            if 'Power Switch' in device.values():
+                controller[sløyfe] = PI_controller(sløyfe, activateHeatTrace, deactivateHeatTrace)
+                outputState[sløyfe] = [False, datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo'))]
 
 packetData = {}
 timeOslo = datetime.time()
-controller = {}
-outputState = {}
-Initialisation()
+initialisation()

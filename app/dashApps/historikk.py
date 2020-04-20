@@ -115,7 +115,7 @@ dbc.Container([
             html.Div([dcc.Graph(id="my-graph")]),
         ],width={'size':12,'order':1}),
     ],no_gutters=True)
-]),
+], id='main-container'),
 #### Tomme divs for callbacks og datalagring ########
 #Bruker skjult input felt, som er avhenig av en verdi som blir oppdatert
 #sammtidig som historisk data, til å trigge loading icon.
