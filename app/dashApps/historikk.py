@@ -18,7 +18,7 @@ from historie_data import update_historiskData
 #import standard layout
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
-from dashApps.innstillinger import get_sløyfer
+from dashApps.innstillinger import get_sløyfer, settingsFile, print_settings, get_settings
 
 #knytter sammen string som brukes til listene med data, og synlig tekst i meny
 målinger_dict={ "Temperatur" : "temperature",
@@ -154,8 +154,38 @@ def callbacks(app):
             historiskData, til_dato, fra_dato = site_refreshed()
             til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
             fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
+            #String i tom div som brukes til å triggre loading icon
             a="Spinn!"
             return historiskData, til_dato, fra_dato,a
+    #Laster inn ny data i datofeltet som kjøres når siden lastes inn
+    @app.callback(Output('måle-valg', 'options'),
+                    [Input('trigger-refresh', 'n_clicks')],
+                    [State(component_id='url', component_property='pathname'),
+                    ])
+    #Funksjon for å oppdatere informasjon når siden lastes
+    def update_refresh(n, url):
+        #Finner sløyfevalg
+        ctx = dash.callback_context
+        states = ctx.states
+        pathname = states['url.pathname']
+        sløyfe_valg = get_sløyfe_from_pathname(pathname)
+
+        #Tømmer målevalg for rele dersom sløyfen ikke har et rele.
+        settings=get_settings()
+        nb_items=len(settings[sløyfe_valg]['devices'])
+        devices=[]
+        for i in range(0, nb_items):
+            devices.append(settings[sløyfe_valg]['devices'][i]['deviceType'])
+        if 'Power Switch' not in devices:
+            print("Ingen powerswitch")
+            #Returnerer bare temperatur valg
+            options=[{'label': "Temperatur",'value': "temperature"}]
+        else:
+            options=[{'label': s,'value':s} for s in målinger_dict.keys()] 
+        return options
+
+
+
     #Flytt minne til data som plottes/ vises
     @app.callback(
             [Output('historisk-data', 'children'),

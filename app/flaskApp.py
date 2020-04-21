@@ -9,9 +9,7 @@ from mqttCommunication import claimMeterdata
 from models import User, login_manager
 from emails import send_email_newUser
 from werkzeug.security import check_password_hash, generate_password_hash
-import json
     
-
 import json, os, io
 
 
