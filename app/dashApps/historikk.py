@@ -154,6 +154,7 @@ def callbacks(app):
             historiskData, til_dato, fra_dato = site_refreshed()
             til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
             fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
+            #String i tom div som brukes til å triggre loading icon
             a="Spinn!"
             return historiskData, til_dato, fra_dato,a
     #Flytt minne til data som plottes/ vises

@@ -16,6 +16,7 @@ from collections import deque
 from cosmosDB import read_from_db
 from opp_temp import update_tempData
 from opp_meter import update_meterData
+from dashApps.innstillinger import settingsFile, print_settings, get_settings
 
 #import standard layout
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
@@ -94,7 +95,7 @@ dbc.Container([
 dbc.Container([
     dbc.Row([
         dbc.Col([
-            html.H5('Måle valg, relé'),
+            html.H5((html.Div(id='Overskrift-Graf'))),
             dcc.Dropdown(
                     id='måle-valg',
                     options=[{'label': s,'value': s} for s in målinger_dict.keys()],
@@ -130,16 +131,42 @@ def callbacks(app):
     layout_callbacks(app)
     update_sløyfe_callback(app, [['site-title-div', get_site_title]])
     #Laster inn ny data i datofeltet som kjøres når siden lastes inn
-    @app.callback(Output('fra_Dato', 'value'),
-                    [Input('refresh-dato', 'n_clicks'),
+    @app.callback([Output('fra_Dato', 'value'),
+                    Output('måle-valg', 'options'),
+                    Output('Overskrift-Graf', 'children')],
+                    [Input('refresh-dato', 'n_clicks')],
+                    [State(component_id='url', component_property='pathname'),
                     ])
-    #Funksjon for å finne nåtid
-    def update_refresh(n):
+    #Funksjon for å oppdatere informasjon når siden lastes
+    def update_refresh(n, url):
+        #Finner sløyfevalg
+        ctx = dash.callback_context
+        states = ctx.states
+        pathname = states['url.pathname']
+        sløyfe_valg = get_sløyfe_from_pathname(pathname)
+
+        #Finner nå tid som settes inn i datofelt
         til_dato_UTC = datetime.now()
         til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
         fra_dato= til_dato + relativedelta(hours=-6)
         fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
-        return fra_dato
+
+        #Tømmer målevalg for rele dersom sløyfen ikke har et rele.
+        settings=get_settings()
+        nb_items=len(settings[sløyfe_valg]['devices'])
+        devices=[]
+        for i in range(0, nb_items):
+            devices.append(settings[sløyfe_valg]['devices'][i]['deviceType'])
+        print(devices)
+        if 'Power Switch' not in devices:
+            print("Ingen powerswitch")
+            #Returnerer tom dropdown meny
+            options={'label': "",'value': ""}
+            overskrift = "Ingen målerele på denne sløyfen!"
+        else:
+            options=[{'label': s,'value': s} for s in målinger_dict.keys()] 
+            overskrift= "Måle valg, relé"
+        return fra_dato, options, overskrift
 
     #Live temperatur data
     @app.callback(Output('live-graph', 'figure'),
@@ -157,6 +184,7 @@ def callbacks(app):
             states = ctx.states
             pathname = states['url.pathname']
             sløyfe_valg = get_sløyfe_from_pathname(pathname)
+
             #Dersom datofletet er tomt returnerer vi tom graf.
             #Hindrer at siden fryser
             if fra_dato == "":
