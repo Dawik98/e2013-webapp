@@ -163,20 +163,23 @@ def callbacks(app):
             else:
                 #henter inn ny data fra database
                 ts_UTC, temp = update_tempData(sløyfe_valg, fra_dato, til_dato)
-                #tilordner X og Y på graf
-                X=ts_UTC
-                Y=temp
-                data = plotly.graph_objs.Scatter(
-                        y=Y,
-                        x=X,
-                        name='Scatter',
-                        mode= 'lines+markers'
-                        )
-                return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                            yaxis=dict(range=[0,120],title='Temperatur [°C]'),
-                                                            title='Temperatur Måling',
-                                                            #margin={'l':300,'r':100,'t':5,'b':50},
-                                                           )}
+                if not temp:
+                    return {'data': [], 'layout': {}}
+                else:
+                    #tilordner X og Y på graf
+                    X=ts_UTC
+                    Y=temp
+                    data = plotly.graph_objs.Scatter(
+                            y=Y,
+                            x=X,
+                            name='Scatter',
+                            mode= 'lines+markers'
+                            )
+                    return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
+                                                                yaxis=dict(range=[0,120],title='Temperatur [°C]'),
+                                                                title='Temperatur Måling',
+                                                                #margin={'l':300,'r':100,'t':5,'b':50},
+                                                            )}
         #Ved feilmelding skrives det til error txt fil.                                                 
         except Exception as e:
             with open('errors.txt','a') as f:
@@ -207,19 +210,22 @@ def callbacks(app):
                 #Tilorder data til x og y etter målevalg
                 X=meterData["timeReceived"]
                 Y=meterData[målinger_dict[måle_valg]]
-                #Returnerer graf med data og layout
-                data = plotly.graph_objs.Scatter(
-                        y=Y,
-                        x=X,
-                        name='Scatter',
-                        mode= 'lines+markers'
-                        )  
-                return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                            yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
-                                                                        title=enhet_dict[måle_valg], tickangle=0,),
-                                                            title='Målerelé: {}'.format(måle_valg),
-                                                            #margin={'l':100,'r':100,'t':50,'b':50},
-                                                            )}                                                                                                                                                            
+                if not X:
+                    return {'data': [], 'layout': {}}
+                else:
+                    #Returnerer graf med data og layout
+                    data = plotly.graph_objs.Scatter(
+                            y=Y,
+                            x=X,
+                            name='Scatter',
+                            mode= 'lines+markers'
+                            )  
+                    return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
+                                                                yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
+                                                                            title=enhet_dict[måle_valg], tickangle=0,),
+                                                                title='Målerelé: {}'.format(måle_valg),
+                                                                #margin={'l':100,'r':100,'t':50,'b':50},
+                                                                )}                                                                                                                                                            
         except Exception as e:
             with open('errors.txt','a') as f:
                 f.write(str(e))
