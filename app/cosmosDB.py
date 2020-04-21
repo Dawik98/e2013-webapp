@@ -34,7 +34,7 @@ def write_to_db(container_name, data):
     cosmos.CreateItem(collection_link + container_name, data)
     print("Created new Item")
 
-# skulle kanskje hette "query_from_db"
+# skulle kanskje hete "query_from_db"
 def read_from_db(container_name, query):
     try:
         cosmos = connect_to_db()
@@ -44,7 +44,6 @@ def read_from_db(container_name, query):
     except:
         print("Could not read from database")
         return []
-        
         
 
 # new data må inneholde id

@@ -79,15 +79,19 @@ def choose_sløyfe_dropdown(main_url, chosen_sløyfe):
     dropdown = dbc.DropdownMenu(label = label, children=items)
     return dropdown
 
+def get_logout_button():
+    button = dbc.Button("Logg ut", href='/logout', external_link=True, id='logout-nav-link', color='danger', className='ml-3')
+    return button
+
 def get_navbar_items(chosen_sløyfe):
 
     navbar_items = [
-        dbc.NavLink("Home", href="/home/{}".format(chosen_sløyfe), external_link=True),
+        dbc.NavLink("Home", href="/hjem/{}".format(chosen_sløyfe), external_link=True),
         dbc.NavLink("Trend", href="/sløyfer/{}".format(chosen_sløyfe), external_link=True, id='sløyfe-nav-link'),
         dbc.NavLink("Historikk", href="/historikk/{}".format(chosen_sløyfe), external_link=True, id='sløyfe-nav-link'),
         dbc.NavLink("Alarmer", href="/alarmer/{}".format(chosen_sløyfe), external_link=True, id='alarmer-nav-link'),
         dbc.NavLink("Innstillinger", href="/innstillinger/{}".format(chosen_sløyfe), external_link=True, id='innstillinger-nav-link'),
-        dbc.NavLink("Logg ut", href="/logout", external_link=True, id='logout-nav-link'),
+        #dbc.NavLink("Logg ut", href="/logout", external_link=True, id='logout-nav-link', className='ml-5'),
         ]
 
     return dbc.Nav(navbar_items, className="mr-auto", navbar=True,)
@@ -103,6 +107,7 @@ header = html.Div([dcc.Location(id='url', refresh=False), dcc.Location(id='updat
                 navbar=True,
             ),
             html.Div(choose_sløyfe_dropdown('', ''), id='choose-sløyfe'), # kjører choose_sløfe_dropdaown for at callbacks akal ha tilllgang til alle elementer
+            html.Div(get_logout_button()),
         ]),
     className="mb-5",
     color="primary",
@@ -330,7 +335,7 @@ def callbacks(app):
         print("chosen sløyfe = '{}'".format(chosen_sløyfe))
 
         if chosen_sløyfe == '':
-            notification = html.Div([html.H2(["Velg en sløyfe for å fortsette!", html.I(className="fas fa-arrow-up ml-3 mr-5")])], className="text-right text-info")
+            notification = html.Div([html.H2(["Velg en sløyfe for å fortsette!", html.I(className="fas fa-arrow-up ml-3")])], className="text-right text-info", style={'margin-right':'10em'})
             return notification
         else:
             raise PreventUpdate
