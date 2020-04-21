@@ -7,8 +7,9 @@ import logging
 from getUsers import get_users
 from models import User, login_manager
 import json
+import os
 import sys
-
+from flask_mail import Mail
 
 sys.path.append("./dashApps")
 
@@ -19,7 +20,6 @@ usersFile = 'app/users.txt' # Lokalt
 def createServer():
     server = Flask(__name__)
     server.config['SECRET_KEY']='019a82e56daaa961957770fc73e383e4'
-
     #_Initialiserer login manager
     login_manager.init_app(server)
     login_manager.login_view='app.login'
@@ -36,6 +36,23 @@ def createServer():
     server.config['MQTT_PASSWORD'] = 'potet'
     server.config['MQTT_CLIENT_ID'] = "Webb-App"
     server.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
+    # email server
+    server.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    server.config['MAIL_PORT'] = 465
+    server.config['MAIL_USE_TLS'] = False
+    server.config['MAIL_USE_SSL'] = True
+    server.config['MAIL_DEFAULT_SENDER'] = 'bachelorgrupee2013@gmail.com'
+    #Legger brukernavn og passord inn i eviorment variabel. Det er tryggere enn å legge de direkte i source file
+    ##Endres om vi kjører lokalt eller lastet opp i azure ##
+    #Lokalt
+    server.config['MAIL_USERNAME'] = 'bachelorgruppee2013@gmail.com'
+    server.config['MAIL_PASSWORD'] = 'E2013LoRa'
+    # Når den kjøres i azure
+    #server.config['MAIL_USERNAME'] = os.environ.get('bachelorgruppee2013@gmail.com')
+    #server.config['MAIL_PASSWORD'] = os.environ.get('E2013LoRa')
+    
+    from emails import connect_mail
+    connect_mail(server)
 
     # Koble til Mosquitto
     from mqttCommunication import connect_mosquitto

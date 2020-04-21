@@ -7,6 +7,7 @@ from flask_login import current_user, logout_user, login_required, login_user
 from cosmosDB import read_from_db, write_to_db
 from mqttCommunication import claimMeterdata
 from models import User, login_manager
+from emails import send_email_newUser
 from werkzeug.security import check_password_hash, generate_password_hash
 import json
     
@@ -66,6 +67,10 @@ def register():
     if form.validate_on_submit():
         NewUser={"type":"NotApproved", "username":form.username.data, "email":form.email.data, "password":generate_password_hash(form.password.data)}
         write_to_db('validUsers', NewUser)
+        #Sender mail til Admins for å eventuellt godkjenne ny bruker
+        #from main import mail
+        send_email_newUser()
+
         flash(f'Account created for {form.username.data}. Waiting for approval!', 'success')
         return redirect("/login")
     return render_template('register.html', title="Register", form=form)
