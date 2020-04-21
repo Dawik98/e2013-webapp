@@ -23,97 +23,70 @@ setpoint='20'
 tilkobledeSløyfer=2
 AntallSløyfer=3
 
-layout = html.Div([
-    header,
-    dbc.Container(
-        html.Div(className="jumbotron", children =[
-            html.H1("Home"),
-        ]
-        )#Div
-    ),
+def get_home_table():
+    from dashApps.innstillinger import get_sløyfer 
+    from mqttCommunication import controller
+    from cosmosDB import read_from_db
 
-    html.Div([
-    daq.Indicator(
-        id='DB-indicator',
-        label="Connected",
-    )]),
+    sløyfer = get_sløyfer()
 
-    html.Div([
-    daq.Thermometer(
-            id='my-thermometer',
-            labelPosition='top',
-            min=0,
-            max=120,
-            style={
-                'margin-bottom': '5%',
-                'margin-top': '5%'},
-            showCurrentValue=True,
-            units="[°C]",
-            scale={'start': 0, 'interval':10, 'custom': {setpoint: 'Referanse'}} 
-            )
-    ]),
-
-    html.Div([
-        daq.Gauge(
-            id='Aktive-sløyfer',
-            label="Default",
-            color={"gradient":True,"ranges":{"green":[2,2],"yellow":[1,1],"red":[0,0]}},
-            value=tilkobledeSløyfer,
-            max=2,
-            min=0,
-        )
+    table_header = [html.Thead(html.Tr([html.Th("Sløyfe"), html.Th("Siste måling"), html.Th("Avvik"), html.Th("Alarm status")]))]
+    table_rows = []
     
-    ]), ])
+    for sløyfe in sløyfer:
+        
+        # Få tak i siste måling i sløyfen
+        query = "SELECT TOP 1 * FROM {0} WHERE {0}.deviceType = 'tempSensor' ORDER BY {0}.timeReceived DESC".format(sløyfe)
+        last_messurment = read_from_db(sløyfe, query)
+        last_temp = last_messurment[0]['temperature']
+        last_messure_time = last_messurment[0]['timeReceived']
+
+        # Finn avviket
+        try:
+            setpoint = controller[sløyfe].setpoint
+            if setpoint == 0:
+                avvik = "Regulator er ikke aktiv"
+            else:
+                avvik = setpoint - last_temp
+                avvik = '{}°C'.format(avvik)
+        except:
+            avvik = "Fant ingen regulator"
+
+        #Finn alarm status
+        query = "SELECT TOP 1 * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false ORDER BY {0}.timeReceived DESC".format(sløyfe)
+        last_unconfirmed_alarm = read_from_db(sløyfe, query)
+        
+        try:
+            if last_unconfirmed_alarm[0]['timeReceived'] == last_messure_time:
+                alarm_status = html.Div([html.I(className='fas fa-exclamation-circle mr-2', style={'color':'red'}), "Aktiv alarm"])
+            else:
+                alarm_status = html.Div([html.I(className='fas fa-exclamation-circle mr-2', style={'color':'#f4d53c'}), "Ukvitterte alarmer"])
+        except:
+            alarm_status = html.Div([html.I(className='fas fa-check-circle mr-2', style={'color':'#86d01b'}), "Ingen nye alarmer"])
+
+
+        row = html.Tr([html.Td(sløyfe), html.Td('{}°C'.format(last_temp), title=last_messure_time), html.Td(avvik), html.Td(alarm_status)])
+
+        table_rows.append(row)
+        
+    table_body=[html.Tbody(table_rows)]
+    return dbc.Table(table_header+table_body, bordered=True)
+
+def serve_layout():
+    layout = html.Div([
+        header,
+        dbc.Container([
+
+            html.H1("Home"),
+            html.Div(get_home_table(), id='table', className='tableFixHead')
+        ])#container
+    ])
+    return layout
+
+layout = serve_layout
 
 
 def callbacks(app):
-    layout_callbacks(app)   
-    @app.callback([Output('DB-indicator', 'label'),
-                    Output('DB-indicator', 'value'),
-                    Output('DB-indicator', 'color')],
-                    [Input('sløyfe-valg', 'value')])
-
-    def db_connection(x):
-        
-        cosmos = connect_to_db()
-        print(cosmos)
-
-        if cosmos != "":
-            value=True
-            label='connected'
-            color="#32CD32"   
-        else:
-            value=False
-            label='Disconnected'
-            color="#FF0000"
-        return label, value, color
-
-    @app.callback([Output('my-thermometer', 'value'),
-                    Output('my-thermometer','label')],
-                    [Input('sløyfe-valg', 'value')])
-
-    def up_thermometer(sløyfe_valg):
-        antall_målinger=1
-        ts_UTC, temp = update_tempData(antall_målinger, sløyfer_dict[sløyfe_valg])
-        label='Temperatur i {0}'.format(sløyfe_valg)
-        return temp[0], label
-
-    """   
-    @app.callback([Output('Aktive-sløyfer', 'color')],
-                    [Input('sløyfe-valg', 'value')])
-
-    def up_gauge(sløyfer_aktiv):
-        tilkobledeSløyfer=2
-        AntallSløyfer=3
-
-        if tilkobledeSløyfer == AntallSløyfer:
-            color="#32CD32"
-        elif tilkobledeSløyfer < AntallSløyfer:
-            color="#ffff00"
-        elif tilkobledeSløyfer == 0 :
-            color="#FF0000"
-        
-        else: color="#FF0000" 
-
-        return color
-    """
+    layout_callbacks(app)
+    
+    

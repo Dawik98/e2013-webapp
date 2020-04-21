@@ -42,7 +42,7 @@ def login():
                 print("Authenitcating user")
                 #login_user(user)
                 login_user(user, remember=form.remember.data)
-                return redirect("/home/")
+                return redirect("/hjem/")
             else:
                 flash('Login Unsuccessful. Please check username and password', 'danger')
         else:
@@ -62,7 +62,7 @@ def runClaimDataFunction():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect("/home/")
+        return redirect("/hjem/")
     form = RegistrationForm()
     if form.validate_on_submit():
         NewUser={"type":"NotApproved", "username":form.username.data, "email":form.email.data, "password":generate_password_hash(form.password.data)}

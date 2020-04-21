@@ -58,15 +58,14 @@ def createServer():
     from mqttCommunication import connect_mosquitto
     connect_mosquitto(server)
 
-
     # legg til dashboard apper
     from dashApps.home import layout as layout_home
     from dashApps.home import callbacks as callbacks_home
-    addDashApp(server, '/home/', 'Home', layout_home, callbacks_home)
+    addDashApp(server, '/hjem/', 'Hjem', layout_home, callbacks_home)
 
     from dashApps.sloyfer import layout as layout_sloyfer
     from dashApps.sloyfer import callbacks as callbacks_sloyfer
-    addDashApp(server, '/sløyfer/', 'Sløyfer', layout_sloyfer, callbacks_sloyfer)
+    addDashApp(server, '/trend/', 'Trend', layout_sloyfer, callbacks_sloyfer)
     
     from dashApps.historikk import layout as layout_historikk
     from dashApps.historikk import callbacks as callbacks_historikk
