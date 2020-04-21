@@ -157,7 +157,6 @@ def callbacks(app):
         devices=[]
         for i in range(0, nb_items):
             devices.append(settings[sløyfe_valg]['devices'][i]['deviceType'])
-        print(devices)
         if 'Power Switch' not in devices:
             print("Ingen powerswitch")
             #Returnerer tom dropdown meny
