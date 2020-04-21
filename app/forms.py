@@ -6,20 +6,20 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username',
+    username = StringField('Brukernavn',
                             validators=[DataRequired(), Length(min=2, max=20)])
-    email = StringField('Email',
+    email = StringField('E-post',
                          validators=[DataRequired(), Email()])
-    password = PasswordField('Password',
+    password = PasswordField('Passord',
                             validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password',
+    confirm_password = PasswordField('Bekreft passord',
                                      validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Apply')
+    submit = SubmitField('Send inn søknad!')
 
 class LoginForm(FlaskForm):
-    email = StringField('Email',
+    email = StringField('E-post',
                          validators=[DataRequired(), Email()])
-    password = PasswordField('Password',
+    password = PasswordField('Passord',
                             validators=[DataRequired()])
-    remember = BooleanField('Remember Me')
-    submit = SubmitField('Login')
+    remember = BooleanField('Husk meg')
+    submit = SubmitField('Logg inn')

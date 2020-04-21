@@ -178,7 +178,7 @@ def callbacks(app):
                             )
                     return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
                                                                 yaxis=dict(range=[0,120],title='Temperatur [°C]'),
-                                                                title='Temperatur Måling',
+                                                                title='Temperaturmåling',
                                                                 #margin={'l':300,'r':100,'t':5,'b':50},
                                                             )}
         #Ved feilmelding skrives det til error txt fil.                                                 
