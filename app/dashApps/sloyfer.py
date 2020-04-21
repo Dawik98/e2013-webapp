@@ -135,7 +135,8 @@ def callbacks(app):
                     ])
     #Funksjon for å finne nåtid
     def update_refresh(n):
-        til_dato = datetime.now()
+        til_dato_UTC = datetime.now()
+        til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
         fra_dato= til_dato + relativedelta(hours=-6)
         fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
         return fra_dato

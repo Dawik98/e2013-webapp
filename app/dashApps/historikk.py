@@ -57,7 +57,8 @@ def get_site_title(chosen_sløyfe):
 
 
 def site_refreshed ():
-    til_dato = datetime.now()
+    til_dato_UTC = datetime.now()
+    til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
     fra_dato= til_dato + relativedelta(months=-1)
     historiskData={}
     sløyfer=get_sløyfer()

@@ -1,10 +1,17 @@
 from cosmosDB import read_from_db
 import pandas as pd
+import pytz
+from datetime import datetime
 
 def update_tempData(sløyfe_valg, fra_dato, til_dato):
     # Dersom ingenting er skrevet i feltet med t "til dato" plotter vi til tidspunket nå (LIVE)
     if til_dato == '':
-        til_dato=pd.datetime.now()
+        til_dato_UTC = datetime.now()
+        til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
+        til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
+
+    #fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
+
     #Basert på ønsket måle periode, og sløyfe queryer vi databasen for data.
     query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'tempSensor' AND {0}.timeReceived >= '{1}' AND {0}.timeReceived <= '{2}') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg, fra_dato, til_dato)
     container_name = sløyfe_valg
