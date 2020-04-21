@@ -17,12 +17,6 @@ import dash_bootstrap_components as dbc
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
 
-
-
-setpoint='20'
-tilkobledeSløyfer=2
-AntallSløyfer=3
-
 def get_home_table():
     from dashApps.innstillinger import get_sløyfer 
     from mqttCommunication import controller
@@ -30,7 +24,7 @@ def get_home_table():
 
     sløyfer = get_sløyfer()
 
-    table_header = [html.Thead(html.Tr([html.Th("Sløyfe"), html.Th("Siste måling"), html.Th("Avvik"), html.Th("Alarm status")]))]
+    table_header = [html.Thead(html.Tr([html.Th("Sløyfe"), html.Th("Siste måling", colSpan = 2, style={'width':'270px'}), html.Th("Avvik"), html.Th("Alarm status")]))]
     table_rows = []
     
     for sløyfe in sløyfer:
@@ -40,6 +34,13 @@ def get_home_table():
         last_messurment = read_from_db(sløyfe, query)
         last_temp = last_messurment[0]['temperature']
         last_messure_time = last_messurment[0]['timeReceived']
+
+        def last_temp_messerument_label(label):
+            alarm_link = html.A(label, href='/trend/{}'.format(sløyfe), style={'color':'#3E3F3A'})
+            return alarm_link
+        
+        last_temp_link = last_temp_messerument_label("{} °C".format(last_temp))
+        last_messure_time_link = last_temp_messerument_label(last_messure_time)
 
         # Finn avviket
         try:
@@ -56,16 +57,22 @@ def get_home_table():
         query = "SELECT TOP 1 * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false ORDER BY {0}.timeReceived DESC".format(sløyfe)
         last_unconfirmed_alarm = read_from_db(sløyfe, query)
         
+        def alarm_status_label(label):
+            alarm_link = html.A(label, href='/alarmer/{}'.format(sløyfe), style={'color':'#3E3F3A'})
+            return alarm_link
+
         try:
             if last_unconfirmed_alarm[0]['timeReceived'] == last_messure_time:
-                alarm_status = html.Div([html.I(className='fas fa-exclamation-circle mr-2', style={'color':'red'}), "Aktiv alarm"])
+                alarm_label = [html.I(className='fas fa-exclamation-circle mr-2', style={'color':'red'}), "Aktiv alarm"]
+                alarm_status = alarm_status_label(alarm_label)
             else:
-                alarm_status = html.Div([html.I(className='fas fa-exclamation-circle mr-2', style={'color':'#f4d53c'}), "Ukvitterte alarmer"])
+                alarm_label = [html.I(className='fas fa-exclamation-circle mr-2', style={'color':'#f4d53c'}), "Ukvitterte alarmer"]
+                alarm_status = alarm_status_label(alarm_label)
         except:
-            alarm_status = html.Div([html.I(className='fas fa-check-circle mr-2', style={'color':'#86d01b'}), "Ingen nye alarmer"])
-
-
-        row = html.Tr([html.Td(sløyfe), html.Td('{}°C'.format(last_temp), title=last_messure_time), html.Td(avvik), html.Td(alarm_status)])
+            alarm_label = [html.I(className='fas fa-check-circle mr-2', style={'color':'#86d01b'}), "Ingen nye alarmer"]
+            alarm_status = alarm_status_label(alarm_label)
+        
+        row = html.Tr([html.Td(sløyfe), html.Td(last_temp_link, style={'width':'100px'}), html.Td(last_messure_time_link, style={'width':'170px'}), html.Td(avvik), html.Td(alarm_status)])
 
         table_rows.append(row)
         
@@ -77,7 +84,7 @@ def serve_layout():
         header,
         dbc.Container([
 
-            html.H1("Home"),
+            html.H1("Sløyfe oversikt:", className="mb-2"),
             html.Div(get_home_table(), id='table', className='tableFixHead')
         ])#container
     ])
@@ -88,5 +95,6 @@ layout = serve_layout
 
 def callbacks(app):
     layout_callbacks(app)
-    
+
+
     
