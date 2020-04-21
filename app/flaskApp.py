@@ -68,8 +68,7 @@ def register():
         NewUser={"type":"NotApproved", "username":form.username.data, "email":form.email.data, "password":generate_password_hash(form.password.data)}
         write_to_db('validUsers', NewUser)
         #Sender mail til Admins for å eventuellt godkjenne ny bruker
-        #from main import mail
-        send_email_newUser()
+        send_email_newUser(form.email.data)
 
         flash(f'Account created for {form.username.data}. Waiting for approval!', 'success')
         return redirect("/login")

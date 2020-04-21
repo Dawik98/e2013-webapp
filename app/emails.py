@@ -6,13 +6,11 @@ def connect_mail(server):
     global mail
     mail=Mail(server)
 
-def send_email_newUser():
+def send_email_newUser(user_email):
     subject="New user created!"
     msg = Message(subject, recipients=ADMINS)
-    """
-    msg.body = text_body
-    msg.html = html_body
-    """
+    msg.body = "En konto er registert for bruker: {}".format(user_email)
+    #msg.html = html_body
     mail.send(msg)
 
 """

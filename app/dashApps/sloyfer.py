@@ -73,7 +73,7 @@ dbc.Container([
 
         dbc.Col([
         html.H5('Til dato'),
-        dbc.Input(id='til_Dato', value='', type='text',placeholder="YYYY-MM-DD HH:MM:SS, ' <Empty> ' for live",debounce=True)
+        dbc.Input(id='til_Dato', value='', type='text',placeholder="<Empty> for live",debounce=True)
         ], width=2),
     ])
     ]),
