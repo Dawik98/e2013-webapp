@@ -1447,3 +1447,33 @@ list index out of range
 list index out of range
 list index out of range
 list index out of range
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
+local variable 'fra_dato' referenced before assignment
