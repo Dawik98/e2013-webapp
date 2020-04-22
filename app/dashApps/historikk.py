@@ -33,7 +33,6 @@ målinger_dict={ "Temperatur" : "temperature",
                 "Frekvens" : "frequency",
                 "Kjøretid" : "runTime",              
 }
-
 #Brukes til å dynamisk skifte benemning på graf til målerelé.
 enhet_dict={"Temperatur" : "[°C]",
             "Aktiv effekt" : "[W]",
@@ -158,7 +157,8 @@ def callbacks(app):
             a="Spinn!"
             return historiskData, til_dato, fra_dato,a
     #Laster inn ny data i datofeltet som kjøres når siden lastes inn
-    @app.callback(Output('måle-valg', 'options'),
+    @app.callback([Output('måle-valg', 'options'),
+                    Output('måle-valg', 'multi')],
                     [Input('trigger-refresh', 'n_clicks')],
                     [State(component_id='url', component_property='pathname'),
                     ])
@@ -177,12 +177,15 @@ def callbacks(app):
         for i in range(0, nb_items):
             devices.append(settings[sløyfe_valg]['devices'][i]['deviceType'])
         if 'Power Switch' not in devices:
-            print("Ingen powerswitch")
+            #print("Ingen powerswitch")
             #Returnerer bare temperatur valg
-            options=[{'label': "Temperatur",'value': "temperature"}]
+            options=[{'label':"Temperatur" ,'value':"Temperatur"}]
+            multi=True
+            return options, multi 
         else:
             options=[{'label': s,'value':s} for s in målinger_dict.keys()] 
-        return options
+            multi=True
+        return options, multi
 
 
 
@@ -233,10 +236,13 @@ def callbacks(app):
         sløyfe_valg = get_sløyfe_from_pathname(pathname)
         #Plotter alle valgte målinger
         if måle_valg == None:
-                 return {'data': [], 'layout': {}}
+            print("tom")
+            return {'data': [], 'layout': {}}
         else:
             for måling in måle_valg:
+                print(måling)
                 if måling == "Temperatur":
+                    print("plotter")
                     trace1 = go.Scatter(y=historiskData[sløyfe_valg]["Temperatur-Sensor"]["temperature"],
                                         x=historiskData[sløyfe_valg]["Temperatur-Sensor"]["timeReceived"],
                                         mode='lines+markers',
