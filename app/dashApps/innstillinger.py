@@ -297,6 +297,7 @@ def controller_settings(chosen_sløyfe):
     try:
         controller = get_controller(chosen_sløyfe)
     except:
+        print("No controller found")
         return ""
 
     if (controller.run_actuation == True):
@@ -558,7 +559,7 @@ def callbacks(app):
                 from mqttCommunication import deleteController
                 deleteController(chosen_sløyfe)
 
-            print(eui)
+            print("Deleting"+eui)
             remove_device(chosen_sløyfe, eui)
             return get_settings_table(chosen_sløyfe)
 
@@ -600,6 +601,8 @@ def callbacks(app):
             sleep(0.5)
             print("updating_settings_window")
             return controller_settings(chosen_sløyfe)
+        else:
+            raise PreventUpdate
             
     # Disable power switch valget når det allerede finnes en regulator
     @app.callback(
