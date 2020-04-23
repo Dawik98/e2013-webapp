@@ -98,6 +98,7 @@ dbc.Container([
                 html.Div(dbc.Button("Last ned data",
                 id='download-excel',
                 color="secondary",
+                href='/hjem/',
                 target="_blank"),
                 )
         ]),
