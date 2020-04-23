@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, render_template, request, g, url_for, flash, redirect, Blueprint
+from flask import Flask, render_template, request, g, url_for, flash, redirect, Blueprint, send_file
 from flask_mqtt import Mqtt
 from forms import RegistrationForm, LoginForm
 from getUsers import get_users
@@ -8,8 +8,11 @@ from cosmosDB import read_from_db, write_to_db
 from mqttCommunication import claimMeterdata
 from models import User, login_manager
 from emails import send_email_newUser
+from historie_data import update_historiskData
+from dashApps.innstillinger import get_sløyfer
+import pandas as pd
+import xlsxwriter
 from werkzeug.security import check_password_hash, generate_password_hash
-    
 import json, os, io
 
 
@@ -67,3 +70,49 @@ def register():
         flash(f'Account created for {form.username.data}. Waiting for approval!', 'success')
         return redirect("/login")
     return render_template('register.html', title="Register", form=form)
+
+#Laste ned data til excel
+@login_required
+@app.route('/excel-download/')
+def download_excel():
+    
+    value = flask.request.args.get('value')
+    value = value.split('/')
+    sløyfe_valg= value[0]
+    start_date = value[1]
+    end_date = value[2]
+
+    filename = 'historisk_data/' + sløyfe_valg + '/' + start_date + '_to_' + end_date + '.xlsx'
+
+    sløyfer=get_sløyfer()
+    historiskData = update_historiskData(sløyfe_valg)
+
+    d = {'Time recived, temp': historiskData["Temperatur-Sensor"]["timeReceived"],
+        'Temperatur [°C]': historiskData["Temperatur-Sensor"]["temperature"],
+        'Time recived, rele': historiskData["Power-Switch"]["timeReceived"],
+        'activePower [W]': historiskData["Power-Switch"]["activePower"],
+        'reactivePower [VAr]': historiskData["Power-Switch"]["reactivePower"],
+        'apparentPower [VA]': historiskData["Power-Switch"]["apparentPower"],
+        'activeEnergy [kWh]': historiskData["Power-Switch"]["activeEnergy"],
+        'reactiveEnergy [kVAh]': historiskData["Power-Switch"]["reactiveEnergy"],
+        'apparentEnergy [VArh]': historiskData["Power-Switch"]["apparentEnergy"],
+        'voltage [V]': historiskData["Power-Switch"]["voltage"],
+        'current [mA]': historiskData["Power-Switch"]["current"],
+        'frequency [f]': historiskData["Power-Switch"]["frequency"],
+        'runTime [s]': historiskData["Power-Switch"]["runTime"],
+         }
+    #Unngår feil på grunn av ulike lengder på listene.
+    df = pd.DataFrame.from_dict(data=d, orient='index')
+    df=df.transpose()
+
+    #Convert DF
+    strIO = io.BytesIO()
+    excel_writer = pd.ExcelWriter(strIO, engine="xlsxwriter")
+    df.to_excel(excel_writer, sheet_name="sheet1")
+    excel_writer.save()
+    excel_data = strIO.getvalue()
+    strIO.seek(0)
+
+    return send_file(strIO,
+                    attachment_filename="{}".format(filename),
+                    as_attachment=True)
