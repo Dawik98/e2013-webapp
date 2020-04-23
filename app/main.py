@@ -16,6 +16,8 @@ sys.path.append("./dashApps")
 # Velges avhengig av om appen kjøres lokalt eller i Azure
 #usersFile = 'users.txt' # Azure
 usersFile = 'app/users.txt' # Lokalt
+#baseURL = 'http://e2013-ntnu.azurewebsites.net'
+baseURL = 'http://localhost:8000'
 
 def createServer():
     server = Flask(__name__)
