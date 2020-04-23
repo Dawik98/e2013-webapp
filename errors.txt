@@ -1477,3 +1477,8 @@ local variable 'fra_dato' referenced before assignment
 local variable 'fra_dato' referenced before assignment
 local variable 'fra_dato' referenced before assignment
 local variable 'fra_dato' referenced before assignment
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
+min() arg is an empty sequence
