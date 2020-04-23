@@ -55,7 +55,7 @@ def get_site_title(chosen_sløyfe):
     site_title = html.Div(html.H1("Historisk graf for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
     return site_title
 
-
+#Funksjon som brukes til å laste inn historisk data
 def site_refreshed ():
     til_dato_UTC = datetime.now()
     til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
@@ -65,6 +65,7 @@ def site_refreshed ():
     for i in sløyfer:
         historiskData[i] = update_historiskData(i)
     return historiskData, til_dato, fra_dato
+
 #Laster inn midlertidig data når appen kjøres første gang. Layout er avhening av å ha ferider. 
 historiskData, til_dato, fra_dato = site_refreshed()
 
@@ -81,6 +82,7 @@ dbc.Container([
     ]
     ),
     dbc.Row([
+        #Usynlig knapp for å plassere de andre knappene til venstre
         dbc.Col([
                 html.Div(dbc.Button("",
                 id='formateringskanpp',
@@ -98,12 +100,14 @@ dbc.Container([
                 html.Div(dbc.Button("Last ned data",
                 id='download-excel',
                 color="secondary",
+                #Setter href til noe helt annet. Slik at når kanppen trykkes lastes urlen i callack på ny fullstendig. 
                 href='/hjem/',
                 target="_blank"),
                 )
         ]),
 
     ]),
+    # Ny rad med input felt og meny som brukes til å styre grafen
     dbc.Row([
         dbc.Col([
         html.H5('Fra dato:'),
@@ -125,10 +129,12 @@ dbc.Container([
                         ),
         ], width=5),
     ]),
+    #Setter graf på ny linje
     dbc.Row([
         dbc.Col([
             html.Div([dcc.Graph(id="my-graph")]),
         ],width={'size':12,'order':1}),
+    #Fjerner uønsket marg til rad   
     ],no_gutters=True)
 ], id='main-container'),
 #### Tomme divs for callbacks og datalagring ########
@@ -340,7 +346,8 @@ def callbacks(app):
                                         showlegend=True,
                                         #margin={'l':100,'r':100,'t':100,'b':100},
                                                         )}
-    #laste ned data
+    #åpner ny fane som redirectes til /excel-download/.... i flask appen som har funksjon for å laste ned excel fil. 
+    #Url kodes også med informasjon om hva som skal lastes ned
     @app.callback(
         Output('download-excel', 'href'),
         [Input('fra_Dato', 'value'),

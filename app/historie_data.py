@@ -1,7 +1,8 @@
 from cosmosDB import read_from_db
 import pandas as pd
 
-#Funksjon som brukes til å laste ny data inn i historisk plot 
+#Funksjon som brukes til å laste ny data inn i historisk plot.
+#Henter ALL data fra databasen slik grafen blir responsive i ettertid.
 def update_historiskData(sløyfe_valg):
     #Deler inn i to querys for å skille mellom tidsstempelene
     #henter tempdata

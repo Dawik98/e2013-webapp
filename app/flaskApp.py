@@ -95,7 +95,6 @@ def download_excel():
     filename = 'historisk_data/' + sløyfe_valg + '/' + start_date + '_to_' + end_date + '.xlsx'
     #returnerer historisk data som pandas dataframe
     df = print_historiskData(sløyfe_valg, start_date, end_date)
-
     #Convert DF
     strIO = io.BytesIO()
     excel_writer = pd.ExcelWriter(strIO, engine="xlsxwriter")

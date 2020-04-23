@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
-
+#klasser som brukes til innloggnings og regstrings- skjemaer
 
 class RegistrationForm(FlaskForm):
     username = StringField('Brukernavn',
