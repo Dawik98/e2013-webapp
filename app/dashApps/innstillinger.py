@@ -7,11 +7,12 @@ import dash_html_components as html
 from dash.exceptions import PreventUpdate
 from dash.dash import no_update
 import dash_bootstrap_components as dbc
+from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace, get_output_state, get_controller
 
 import json
 import re
 from itertools import zip_longest
-from mqttCommunication import claimMeterdata, activateHeatTrace, deactivateHeatTrace, get_output_state, get_controller
+from datetime import datetime, timedelta
 
 # Importer standard layout
 #from dashApps.layout import get_sløyfe_from_pathname
@@ -185,6 +186,41 @@ def get_alarms(sløyfe):
         print(alarms)
     return alarms
 
+def get_device_status(sløyfe, device_eui):
+    from cosmosDB import read_from_db
+
+    try:
+        query = "SELECT TOP 1 * FROM {0} WHERE {0}.deviceEui = '{1}' ORDER BY {0}.timeReceived DESC".format(sløyfe, device_eui)
+        data = read_from_db(sløyfe, query)
+        data = data[0]
+    except:
+        return "Ingen data"
+
+    message_time = data['timeReceived']
+    message_time = datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
+
+    now = datetime.now()
+    time_diff = now-message_time
+
+    battery_label = [""]
+    if data['deviceType'] == 'tempSensor':
+        battery = "{}%".format(round(data['batteryLevel']))
+        battery_icon = html.I(className="fas fa-battery-three-quarters fa-lg ml-3 mr-1")
+        battery_label = [battery_icon, battery]
+
+    if time_diff < timedelta(hours=3):
+        title = "Siste data ble sendt: {}".format(message_time)
+        icon_connection = html.I(className="fas fa-circle fa-lg", style={'color':'#86d01b'}, title=title)
+        label = [icon_connection] + battery_label
+        return label
+    else:
+        title = "Ingen nye data siden: {}".format(message_time)
+        icon_no_connection = html.I(className="fas fa-circle fa-lg", style={'color':'red'}, title=title)
+        label = [icon_no_connection] + battery_label
+        return label
+
+
+    return time_delta
 #---------------------------------------------------- Site components --------------------------------------------------------------------
 
 def make_id_dict():
@@ -226,36 +262,40 @@ def get_site_title(chosen_sløyfe):
 
 
 def get_settings_table(chosen_sløyfe):
-    print('chosens sløyfe = '+chosen_sløyfe)
+    small_coll = {'width':'120px'}
+
     settings = get_settings()
     settings = settings[chosen_sløyfe]['devices']
     print(settings)
 
-    table_header = [html.Thead(html.Tr([html.Th("Enhetens eui"), html.Th("Enhet")]))]
+    table_header = [html.Thead(html.Tr([html.Th("Enhetens eui"), html.Th("Enhet"), html.Th("Status", style=small_coll)]))]
     table_rows = []
 
     add_eui = dbc.Input(placeholder="Skriv inn enhetens eui", type='text', id="add-eui")
     device_types = [dbc.DropdownMenuItem("Temperatur sensor", id='tempSensor'),
                     dbc.DropdownMenuItem("Power switch", id='powerSwitch')]
     add_type = dbc.DropdownMenu(device_types, label="Velg enhet type", id="add-type")#, toggleClassName="btn-outline-secondary")
-    add_device_row = dbc.Collapse(html.Tr([html.Td(add_eui), html.Td(add_type)]), id='add-row-collapse')#, is_open=False)
+    add_device_row = dbc.Collapse(html.Tr([html.Td(add_eui), html.Td(add_type), html.Td(style=small_coll)]), id='add-row-collapse')#, is_open=False)
 
     # lag alle mulige rader i tabellen, vis bare de som har tilskrevet enhet
     for (key, status), setting_item in zip_longest(remove_buttons_ids.items(), settings):
 
         if setting_item:
+
             deviceEui = setting_item["device_eui"]
             deviceType = setting_item["deviceType"]
+
+            delete_button = remove_buttons[key]
+            remove_buttons_ids[key]=deviceEui
 
             if deviceType == "tempSensor":
                 deviceType = "Temperatur sensor"
             elif deviceType == "powerSwitch":
                 deviceType = "Power switch"
 
-            delete_button = remove_buttons[key]
-            remove_buttons_ids[key]=deviceEui
+            dev_status = get_device_status(chosen_sløyfe, deviceEui)
 
-            row = html.Tr([html.Td(deviceEui), html.Td([deviceType, delete_button]),])
+            row = html.Tr([html.Td(deviceEui), html.Td([deviceType, delete_button]), html.Td(dev_status, style=small_coll)])
             table_rows.append(row)
         elif setting_item == None:
             deviceEui = ""

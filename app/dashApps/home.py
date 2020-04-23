@@ -45,8 +45,9 @@ def get_home_table():
         # Finn avviket
         try:
             setpoint = controller[sløyfe].setpoint
-            if setpoint == 0:
-                avvik = "Regulator er ikke aktiv"
+
+            if controller[sløyfe].mode != "Auto":
+                avvik = "Regulator er i manuell modus"
             else:
                 avvik = setpoint - last_temp
                 avvik = '{}°C'.format(avvik)
