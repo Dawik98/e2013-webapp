@@ -1,7 +1,7 @@
 from decoder import decoder
 from flask_mqtt import Mqtt
 from powerControl import PI_controller
-from cosmosDB import connect_to_db, write_to_db
+from cosmosDB import connect_to_db, write_to_db, read_from_db
 import json, time, datetime, pytz
 
 mqtt = None
@@ -32,7 +32,11 @@ def connect_mosquitto(server):
             global outputState
             outputState[packetData['devicePlacement']] = [packetData['output'], timeOslo]
             print("outputState: {}".format(outputState[packetData['devicePlacement']][0]))
-        elif (packetData['messageType'] == 'dataLog'):
+        elif ((packetData['messageType'] == 'dataLog') AND (packetData['devicePlacement'] in controller)):
+            # query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - datetime.timedelta(minutes=7)))
+            # lastTemps = read_from_db(packetData['devicePlacement'], query)
+            # for i in range(0 : len(lastTemps)):
+            #     lastTemps[i]['deviceEui']
             controller[packetData['devicePlacement']].update_value(packetData['temperature'])
             
         # Write data to database if this isn't a powerdata-message or if active power is not zero.

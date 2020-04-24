@@ -25,7 +25,7 @@ prew_dutycycle_confirm_count = 0
 prew_actuation_confirm_count = 0
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-#settingsFile = 'settings.txt' # Azure
+# settingsFile = 'settings.txt' # Azure
 settingsFile = 'app/settings.txt' # Lokalt
 
 def print_settings():
@@ -191,7 +191,7 @@ def make_id_dict():
     """
     make_id_dict lager 20 slettknapper med hver sin unik ID som skal brukes til å kunne slette enheter fra enhets-tabellen. 
     Grunnen til at alle må defineres på forhånd er at alle id-er/html elementer må eksistere når nettsiden startes for at callback skal kunne kjøres.
-    Det kan derfor være nødvendig å definere flere  kanpper hvis sløfen skal ha mer enn 20 enheter
+    Det kan derfor være nødvendig å definere flere kanpper hvis sløfen skal ha mer enn 20 enheter
     
     Returns:
         remove_buttons_ids {dictionary} -- innehloder id-er til alle knapper som 'keys' og hvilken enhet de er tilknyttet (eui) som 'value', None i utgangspunktet

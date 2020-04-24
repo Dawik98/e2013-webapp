@@ -53,9 +53,9 @@ def logout():
     logout_user()
     return redirect("/login")
 
-@app.route('/claimMeterdata')
-def runClaimDataFunction():
-    return claimMeterdata('heatTrace1')
+# @app.route('/claimMeterdata')
+# def runClaimDataFunction():
+#     return claimMeterdata('heatTrace1')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
