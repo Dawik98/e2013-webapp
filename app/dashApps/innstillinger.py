@@ -787,16 +787,6 @@ def callbacks(app):
         else:
             return False
 
-    # dummy update
-    @app.callback(
-        Output('dummy', 'children'),
-        [Input('update-controller-button', 'n_clicks')],
-        [State('setpoint-input', 'value')]
-    )
-    def update_dummy_label(button_click, setpoint_value):
-        #print(setpoint_value)
-        return ""
-
     # Vis skjul knappen for å endre alarm-verdier
     @app.callback(
         Output(component_id='collapse-alarm-confirm', component_property='is_open'),

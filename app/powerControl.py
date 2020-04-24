@@ -99,6 +99,9 @@ class PI_controller:
         self.error = round(error,2)
 
     def calculate_u_tot(self):
+        """
+        calculate_u_tot() kalkulerer totalt pådragstall
+        """
         if self.mode == 'Auto':
             self.get_sample_time()
             self.get_error()
@@ -123,51 +126,27 @@ class PI_controller:
             # Logg resulateter hvis dette er aktivert (default = FALSE)
             if self.log_results:
                 self.writer(results)
-
-    # # Dutycycle i minutter
-    # def actuationControl(self):
-    #     while True:
-    #         if (self.run_actuation == True):
-    #             if not self.lock.acquire(False):
-    #                 print("Failed to lock the Lock")
-    #             else:
-    #                 try:
-    #                     print("Lock acquired")
-    #                     dutycycle = self.dutycycle*60 # Konverterer til sekunder
-    #                     actuation = self.u_tot
-    #                 finally:
-    #                     self.lock.release()
-    #                     print("Lock released")
-    #                     t_on = (actuation/100)*dutycycle
-    #                     t_off = dutycycle - t_on
-    #                     try:
-    #                         if(t_on != 0):
-    #                             # Skru varmekabel på
-    #                             self.activate_func(self.devicePlacement)
-    #                             print("{} will be on for {} seconds".format(self.devicePlacement, t_on))
-    #                             sleep(t_on)
-    #                             print("Woke up from on-time sleep")
-    #                     except:
-    #                         print("Could not activate heat trace")
-    #                         print(sys.exc_info()[0])
-    #                         sleep(5)
-    #                         continue
-    #                     try:
-    #                         if(t_off != 0):
-    #                             # Skru av varmekabel
-    #                             self.deactivate_func(self.devicePlacement)
-    #                             print("{} will be off for {} seconds".format(self.devicePlacement, t_off))
-    #                             sleep(t_off)
-    #                             print("Woke up from off-time sleep")
-    #                     except:
-    #                         print("Could not deactivate heattrace")
-    #                         print(sys.exc_info()[0])
-    #                         sleep(5)
-    #                         continue
-    #         else:
-    #             sleep(1)
+    
+    def change_mode(self, mode, actuation=0.0):
+        """
+        change_mode() benyttes ved skifte av regulatormodus.
+        """
+        if mode == 'Auto':
+            print("Ny regulatormodus: Auto, Tidligere pådrag: {}".format(actuation))
+            self.bumpless(actuation)
+            self.mode = mode
+        elif mode == 'Manual':
+            print("Ny regulatormodus: Manuell, Pådrag: {}".format(actuation))
+            self.set_u_tot(actuation)
+            self.mode = 'Manual'
+        else:
+            print("Ugylding regulatormodus!")
 
     def actuationControl(self):
+        """
+        actuationControl() skrur reléet av og på i en syklus (dutycycle) avhengig av pådragstall.
+        Funksjonen kjøres som en individuell tråd. Styringen av reléet kjøres avhengig av tilstanden til self.run_actuation.
+        """
         while True:
             if self.run_actuation:
                 dutycycle = self.get_dutycycle() * 60
@@ -187,8 +166,10 @@ class PI_controller:
             else:
                 sleep(1)
 
-
     def set_dutycycle(self, dutycycle):
+        """
+        set_dutycycle() setter ny dutycycle til reléstyringen. Funksjonen benytter lock for sikker behandling av delte variabler.
+        """
         self.lock.acquire()
         try:
             self.dutycycle = dutycycle
@@ -197,6 +178,9 @@ class PI_controller:
             self.lock.release()
 
     def get_dutycycle(self):
+        """
+        get_dutycycle() returnerer dutycycle til reléstyringen. Funksjonen benytter lock for sikker behandling av delte variabler.
+        """
         self.lock.acquire()
         try:
             return self.dutycycle
@@ -204,6 +188,9 @@ class PI_controller:
             self.lock.release()
 
     def set_u_tot(self, u_tot):
+        """
+        set_u_tot() setter nytt totalt pådragstall i prosent. Funksjonen benytter lock for sikker behandling av delte variabler.
+        """
         self.lock.acquire()
         try:
             self.u_tot = u_tot
@@ -211,23 +198,15 @@ class PI_controller:
             self.lock.release()
 
     def get_u_tot(self):
+        """
+        get_u_tot() returnerer totalt pådragstall i prosent. Funksjonen benytter lock for sikker behandling av delte variabler.
+        """
         self.lock.acquire()
         try:
             return self.u_tot
         finally:
             self.lock.release()
 
-    def change_mode(self, mode, actuation=0.0):
-        if mode == 'Auto':
-            print("Ny regulatormodus: Auto, Tidligere pådrag: {}".format(actuation))
-            self.bumpless(actuation)
-            self.mode = mode
-        elif mode == 'Manual':
-            print("Ny regulatormodus: Manuell, Pådrag: {}".format(actuation))
-            self.set_u_tot(actuation)
-            self.mode = 'Manual'
-        else:
-            print("Ugylding regulatormodus!")
 
     def stop(self):
         self.run_actuation = False

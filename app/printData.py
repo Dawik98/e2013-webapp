@@ -62,18 +62,18 @@ def print_historiskData(sløyfe_valg,til_dato, fra_dato):
             historiskData["Temperatur-Sensor"][key].append(i[key])
 
     d = {'Time recived, temp': historiskData["Temperatur-Sensor"]["timeReceived"],
-        'Temperatur [°C]': historiskData["Temperatur-Sensor"]["temperature"],
+        'Temperature [°C]': historiskData["Temperatur-Sensor"]["temperature"],
         'Time recived, rele': historiskData["Power-Switch"]["timeReceived"],
-        'activePower [W]': historiskData["Power-Switch"]["activePower"],
-        'reactivePower [VAr]': historiskData["Power-Switch"]["reactivePower"],
-        'apparentPower [VA]': historiskData["Power-Switch"]["apparentPower"],
-        'activeEnergy [kWh]': historiskData["Power-Switch"]["activeEnergy"],
-        'reactiveEnergy [kVAh]': historiskData["Power-Switch"]["reactiveEnergy"],
-        'apparentEnergy [VArh]': historiskData["Power-Switch"]["apparentEnergy"],
-        'voltage [V]': historiskData["Power-Switch"]["voltage"],
-        'current [mA]': historiskData["Power-Switch"]["current"],
-        'frequency [f]': historiskData["Power-Switch"]["frequency"],
-        'runTime [s]': historiskData["Power-Switch"]["runTime"],
+        'Active Power [W]': historiskData["Power-Switch"]["activePower"],
+        'Reactive Power [VAr]': historiskData["Power-Switch"]["reactivePower"],
+        'Apparent Power [VA]': historiskData["Power-Switch"]["apparentPower"],
+        'Active Energy [kWh]': historiskData["Power-Switch"]["activeEnergy"],
+        'Reactive Energy [kVArh]': historiskData["Power-Switch"]["reactiveEnergy"],
+        'Apparent Energy [kVAh]': historiskData["Power-Switch"]["apparentEnergy"],
+        'Voltage [V]': historiskData["Power-Switch"]["voltage"],
+        'Current [mA]': historiskData["Power-Switch"]["current"],
+        'Frequency [f]': historiskData["Power-Switch"]["frequency"],
+        'Runtime [s]': historiskData["Power-Switch"]["runTime"],
          }
     #Unngår feil på grunn av ulike lengder på listene.
     df = pd.DataFrame.from_dict(data=d, orient='index')
