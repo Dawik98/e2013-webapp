@@ -1,23 +1,27 @@
+"""
+home.py inneholder:
+    - layout og callbacks som brukes på Home siden
+"""
+
 import dash
-import pandas as pd
 from dash.dependencies import Output, Input
 import dash_core_components as dcc
 import dash_html_components as html
-import plotly
-import random
-import pytz
-import plotly.graph_objs as go
-import dash_daq as daq
-from datetime import datetime
-from collections import deque
-from cosmosDB import read_from_db, connect_to_db
-from opp_temp import update_tempData
 import dash_bootstrap_components as dbc
+from datetime import datetime
 
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
 
 def get_home_table():
+    """
+    get_home_table lager tabell som vises på Hjemme siden
+
+    Returns
+    -------
+    dash_bootstrap_components
+        dbc.Table som inneholder tabellen
+    """
     from dashApps.innstillinger import get_sløyfer 
     from mqttCommunication import controller
     from cosmosDB import read_from_db
@@ -36,6 +40,7 @@ def get_home_table():
         last_messure_time = last_messurment[0]['timeReceived']
 
         def last_temp_messerument_label(label):
+        # lager en lenke som sender bruker til Trend vindet når det trykkes på siste måling
             alarm_link = html.A(label, href='/trend/{}'.format(sløyfe), style={'color':'#3E3F3A'})
             return alarm_link
         
@@ -59,17 +64,21 @@ def get_home_table():
         last_unconfirmed_alarm = read_from_db(sløyfe, query)
         
         def alarm_status_label(label):
+            # Lager en lenke som sender bruker til alarmvinduet når det trykkes på alarm status
             alarm_link = html.A(label, href='/alarmer/{}'.format(sløyfe), style={'color':'#3E3F3A'})
             return alarm_link
 
         try:
             if last_unconfirmed_alarm[0]['timeReceived'] == last_messure_time:
+                # Hvis siste måling er en alarm -> status = 'aktiv alarm' 
                 alarm_label = [html.I(className='fas fa-exclamation-circle mr-2', style={'color':'red'}), "Aktiv alarm"]
                 alarm_status = alarm_status_label(alarm_label)
             else:
+                # hvis siste måling er ike en alarmverdi men det finne ukvitterte alarmer i sløyfen -> status = 'ukvitterte alarmer'
                 alarm_label = [html.I(className='fas fa-exclamation-circle mr-2', style={'color':'#f4d53c'}), "Ukvitterte alarmer"]
                 alarm_status = alarm_status_label(alarm_label)
         except:
+            # hvis det finne ikke nou ukvitterte alarmer -> status = OK
             alarm_label = [html.I(className='fas fa-check-circle mr-2', style={'color':'#86d01b'}), "Ingen nye alarmer"]
             alarm_status = alarm_status_label(alarm_label)
         
@@ -80,6 +89,7 @@ def get_home_table():
     table_body=[html.Tbody(table_rows)]
     return dbc.Table(table_header+table_body, bordered=True)
 
+# layout definnneres i en funksjon for at den skal bli oppdatert når nettsiden refreshes
 def serve_layout():
     layout = html.Div([
         header,
