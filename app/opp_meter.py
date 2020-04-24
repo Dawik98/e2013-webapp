@@ -9,9 +9,7 @@ def update_meterData(sløyfe_valg, fra_dato, til_dato):
     if til_dato == '':
         til_dato_UTC = datetime.now()
         til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
-
-    #fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
-
+        
     #Basert på ønsket måle periode, og sløyfe queryer vi databasen for data.
     query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'powerSwitch' AND {0}.timeReceived >= '{1}' AND {0}.timeReceived <= '{2}' AND {0}.messageType ='powerData') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg,fra_dato, til_dato)
     container_name = sløyfe_valg

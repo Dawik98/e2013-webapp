@@ -79,8 +79,9 @@ dbc.Container([
         ], width=2),
         ]),      
 ]),
-        
+#Ny kontainer til graf       
 dbc.Container([
+    #setter graf på ny linje
     dbc.Row([
         dbc.Col([
             dcc.Graph(id='live-graph', animate=False),
@@ -91,6 +92,7 @@ dbc.Container([
                     n_intervals = 1
             )
       ],width={'size':12,'order':1}),
+#fjerner uønsket marg fra raden.
 ],no_gutters=True)
 ]),
 #Graf for tempsensorer
@@ -177,8 +179,6 @@ def callbacks(app):
             Input('dropdown-område1','label')],
             [State(component_id='url', component_property='pathname'),
             ])
-    
-
     def update_graph_scatter(n,dropdown_område, url):
         try:  
             #Finner sløyfevalg
@@ -260,8 +260,6 @@ def callbacks(app):
                 offset=24
             elif dropdown_område == "Siste uke": 
                 offset=168
-           
-            
             #finner området som skal hentes fra databse
             til_dato_UTC = datetime.now()
             til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))

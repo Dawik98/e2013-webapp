@@ -1,7 +1,7 @@
 from decoder import decoder
 from flask_mqtt import Mqtt
 from powerControl import PI_controller
-from cosmosDB import connect_to_db, write_to_db
+from cosmosDB import connect_to_db, write_to_db, read_from_db
 import json, time, datetime, pytz
 
 mqtt = None
@@ -32,7 +32,11 @@ def connect_mosquitto(server):
             global outputState
             outputState[packetData['devicePlacement']] = [packetData['output'], timeOslo]
             print("outputState: {}".format(outputState[packetData['devicePlacement']][0]))
-        elif (packetData['messageType'] == 'dataLog'):
+        elif ((packetData['messageType'] == 'dataLog') and (packetData['devicePlacement'] in controller)):
+            # query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - datetime.timedelta(minutes=7)))
+            # lastTemps = read_from_db(packetData['devicePlacement'], query)
+            # for i in range(0 : len(lastTemps)):
+            #     lastTemps[i]['deviceEui']
             controller[packetData['devicePlacement']].update_value(packetData['temperature'])
             
         # Write data to database if this isn't a powerdata-message or if active power is not zero.
@@ -114,7 +118,7 @@ def createController(devicePlacement):
     global controller
     controller[devicePlacement] = PI_controller(devicePlacement, activateHeatTrace, deactivateHeatTrace)
     outputState[devicePlacement] = [False, datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo'))]
-    print("making new controller")
+    print("creating new controller")
 
 def deleteController(devicePlacement):
     global controller
@@ -123,7 +127,7 @@ def deleteController(devicePlacement):
 
 def get_controller(devicePlacement):
     global controller
-    print("Got controllers: {}".format(controller))
+    #print("Got controllers: {}".format(controller))
     return controller[devicePlacement]
 
 

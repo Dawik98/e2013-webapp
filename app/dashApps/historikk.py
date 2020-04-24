@@ -14,6 +14,7 @@ from dateutil.relativedelta import *
 from collections import deque
 from cosmosDB import read_from_db
 from historie_data import update_historiskData
+from main import baseURL
 
 #import standard layout
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
@@ -44,7 +45,7 @@ enhet_dict={"Temperatur" : "[°C]",
             "Spenning" : "[V]",
             "Strøm" : "[mA]",
             "Frekvens" : "[f]",
-            "Kjøretid" : "s", 
+            "Kjøretid" : "[s]", 
 }          
 #Dager måledata med 5 min samplerate
 #antall_målinger = 288*1 
@@ -54,7 +55,7 @@ def get_site_title(chosen_sløyfe):
     site_title = html.Div(html.H1("Historisk graf for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
     return site_title
 
-
+#Funksjon som brukes til å laste inn historisk data
 def site_refreshed ():
     til_dato_UTC = datetime.now()
     til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
@@ -64,6 +65,7 @@ def site_refreshed ():
     for i in sløyfer:
         historiskData[i] = update_historiskData(i)
     return historiskData, til_dato, fra_dato
+
 #Laster inn midlertidig data når appen kjøres første gang. Layout er avhening av å ha ferider. 
 historiskData, til_dato, fra_dato = site_refreshed()
 
@@ -80,13 +82,32 @@ dbc.Container([
     ]
     ),
     dbc.Row([
+        #Usynlig knapp for å plassere de andre knappene til venstre
+        dbc.Col([
+                html.Div(dbc.Button("",
+                id='formateringskanpp',
+                style={'display':'none'},
+                ),
+                )
+        ], width=8),
         dbc.Col([
                 html.Div(dbc.Button("Oppdater data",
                 id='trigger-refresh',
-                color="secondary")
+                color="secondary"),
                 )
-        ])
+        ], width=2),
+        dbc.Col([
+                html.Div(dbc.Button("Last ned data",
+                id='download-excel',
+                color="secondary",
+                #Setter href til noe helt annet. Slik at når kanppen trykkes lastes urlen i callack på ny fullstendig. 
+                href='/hjem/',
+                target="_blank"),
+                )
+        ]),
+
     ]),
+    # Ny rad med input felt og meny som brukes til å styre grafen
     dbc.Row([
         dbc.Col([
         html.H5('Fra dato:'),
@@ -108,10 +129,12 @@ dbc.Container([
                         ),
         ], width=5),
     ]),
+    #Setter graf på ny linje
     dbc.Row([
         dbc.Col([
             html.Div([dcc.Graph(id="my-graph")]),
         ],width={'size':12,'order':1}),
+    #Fjerner uønsket marg til rad   
     ],no_gutters=True)
 ], id='main-container'),
 #### Tomme divs for callbacks og datalagring ########
@@ -236,13 +259,17 @@ def callbacks(app):
         sløyfe_valg = get_sløyfe_from_pathname(pathname)
         #Plotter alle valgte målinger
         if måle_valg == None:
-            print("tom")
-            return {'data': [], 'layout': {}}
+            return {'data': [], "layout": go.Layout(xaxis=dict(range=[fra_dato,til_dato]),
+                                        title="Ingen måling valgt",
+                                        #autosize=False,
+                                        #width=1700,
+                                        height=800,
+                                        showlegend=True,
+                                        #margin={'l':100,'r':100,'t':100,'b':100},
+                                                        )}
         else:
             for måling in måle_valg:
-                print(måling)
                 if måling == "Temperatur":
-                    print("plotter")
                     trace1 = go.Scatter(y=historiskData[sløyfe_valg]["Temperatur-Sensor"]["temperature"],
                                         x=historiskData[sløyfe_valg]["Temperatur-Sensor"]["timeReceived"],
                                         mode='lines+markers',
@@ -319,3 +346,18 @@ def callbacks(app):
                                         showlegend=True,
                                         #margin={'l':100,'r':100,'t':100,'b':100},
                                                         )}
+    #åpner ny fane som redirectes til /excel-download/.... i flask appen som har funksjon for å laste ned excel fil. 
+    #Url kodes også med informasjon om hva som skal lastes ned
+    @app.callback(
+        Output('download-excel', 'href'),
+        [Input('fra_Dato', 'value'),
+        Input('til_Dato', 'value')],
+        [State(component_id='url', component_property='pathname'),
+        ])
+    def update_link(fra_dato, til_dato, url):
+        #Henter in pathname, og finner sløyfevalg som skal plottes
+        ctx = dash.callback_context
+        states = ctx.states
+        pathname = states['url.pathname']
+        sløyfe_valg = get_sløyfe_from_pathname(pathname)
+        return "{3}/excel-download/?value={0}/{1}/{2}".format(sløyfe_valg, fra_dato, til_dato, baseURL)
