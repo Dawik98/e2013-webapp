@@ -1,4 +1,8 @@
-# HOME PAGE
+"""
+alarmer.py inneholder:
+    - layout og callbacks som brukes på Alarm siden
+    - funksjon for å kvittere alarmer
+"""
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -19,16 +23,75 @@ from dashApps.innstillinger import get_alarms
 
 #num_of_alarms = '25'
 #time_range = 'day'
-not_confirmed_alarms = []
+#not_confirmed_alarms = []
 
 def get_site_title(chosen_sløyfe):
+    """
+    get_site_title returner side tittel som vises helt øvers på siden og sier hvilken sløyfe som vises på siden 
+
+    Parameters
+    ----------
+    chosen_sløyfe : string
+        navn på sløyfen som er valgt
+
+    Returns
+    -------
+    dash_html_components
+        En H1 header som inneholder side tittel
+    """
     site_title = html.Div(html.H1("Alarmer for {}".format(chosen_sløyfe), id="site-title"), className="page-header") 
     return site_title
 
 site_title = html.Div(html.H1("Alarmer for alle sløyfer"), className="page-header") 
-# TODO legg til mulighet til å velge sløyfe
+
+def confirm_alarms(chosen_sløyfe):
+    """
+    confirm_alarms kvitterer alle ukvitterte alarmer
+
+    Parameters
+    ----------
+    chosen_sløyfe : string
+        navn på sløyfen som er valgt
+    """
+
+    # hent alle ukvitterte alarmer
+    query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false".format(chosen_sløyfe)
+    unconfirmed_alarms = read_from_db(chosen_sløyfe, query)
+
+    # gå gjennom alle alarmer og kvitter de
+    for alarm_data in unconfirmed_alarms:
+        id_ = alarm_data['id']
+        # slett all metadata til item
+        del alarm_data['_rid']
+        del alarm_data['_self']
+        del alarm_data['_etag']
+        del alarm_data['_attachments']
+        del alarm_data['_ts']
+
+        alarm_data['alarmConfirmed'] = True
+        # Prøver å kvittere alarmen helt til det er vellykke, siden noen ganger får man ikke tilgang til databasen
+        # når andre deler av appen prøver å hente data fra databasen
+        while True:
+            try:
+                replace_in_db(id_, chosen_sløyfe, alarm_data)
+                break
+            except:
+                print("couldn't coonfirm alarm... trying again")
 
 def get_time_range(time_interval):
+    """
+    get_time_range finner ut dato og tid en hvis tidsinterval tilbake i tid
+
+    Parameters
+    ----------
+    time_interval : string
+        'dag', 'uke', 'måned' eller 'Alle'
+
+    Returns
+    -------
+    string
+        dato og tid på formen: 'år-måned-dag time:minutt'
+    """
     if time_interval == 'dag':
         interval = timedelta(days=1)
     elif time_interval == 'uke':
@@ -44,46 +107,34 @@ def get_time_range(time_interval):
     result = datetime.strftime(result, '%Y-%m-%d %H:%M')
     return result
 
-
-def confirm_alarms(chosen_sløyfe):
-    query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false".format(chosen_sløyfe)
-    unconfirmed_alarms = read_from_db(chosen_sløyfe, query)
-
-    for alarm_data in unconfirmed_alarms:
-        id_ = alarm_data['id']
-        del alarm_data['_rid']
-        del alarm_data['_self']
-        del alarm_data['_etag']
-        del alarm_data['_attachments']
-        del alarm_data['_ts']
-
-        #print("confirming alarm with id = {} from {}".format(id_, alarm_data['timeReceived']))
-
-        alarm_data['alarmConfirmed'] = True
-        while True:
-            try:
-                replace_in_db(id_, chosen_sløyfe, alarm_data)
-                break
-            except:
-                print("couldn't coonfirm alarm... trying again")
-
-
 def get_alarm_table(time_interval, chosen_sløyfe):
+    """
+    get_alarm_table lager en tabell som inneholder alle alarmer fra valgt tidsperiode
+
+    Parameters
+    ----------
+    time_interval : string - 'dag', 'uke', 'måned', 'Alle'
+        Definerer hvor gamle alarmer som skal lastes inn
+    chosen_sløyfe : string
+        navn på sløyfen som er valgt
+
+    Returns
+    -------
+    dash_bootstrap_components
+        dbc.Table som har alle ønskede alrmer
+    """
     time_range = get_time_range(time_interval)
 
-    alarms = get_alarms(chosen_sløyfe)
-    min_val = alarms[0]
-    max_val = alarms[1]
+    #alarms = get_alarms(chosen_sløyfe)
+    #min_val = alarms[0]
+    #max_val = alarms[1]
 
-    print("updating from " + time_range)
+    #print("updating from " + time_range)
 
     if (time_interval != "Alle"):
-        #get data where temp is <10 or >30
-        #query = "SELECT * FROM {0} WHERE {0}.timeReceived > '{1}' AND {0}.deviceType = 'tempSensor' AND ({0}.temperature < {2} OR {0}.temperature > {3} ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range, min_val, max_val)
         query = "SELECT * FROM {0} WHERE {0}.timeReceived > '{1}' AND {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range)
         abnormal_values = read_from_db(chosen_sløyfe, query)
     else:
-        #query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND ({0}.temperature < {1} OR {0}.temperature > {2} ) ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, min_val, max_val)
         query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range)
         abnormal_values = read_from_db(chosen_sløyfe, query)
 
@@ -91,25 +142,27 @@ def get_alarm_table(time_interval, chosen_sløyfe):
     table_rows = []
     
     for item in abnormal_values:
+        # Gjør dato formatet for at den skal bli mer lesbar
         time = datetime.strptime(item["timeReceived"], '%Y-%m-%d %H:%M:%S')
         time = datetime.strftime(time, '%d.%m.%Y   %H:%M')
         devicePlacement = item["devicePlacement"]
         deviceEui = item["deviceEui"]
         temperature = item["temperature"]
 
-        global not_confirmed_alarms
-        not_confirmed_alarms = []
+        # Lag ny rad for hver alarm
+        # Hvis alarmen ikke er kvittert bruk rød bakgrunnsfarge
         if item['alarmConfirmed'] == False:
-            not_confirmed_alarms.append(item['_self'])
             row = html.Tr([html.Td(time), html.Td(devicePlacement), html.Td(deviceEui), html.Td("{} °C".format(temperature), className="scrollBarColl")], className='table-danger')
         else:
             row = html.Tr([html.Td(time), html.Td(devicePlacement), html.Td(deviceEui), html.Td("{} °C".format(temperature), className="scrollBarColl")])
 
         table_rows.append(row)
-        
+
     table_body=[html.Tbody(table_rows)]
+
     return dbc.Table(table_header+table_body, bordered=True)
     
+# Lag dropdown meny for å velge hvor gamle alarmer som skal lastes inn
 dropdown = dbc.DropdownMenu(label = 'dag', id='dropdown-alarms', children=[
     dbc.DropdownMenuItem('dag', id='day'),
     dbc.DropdownMenuItem('uke', id='week'),
@@ -119,25 +172,33 @@ dropdown = dbc.DropdownMenu(label = 'dag', id='dropdown-alarms', children=[
 
 label_dropdown = html.Div("Alarmer fra siste:", className='label-dropdown')
 
+# Lag en knapp for kvittering av alarmer
 confirm_button = dbc.Button("Kvitter alarmer", id='button-confirm', color="success", className='ml-4')
 
-layout = html.Div([
-    dcc.Interval(id='refresh', n_intervals=0, interval=120*1000),
-    header,
-    dbc.Container([
-        dbc.Row(dbc.Col(html.Div(id='site-title'))),
-        dbc.Row(html.Div(id='table', className='tableFixHead')),
-        dbc.Row([dbc.Col(label_dropdown, width='auto'), dbc.Col(dropdown), dbc.Col(confirm_button)], justify='start', no_gutters=True),
+# layout definnneres i en funksjon for at den skal bli oppdatert når nettsiden refreshes
+def serve_layout():
+    layout = html.Div([
+        dcc.Interval(id='refresh', n_intervals=0, interval=120*1000),
+        header,
+        dbc.Container([
+            dbc.Row(dbc.Col(html.Div(id='site-title'))),
+            dbc.Row(html.Div(id='table', className='tableFixHead')),
+            dbc.Row([dbc.Col(label_dropdown, width='auto'), dbc.Col(dropdown), dbc.Col(confirm_button)], justify='start', no_gutters=True),
 
-    ], id='main-container'),# Container
-    ])# Div
+        ], id='main-container'),# Container
+        ])# Div
+    return layout
+
+layout = serve_layout
 
 
 def callbacks(app):
     layout_callbacks(app)
+
+    # oppdater site-title når ny sløyfe blir valgt
     update_sløyfe_callback(app, [['site-title', get_site_title],
                                  ])
-
+    # Oppdater alarm tabellen etter en hvis tidsintervall, når alarmer kvitteres og når ny tidsintervall velges
     @app.callback(
         Output(component_id='table', component_property='children'),
         [Input(component_id='refresh', component_property='n_intervals'),
@@ -151,7 +212,8 @@ def callbacks(app):
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
 
         if triggered == None or ctx.triggered[0]['value'] == None:
-            return [get_alarm_table(time_range, chosen_sløyfe)]
+            raise PreventUpdate
+            #return [get_alarm_table(time_range, chosen_sløyfe)]
         elif triggered == 'button-confirm':
             print('confirming_alarms')
             confirm_alarms(chosen_sløyfe)
@@ -160,6 +222,7 @@ def callbacks(app):
             chosen_sløyfe = get_sløyfe_from_pathname(pathname)
             return [get_alarm_table(time_range, chosen_sløyfe)]
 
+    # oppdater label til dropdown menu
     @app.callback(
         Output(component_id='dropdown-alarms', component_property='label'),
         [Input(component_id='day', component_property='n_clicks'),

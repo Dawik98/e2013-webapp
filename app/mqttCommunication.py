@@ -134,7 +134,7 @@ def createController(devicePlacement):
     global controller
     controller[devicePlacement] = PI_controller(devicePlacement, activateHeatTrace, deactivateHeatTrace)
     outputState[devicePlacement] = [False, datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo'))]
-    print("making new controller")
+    print("creating new controller")
 
 def deleteController(devicePlacement):
     global controller
@@ -143,7 +143,7 @@ def deleteController(devicePlacement):
 
 def get_controller(devicePlacement):
     global controller
-    print("Got controllers: {}".format(controller))
+    #print("Got controllers: {}".format(controller))
     return controller[devicePlacement]
 
 
