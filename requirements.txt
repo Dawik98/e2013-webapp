@@ -2,7 +2,7 @@ click==6.7
 Flask==1.0.2
 itsdangerous==0.24
 Jinja2==2.10
-MarkupSafe==1.0
+MarkupSafe==1.1.1
 Werkzeug==0.14.1
 flask-mqtt==1.1.0
 azure-cosmos==3.1.2
@@ -21,3 +21,4 @@ alembic==1.4.2
 flask-migrate==2.5.3
 python-editor==1.0.4
 flask-mail==0.9.1
+xlsxwriter==1.2.8

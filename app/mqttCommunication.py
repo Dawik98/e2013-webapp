@@ -32,12 +32,28 @@ def connect_mosquitto(server):
             global outputState
             outputState[packetData['devicePlacement']] = [packetData['output'], timeOslo]
             print("outputState: {}".format(outputState[packetData['devicePlacement']][0]))
-        elif ((packetData['messageType'] == 'dataLog') AND (packetData['devicePlacement'] in controller)):
-            # query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - datetime.timedelta(minutes=7)))
-            # lastTemps = read_from_db(packetData['devicePlacement'], query)
-            # for i in range(0 : len(lastTemps)):
-            #     lastTemps[i]['deviceEui']
-            controller[packetData['devicePlacement']].update_value(packetData['temperature'])
+        elif ((packetData['messageType'] == 'dataLog') and (packetData['devicePlacement'] in controller)):
+            from dashApps.innstillinger import get_settings
+            devicesInPlacement = get_settings()[packetData['devicePlacement']]['devices']
+            print(devicesInPlacement)
+            if (len(devicesInPlacement) > 2):
+                query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - datetime.timedelta(minutes=7)))
+                lastTemps = read_from_db(packetData['devicePlacement'], query)
+                otherDeviceEuis = []
+                for i in range(0, len(devicesInPlacement)):
+                    if ((devicesInPlacement[i]['deviceType'] == "Temperatur sensor") and (devicesInPlacement[i]['device_eui'] != packetData['deviceEui'])):
+                        otherDeviceEuis.append(devicesInPlacement[i]['device_eui'])
+                otherTemperatureStates = []
+                for deviceEui in otherDeviceEuis:
+                    for i in range(0, len(lastTemps)):
+                        if (lastTemps[i]['deviceEui'] == deviceEui):
+                            otherTemperatureStates.append(lastTemps[i]['temperature'])
+                            break
+                if ((otherTemperatureStates == []) or (packetData['temperature'] < min(otherTemperatureStates))):
+                    print(otherTemperatureStates)
+                    controller[packetData['devicePlacement']].update_value(packetData['temperature'])
+            else:
+                controller[packetData['devicePlacement']].update_value(packetData['temperature'])
             
         # Write data to database if this isn't a powerdata-message or if active power is not zero.
         if (packetData['messageType'] != 'powerData'):

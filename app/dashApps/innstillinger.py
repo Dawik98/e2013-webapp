@@ -26,8 +26,8 @@ prew_dutycycle_confirm_count = 0
 prew_actuation_confirm_count = 0
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-# settingsFile = 'settings.txt' # Azure
-settingsFile = 'app/settings.txt' # Lokalt
+settingsFile = 'settings.txt' # Azure
+# settingsFile = 'app/settings.txt' # Lokalt
 
 def print_settings():
     """

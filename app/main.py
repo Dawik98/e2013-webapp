@@ -14,10 +14,10 @@ from flask_mail import Mail
 sys.path.append("./dashApps")
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-# usersFile = 'users.txt' # Azure
-usersFile = 'app/users.txt' # Lokalt
-#baseURL = 'http://e2013-ntnu.azurewebsites.net'
-baseURL = 'http://localhost:8000'
+usersFile = 'users.txt' # Azure
+# usersFile = 'app/users.txt' # Lokalt
+baseURL = 'http://e2013-ntnu.azurewebsites.net' # Azure
+# baseURL = 'http://localhost:8000' # Lokalt
 
 def createServer():
     server = Flask(__name__)
@@ -44,14 +44,12 @@ def createServer():
     server.config['MAIL_USE_TLS'] = False
     server.config['MAIL_USE_SSL'] = True
     server.config['MAIL_DEFAULT_SENDER'] = 'bachelorgrupee2013@gmail.com'
-    #Legger brukernavn og passord inn i eviorment variabel. Det er tryggere enn å legge de direkte i source file
-    ##Endres om vi kjører lokalt eller lastet opp i azure ##
-    #Lokalt
-    server.config['MAIL_USERNAME'] = 'bachelorgruppee2013@gmail.com'
-    server.config['MAIL_PASSWORD'] = 'E2013LoRa'
-    # Når den kjøres i azure
-    #server.config['MAIL_USERNAME'] = os.environ.get('bachelorgruppee2013@gmail.com')
-    #server.config['MAIL_PASSWORD'] = os.environ.get('E2013LoRa')
+    # Legger brukernavn og passord inn i enviorment variabel. Det er tryggere enn å legge de direkte i source file
+    # Endres om vi kjører lokalt eller lastet opp i Azure ##
+    # server.config['MAIL_USERNAME'] = 'bachelorgruppee2013@gmail.com' # Lokalt
+    # server.config['MAIL_PASSWORD'] = 'E2013LoRa' # Lokalt
+    server.config['MAIL_USERNAME'] = os.environ.get('bachelorgruppee2013@gmail.com') # Azure
+    server.config['MAIL_PASSWORD'] = os.environ.get('E2013LoRa') # Azure
     
     from emails import connect_mail
     connect_mail(server)
@@ -130,7 +128,7 @@ def addDashApp(server, path, title, layout, callbacks):
                         server=server,
                         url_base_pathname=path, 
                         external_scripts=external_scripts, 
-                        #external_stylesheets=external_stylesheets)
+                        # external_stylesheets=external_stylesheets)
                         external_stylesheets=[dbc.themes.SANDSTONE, font_awesome_stylesheets],
                         suppress_callback_exceptions=True)
                         
@@ -141,7 +139,7 @@ def addDashApp(server, path, title, layout, callbacks):
         dashApp.layout = layout
         callbacks(dashApp)
     
-    #Beskytter dashappene (dashboardet) med innloggning
+    # Beskytter dashappene (dashboardet) med innloggning
     _protect_dashviews(dashApp)
 
 if __name__ == '__main__':

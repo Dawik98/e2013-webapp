@@ -225,7 +225,7 @@ def callbacks(app):
                         mode= 'lines+markers'
                         )
                 return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                            yaxis=dict(range=[0,120],title='Temperatur [°C]'),
+                                                            yaxis=dict(range=[min(Y) - 10, max(Y) + 10],title='Temperatur [°C]'),
                                                             title='Temperaturmåling',
                                                             #margin={'l':300,'r':100,'t':5,'b':50},
                                                         )}
@@ -273,7 +273,7 @@ def callbacks(app):
             #Hindrer at siden fryser
             if not X:
                 return {'data': [], 'layout' : go.Layout(xaxis=dict(range=[fra_dato,til_dato]),
-                                                            yaxis=dict(range=[0,100],
+                                                            yaxis=dict(range=[0, 100],
                                                                         title=enhet_dict[måle_valg], tickangle=0,),
                                                             title="Ingen målinger i valgt periode!",
                                                             #margin={'l':100,'r':100,'t':50,'b':50},
