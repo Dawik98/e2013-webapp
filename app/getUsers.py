@@ -1,5 +1,6 @@
 from cosmosDB import read_from_db
 
+#Henter brukere fra databasen på ønsket format der hver email har et dictonary med nødvendig informasjon
 def get_users():
     query = "SELECT * FROM validUsers ORDER BY validUsers._ts DESC"
     container_name = 'validUsers'
@@ -14,7 +15,4 @@ def get_users():
                                 "password":i['password'],
                                 "id":i['id']
                             }
-    #print(users)
-    #user=users["kristoffer.hovland@hotmail.com"]["password"]
-    #print(user)
     return users

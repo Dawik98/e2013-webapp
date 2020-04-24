@@ -2,15 +2,17 @@ from flask_login import UserMixin, LoginManager
 from getUsers import get_users
 import json
 
+#Definerer loginmanageren som holder styr på brukere
+
 login_manager=LoginManager()
 
+#Importerer nødvendige atributter til bruker klassen
 class User(UserMixin):
         pass
 
+#Denne funksjonen kjøres hele tiden av login managereren for å sjekke om brukerene har logget inn osv
 @login_manager.user_loader
 def user_loader(email):
-    
-    #Laster brukere fra tekst fil.
     from main import usersFile
     users={}
     #Denne kjøres hele tiden, laster derfor brukere inn fra fil, i stedet for database query.

@@ -10,8 +10,6 @@ def update_tempData(sløyfe_valg, fra_dato, til_dato):
         til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
         til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
 
-    #fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
-
     #Basert på ønsket måle periode, og sløyfe queryer vi databasen for data.
     query = "SELECT * FROM {0} WHERE ({0}.deviceType = 'tempSensor' AND {0}.timeReceived >= '{1}' AND {0}.timeReceived <= '{2}') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg, fra_dato, til_dato)
     container_name = sløyfe_valg
@@ -26,7 +24,5 @@ def update_tempData(sløyfe_valg, fra_dato, til_dato):
         temp.append(i['temperature'])
     for i in items:
             ts.append(i['timeReceived'])
-    
     ts_UTC=ts
-    
     return  ts_UTC,temp

@@ -5,12 +5,11 @@ ADMINS = ['kristobh@stud.ntnu.no', 'omgoa@stud.ntnu.no', 'dawidk@stud.ntnu.no', 
 def connect_mail(server):
     global mail
     mail=Mail(server)
-
+# Funksjon som kjøres hver gang ny bruker opprettes. Varlser ADMINS på email om nødvendig godkjenning
 def send_email_newUser(user_email):
     subject="New user created!"
     msg = Message(subject, recipients=ADMINS)
     msg.body = "En konto er registert for bruker: {}".format(user_email)
-    #msg.html = html_body
     mail.send(msg)
 
 """
