@@ -63,7 +63,7 @@ def print_historiskData(sløyfe_valg,til_dato, fra_dato):
 
     d = {'Time recived, temp': historiskData["Temperatur-Sensor"]["timeReceived"],
         'Temperature [°C]': historiskData["Temperatur-Sensor"]["temperature"],
-        'Time recived, rele': historiskData["Power-Switch"]["timeReceived"],
+        'Time recived, meter-relay': historiskData["Power-Switch"]["timeReceived"],
         'Active Power [W]': historiskData["Power-Switch"]["activePower"],
         'Reactive Power [VAr]': historiskData["Power-Switch"]["reactivePower"],
         'Apparent Power [VA]': historiskData["Power-Switch"]["apparentPower"],
