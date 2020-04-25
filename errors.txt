@@ -1482,3 +1482,314 @@ min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'tempsensors' is not defined
+name 'tempsensors' is not defined
+name 'tempsensors' is not defined
+name 'tempsensors' is not defined
+name 'tempsensors' is not defined
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
