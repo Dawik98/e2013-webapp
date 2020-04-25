@@ -16,7 +16,7 @@ from collections import deque
 from cosmosDB import read_from_db
 from opp_temp import update_tempData
 from opp_meter import update_meterData
-from dashApps.innstillinger import settingsFile, print_settings, get_settings
+from dashApps.innstillinger import settingsFile, print_settings, get_settings, get_devices
 
 #import standard layout
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
@@ -159,12 +159,13 @@ def callbacks(app):
         sløyfe_valg = get_sløyfe_from_pathname(pathname)
 
         #Tømmer målevalg for rele dersom sløyfen ikke har et rele.
-        settings=get_settings()
-        nb_items=len(settings[sløyfe_valg]['devices'])
+        allDevices=get_devices()
         devices=[]
-        for i in range(0, nb_items):
-            devices.append(settings[sløyfe_valg]['devices'][i]['deviceType'])
-        if 'Power Switch' not in devices:
+        for key, value in allDevices.items():
+            if value[0] == sløyfe_valg:
+                devices.append(value[1])
+        #print(devices)
+        if 'powerSwitch' not in devices:
             #Returnerer tom dropdown meny
             options={'label': "",'value': ""}
             overskrift = "Ingen målerele på denne sløyfen!"
@@ -202,33 +203,39 @@ def callbacks(app):
             til_dato_UTC = datetime.now()
             til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
             fra_dato= til_dato + relativedelta(hours=-offset)
+            til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
             fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
-
-            #henter inn ny data fra database
-            ts_UTC, temp = update_tempData(sløyfe_valg, fra_dato, til_dato)
-
-            #Dersom måle array er tom returneres tom graf, hindrer at siden fryser
-            if not temp:
-                return {'data': [], 'layout' : go.Layout(xaxis=dict(range=[fra_dato, til_dato]),
-                                                            yaxis=dict(range=[0,120],title='Temperatur [°C]'),
-                                                            title="Ingen målinger i valgt periode!",
-                                                            #margin={'l':300,'r':100,'t':5,'b':50},
-                                                        )}
+            # Henter inn ny data fra database
+            tempData = update_tempData(sløyfe_valg, fra_dato, til_dato)
+            # Dersom måle-array er tom returneres tom graf, hindrer at siden fryser
+            if not tempData:
+                return {
+                    'data': [],
+                    'layout' : go.Layout(
+                        xaxis=dict(range=[fra_dato, til_dato]),
+                        yaxis=dict(range=[0,120],title='Temperatur [°C]'),
+                        title="Ingen målinger i valgt periode!",
+                    )
+                }
             else:
-                #tilordner X og Y på graf
-                X=ts_UTC
-                Y=temp
-                data = plotly.graph_objs.Scatter(
-                        y=Y,
-                        x=X,
-                        name='Scatter',
-                        mode= 'lines+markers'
+                # Tilordner X og Y på graf
+                data=[]
+                for key in tempData:
+                    data.append(
+                        go.Scatter(
+                            y=tempData[key]['temperature'],
+                            x=tempData[key]['ts'],
+                            name=key,
+                            mode= 'lines+markers'
                         )
-                return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                            yaxis=dict(range=[min(Y) - 10, max(Y) + 10],title='Temperatur [°C]'),
-                                                            title='Temperaturmåling',
-                                                            #margin={'l':300,'r':100,'t':5,'b':50},
-                                                        )}
+                    )
+                return {
+                    'data': data,
+                    'layout' : go.Layout(
+                        title='Temperaturmåling',
+                        showlegend=True
+                    )
+                }
         #Ved feilmelding skrives det til error txt fil.                                                 
         except Exception as e:
             with open('errors.txt','a') as f:

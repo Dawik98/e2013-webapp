@@ -1482,3 +1482,747 @@ min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
 min() arg is an empty sequence
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'allDevices' is not defined
+name 'tempsensors' is not defined
+name 'tempsensors' is not defined
+name 'tempsensors' is not defined
+name 'tempsensors' is not defined
+name 'tempsensors' is not defined
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+'dict' object has no attribute 'append'
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+list indices must be integers or slices, not dict
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+'deviceEUI'
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+
+    Invalid value of type 'builtins.str' received for the 'x' property of scatter
+        Received value: '70-b3-d5-80-a0-10-94-46'
+
+    The 'x' property is an array that may be specified as a tuple,
+    list, numpy array, or pandas Series
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+'temperature'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
