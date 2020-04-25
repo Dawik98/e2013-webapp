@@ -84,6 +84,18 @@ def get_devices():
                 devices[device['device_eui']] = [sløyfe, deviceType]
     return devices
 
+def get_temp_sensors_in_placement(devicePlacement):
+    """
+    Funksjonen returnerer en liste med enhets-EUI-er for enheter tilknyttet aktuell varmekrets.
+    """
+    devicesInPlacement = get_settings()[devicePlacement]['devices']
+    devices = []
+    for i in range(0, len(devicesInPlacement)):
+        if (devicesInPlacement[i]['deviceType'] == "Temperatur sensor"):
+            devices.append(devicesInPlacement[i]['device_eui'])
+    return devices
+
+
 def add_device(sløyfe, device_eui, device_type):
     """
     add_device legger til en ny enhet i valgt sløfe i 'settings.txt' fila

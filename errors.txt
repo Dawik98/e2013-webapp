@@ -1793,3 +1793,436 @@ list indices must be integers or slices, not dict
 'temperature'
 'temperature'
 'temperature'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+can only concatenate str (not "relativedelta") to str
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+name 'get_devices' is not defined
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+list assignment index out of range
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+'list' object attribute 'append' is read-only
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'
+unhashable type: 'dict'

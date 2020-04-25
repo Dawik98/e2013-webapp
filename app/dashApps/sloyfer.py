@@ -203,38 +203,40 @@ def callbacks(app):
             til_dato_UTC = datetime.now()
             til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
             fra_dato= til_dato + relativedelta(hours=-offset)
+            til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
             fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
-
-            #henter inn ny data fra database
+            # Henter inn ny data fra database
             tempData = update_tempData(sløyfe_valg, fra_dato, til_dato)
-
-            #Dersom måle array er tom returneres tom graf, hindrer at siden fryser
-            if not tempData['temperature']:
-                return {'data': [], 'layout' : go.Layout(xaxis=dict(range=[fra_dato, til_dato]),
-                                                            yaxis=dict(range=[0,120],title='Temperatur [°C]'),
-                                                            title="Ingen målinger i valgt periode!",
-                                                            #margin={'l':300,'r':100,'t':5,'b':50},
-                                                        )}
+            # Dersom måle-array er tom returneres tom graf, hindrer at siden fryser
+            if not tempData:
+                return {
+                    'data': [],
+                    'layout' : go.Layout(
+                        xaxis=dict(range=[fra_dato, til_dato]),
+                        yaxis=dict(range=[0,120],title='Temperatur [°C]'),
+                        title="Ingen målinger i valgt periode!",
+                    )
+                }
             else:
-                #tilordner X og Y på graf
+                # Tilordner X og Y på graf
                 data=[]
-                i=0
-                for key in tempData.items():
-                    X=tempData[key]['temperature']
-                    Y=tempData[key]['ts']
-                    data[i] = plotly.graph_objs.Scatter(
-                            y=Y,
-                            x=X,
-                            name='Scatter',
+                for key in tempData:
+                    data.append(
+                        go.Scatter(
+                            y=tempData[key]['temperature'],
+                            x=tempData[key]['ts'],
+                            name=key,
                             mode= 'lines+markers'
-                            )
-                    i=i+1
+                        )
+                    )
                 
-                return {'data': data,'layout' : go.Layout(xaxis=dict(range=[(min(X)),(max(X))]),
-                                                            yaxis=dict(range=[0,120],title='Temperatur [°C]'),
-                                                            title='Temperaturmåling',
-                                                            #margin={'l':300,'r':100,'t':5,'b':50},
-                                                        )}
+                return {
+                    'data': data,
+                    'layout' : go.Layout(
+                        title='Temperaturmåling',
+                        showlegend=True
+                    )
+                }
         #Ved feilmelding skrives det til error txt fil.                                                 
         except Exception as e:
             with open('errors.txt','a') as f:

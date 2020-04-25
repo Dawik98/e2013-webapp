@@ -2,7 +2,7 @@ from cosmosDB import read_from_db
 import pandas as pd
 import pytz
 from datetime import datetime
-from dashApps.innstillinger import get_devices
+from dashApps.innstillinger import get_temp_sensors_in_placement
 
 def update_tempData(sløyfe_valg, fra_dato, til_dato):
     # Dersom ingenting er skrevet i feltet med t "til dato" plotter vi til tidspunket nå (LIVE)
@@ -11,13 +11,7 @@ def update_tempData(sløyfe_valg, fra_dato, til_dato):
         til_dato = til_dato_UTC.astimezone(pytz.timezone('Europe/Oslo'))
         til_dato=til_dato.strftime("%Y-%m-%d %H:%M:%S")
     #sjekker om det er flere tempsensorer
-    Devices=get_devices()
-    tempSensors=[]
-    for key, value in Devices.items():
-        if value[0] == sløyfe_valg:
-            if value[1] == 'tempSensor':
-                tempSensors.append(key)
-
+    tempSensors = get_temp_sensors_in_placement(sløyfe_valg)
     #Basert på ønsket måle periode, og sløyfe queryer vi databasen for data.
     query = "SELECT {0}.temperature, {0}.deviceEui, {0}.timeReceived FROM {0} WHERE ({0}.deviceType = 'tempSensor' AND {0}.timeReceived >= '{1}' AND {0}.timeReceived <= '{2}') ORDER BY {0}.timeReceived DESC".format(sløyfe_valg, fra_dato, til_dato)
     container_name = sløyfe_valg
