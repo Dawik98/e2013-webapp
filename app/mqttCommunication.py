@@ -33,18 +33,15 @@ def connect_mosquitto(server):
             outputState[packetData['devicePlacement']] = [packetData['output'], timeOslo]
             print("outputState: {}".format(outputState[packetData['devicePlacement']][0]))
         elif ((packetData['messageType'] == 'dataLog') and (packetData['devicePlacement'] in controller)):
-            from dashApps.innstillinger import get_settings
-            devicesInPlacement = get_settings()[packetData['devicePlacement']]['devices']
-            print(devicesInPlacement)
-            if (len(devicesInPlacement) > 2):
+            from dashApps.innstillinger import get_temp_sensors_in_placement
+            devicesInPlacement = get_temp_sensors_in_placement(packetData['devicePlacement'])
+            if (len(devicesInPlacement) > 1):
                 query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - datetime.timedelta(minutes=7)))
                 lastTemps = read_from_db(packetData['devicePlacement'], query)
-                otherDeviceEuis = []
-                for i in range(0, len(devicesInPlacement)):
-                    if ((devicesInPlacement[i]['deviceType'] == "Temperatur sensor") and (devicesInPlacement[i]['device_eui'] != packetData['deviceEui'])):
-                        otherDeviceEuis.append(devicesInPlacement[i]['device_eui'])
+                # Fjerner enhets-EUI til avsenderenhet fra listen over enheter i varmekretsen
+                devicesInPlacement.remove(packetData['deviceEui'])
                 otherTemperatureStates = []
-                for deviceEui in otherDeviceEuis:
+                for deviceEui in devicesInPlacement:
                     for i in range(0, len(lastTemps)):
                         if (lastTemps[i]['deviceEui'] == deviceEui):
                             otherTemperatureStates.append(lastTemps[i]['temperature'])
