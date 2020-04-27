@@ -52,13 +52,13 @@ def connect_mosquitto(server):
             else:
                 controller[packetData['devicePlacement']].update_value(packetData['temperature'])
             
-        # Write data to database if this isn't a powerdata-message or if active power is not zero.
-        if (packetData['messageType'] != 'powerData'):
-            container_name = packetData['devicePlacement']
-            write_to_db(container_name, packetData)
-        elif (packetData['activePower'] != 0):
-            container_name = packetData['devicePlacement']
-            write_to_db(container_name, packetData)
+        # # Write data to database if this isn't a powerdata-message or if active power is not zero.
+        # if (packetData['messageType'] != 'powerData'):
+        #     container_name = packetData['devicePlacement']
+        #     write_to_db(container_name, packetData)
+        # elif (packetData['activePower'] != 0):
+        #     container_name = packetData['devicePlacement']
+        #     write_to_db(container_name, packetData)
 
 # Utsending av "Meter-data-request"
 def claimMeterdata(devicePlacement):
