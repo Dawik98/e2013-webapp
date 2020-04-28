@@ -233,14 +233,12 @@ def callbacks(app):
                     lastReceiveTime = lastReceiveTimes[0]
                     lowestTemp = lowestTemps[0]
                     highestTemp = highestTemps[0]
-                print("Laveste temperatur: {}, Høyeste temperatur: {}".format(lowestTemp, highestTemp))
                 trigger = dash.callback_context.triggered[0]['prop_id']
                 if ((lastReceiveTime == lastMessurement['tempMessage']) and trigger == 'graph-update.n_intervals'):
                     return dash.dash.no_update
                 else:
                     lastMessurement['tempMessage'] = lastReceiveTime
                 # Tilordner X og Y på graf
-                print(tempData)
                 data=[]
                 for key in tempData:
                     data.append(
