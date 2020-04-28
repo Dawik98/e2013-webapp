@@ -14,7 +14,7 @@ def connect_mosquitto(server):
     @mqtt.on_connect()
     def handle_connect(client, userdata, flags, rc):
         mqtt.subscribe('measurement')
-        print("Subscribed to topic")
+        print("[MQTT] Subscribed to measurement topic")
     
     # run when new message is published to the subscribed topic
     @mqtt.on_message()
@@ -22,7 +22,7 @@ def connect_mosquitto(server):
         topic = message.topic
         payload = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
     
-        print("\nNew message recieved at topic {}:".format(topic))
+        print("\n[MQTT] New message recieved at topic {}:".format(topic))
         # print(payload)
         global timeOslo
         global packetData

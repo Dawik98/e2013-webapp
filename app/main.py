@@ -30,7 +30,7 @@ def createServer():
     with open(usersFile, 'r+') as json_file:
         json.dump(users, json_file)
 
-    # setup mqtt for mosquitto on vm
+    # legger inn all nødvendig data for mosquitto klient
     server.config['MQTT_BROKER_URL'] = '13.74.42.218'
     server.config['MQTT_BROKER_PORT'] = 9990
     server.config['MQTT_CLIENT_ID'] = 'Webb-App'
@@ -38,12 +38,14 @@ def createServer():
     server.config['MQTT_PASSWORD'] = 'potet'
     server.config['MQTT_CLIENT_ID'] = "Webb-App"
     server.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
+
     # email server
     server.config['MAIL_SERVER'] = 'smtp.gmail.com'
     server.config['MAIL_PORT'] = 465
     server.config['MAIL_USE_TLS'] = False
     server.config['MAIL_USE_SSL'] = True
     server.config['MAIL_DEFAULT_SENDER'] = 'bachelorgrupee2013@gmail.com'
+
     # Legger brukernavn og passord inn i enviorment variabel. Det er tryggere enn å legge de direkte i source file
     # Endres om vi kjører lokalt eller lastet opp i Azure ##
     # server.config['MAIL_USERNAME'] = 'bachelorgruppee2013@gmail.com' # Lokalt
@@ -71,7 +73,6 @@ def createServer():
     from dashApps.historikk import callbacks as callbacks_historikk
     addDashApp(server, '/historikk/', 'historikk', layout_historikk, callbacks_historikk)
 
-
     from dashApps.alarmer import layout as layout_alarmer
     from dashApps.alarmer import callbacks as callbacks_alarmer
     addDashApp(server, '/alarmer/', 'Alarmer', layout_alarmer, callbacks_alarmer)
@@ -82,7 +83,6 @@ def createServer():
 
 
     from flaskApp import app
-
     
     server.register_blueprint(app)
 
@@ -94,21 +94,17 @@ def _protect_dashviews(dashapp):
         if view_func.startswith(dashapp.config.url_base_pathname):
             dashapp.server.view_functions[view_func] = flask_login.login_required(dashapp.server.view_functions[view_func])
 
+# Lager en funksjon for å kunne enkelt legge til flere dash-apps
 def addDashApp(server, path, title, layout, callbacks):
 
-    #external_stylesheets = [{
-    #    "href" : "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
-    #    "rel" : "stylesheet",
-    #    "integrity" : "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh",
-    #    "crossorigin" : "anonymous"
-    #    
-    #}]
+    # Inkluderer en font med ikoner
     font_awesome_stylesheets = [{
         "href" : "https://kit.fontawesome.com/274a562a3f.js",
         "crossorigin" : "anonymous"
         
     }]
 
+    # Inkluder nødvendige script bla. for bootstrap
     external_scripts = [{
         "href" : "https://code.jquery.com/jquery-3.4.1.slim.min.js",
         "integrity" : "sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n",
@@ -128,12 +124,9 @@ def addDashApp(server, path, title, layout, callbacks):
                         server=server,
                         url_base_pathname=path, 
                         external_scripts=external_scripts, 
-                        # external_stylesheets=external_stylesheets)
                         external_stylesheets=[dbc.themes.SANDSTONE, font_awesome_stylesheets],
                         suppress_callback_exceptions=True)
                         
-
-    
     with server.app_context():
         dashApp.title = title
         dashApp.layout = layout
