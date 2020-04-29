@@ -205,18 +205,43 @@ def callbacks(app):
             fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
             # Henter inn ny data fra database
             tempData = update_tempData(sløyfe_valg, fra_dato, til_dato)
-            # Dersom måle-array er tom returneres tom graf, hindrer at siden fryser
+            # Kontrollerer om det er innhold i mottatt data, begynner med antagelsen at listen er tom.
+            empthy = True
             for eui in tempData:
-                if not tempData[key]['temperature']:
-                    print("List empty")
-                    return {
-                        'data': [],
-                        'layout' : go.Layout(
-                            xaxis=dict(range=[fra_dato, til_dato]),
-                            yaxis=dict(range=[0,120], title='Temperatur [°C]'),
-                            title="Ingen målinger i valgt periode!",
-                        )
-                    }
+                if tempData[eui]['temperature']:
+                    empthy = False
+                    break
+            # Dersom måle-array er tom returneres tom graf, hindrer at siden fryser
+            if empthy:
+                return {
+                    'data': [],
+                    'layout' : go.Layout(
+                        xaxis=dict(range=[fra_dato, til_dato]),
+                        yaxis=dict(range=[0,120], title='Temperatur [°C]'),
+                        title="Ingen målinger i valgt periode!",
+                    )
+                }
+            else:
+                # Sjekker om det har kommet inn ny melding ved å sammenligne 'timeReceived' i nyeste melding
+                # Detekterer samtidig laveste og høyeste temperatur som skal vises for å bestemme akser.
+                lastReceiveTimes = []
+                lowestTemps = []
+                highestTemps =[]
+                for eui in tempData:
+                    lastReceiveTimes.append(tempData[eui]['timeReceived'][0])
+                    lowestTemps.append(min(tempData[eui]['temperature']))
+                    highestTemps.append(max(tempData[eui]['temperature']))
+                if (len(tempData) > 1):
+                    lastReceiveTime = max(lastReceiveTimes)
+                    lowestTemp = min(lowestTemps)
+                    highestTemp = max(highestTemps)
+                else:
+                    lastReceiveTime = lastReceiveTimes[0]
+                    lowestTemp = lowestTemps[0]
+                    highestTemp = highestTemps[0]
+                trigger = dash.callback_context.triggered[0]['prop_id']
+                if ((lastReceiveTime == lastMessurement['tempMessage']) and trigger == 'graph-update.n_intervals'):
+                    return dash.dash.no_update
                 else:
                     
                     # Sjekker om det har kommet inn ny melding ved å sammenligne 'timeReceived' i nyeste melding
