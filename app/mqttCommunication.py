@@ -14,7 +14,7 @@ def connect_mosquitto(server):
     @mqtt.on_connect()
     def handle_connect(client, userdata, flags, rc):
         mqtt.subscribe('measurement')
-        print("Subscribed to topic")
+        print("[MQTT] Subscribed to measurement topic")
     
     # run when new message is published to the subscribed topic
     @mqtt.on_message()
@@ -22,7 +22,7 @@ def connect_mosquitto(server):
         topic = message.topic
         payload = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
     
-        print("\nNew message recieved at topic {}:".format(topic))
+        print("\n[MQTT] New message recieved at topic {}:".format(topic))
         # print(payload)
         global timeOslo
         global packetData
@@ -52,11 +52,11 @@ def connect_mosquitto(server):
             else:
                 controller[packetData['devicePlacement']].update_value(packetData['temperature'])
             
-        # # Write data to database if this isn't a powerdata-message or if active power is not zero.
+        # # Skriv til databesen dersom det ikke er en powerData-melding, eller hvis den aktive effekten i powerData-meldingen er høyere enn 5 W.
         # if (packetData['messageType'] != 'powerData'):
         #     container_name = packetData['devicePlacement']
         #     write_to_db(container_name, packetData)
-        # elif (packetData['activePower'] != 0):
+        # elif (packetData['activePower'] > 5):
         #     container_name = packetData['devicePlacement']
         #     write_to_db(container_name, packetData)
 
