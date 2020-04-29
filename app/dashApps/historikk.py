@@ -372,7 +372,9 @@ def callbacks(app):
                     #autosize=False,
                     #width=1700,
                     height=800,
-                    showlegend=True,
+                    legend=dict(orientation="h"),
+                    paper_bgcolor="#D3D3D3",
+                    plot_bgcolor="#D3D3D3",
                                                         )}
     #åpner ny fane som redirectes til /excel-download/.... i flask appen som har funksjon for å laste ned excel fil. 
     #Url kodes også med informasjon om hva som skal lastes ned

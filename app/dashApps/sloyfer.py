@@ -206,57 +206,64 @@ def callbacks(app):
             # Henter inn ny data fra database
             tempData = update_tempData(sløyfe_valg, fra_dato, til_dato)
             # Dersom måle-array er tom returneres tom graf, hindrer at siden fryser
-            if not tempData:
-                return {
-                    'data': [],
-                    'layout' : go.Layout(
-                        xaxis=dict(range=[fra_dato, til_dato]),
-                        yaxis=dict(range=[0,120], title='Temperatur [°C]'),
-                        title="Ingen målinger i valgt periode!",
-                    )
-                }
-            else:
-                # Sjekker om det har kommet inn ny melding ved å sammenligne 'timeReceived' i nyeste melding
-                # Detekterer samtidig laveste og høyeste temperatur som skal vises for å bestemme akser.
-                lastReceiveTimes = []
-                lowestTemps = []
-                highestTemps =[]
-                for eui in tempData:
-                    lastReceiveTimes.append(tempData[eui]['timeReceived'][0])
-                    lowestTemps.append(min(tempData[eui]['temperature']))
-                    highestTemps.append(max(tempData[eui]['temperature']))
-                if (len(tempData) > 1):
-                    lastReceiveTime = max(lastReceiveTimes)
-                    lowestTemp = min(lowestTemps)
-                    highestTemp = max(highestTemps)
-                else:
-                    lastReceiveTime = lastReceiveTimes[0]
-                    lowestTemp = lowestTemps[0]
-                    highestTemp = highestTemps[0]
-                trigger = dash.callback_context.triggered[0]['prop_id']
-                if ((lastReceiveTime == lastMessurement['tempMessage']) and trigger == 'graph-update.n_intervals'):
-                    return dash.dash.no_update
-                else:
-                    lastMessurement['tempMessage'] = lastReceiveTime
-                # Tilordner X og Y på graf
-                data=[]
-                for key in tempData:
-                    data.append(
-                        go.Scatter(
-                            y=tempData[key]['temperature'],
-                            x=tempData[key]['timeReceived'],
-                            name=key,
-                            mode= 'lines+markers'
+            for eui in tempData:
+                if not tempData[key]['temperature']:
+                    print("List empty")
+                    return {
+                        'data': [],
+                        'layout' : go.Layout(
+                            xaxis=dict(range=[fra_dato, til_dato]),
+                            yaxis=dict(range=[0,120], title='Temperatur [°C]'),
+                            title="Ingen målinger i valgt periode!",
                         )
-                    )
-                return {
-                    'data': data,
-                    'layout' : go.Layout(
-                        yaxis=dict(range=[(lowestTemp - 10),(highestTemp + 10)], title='Temperatur [°C]'),
-                        title='Temperaturmåling',
-                        showlegend=True
-                    )
-                }
+                    }
+                else:
+                    
+                    # Sjekker om det har kommet inn ny melding ved å sammenligne 'timeReceived' i nyeste melding
+                    # Detekterer samtidig laveste og høyeste temperatur som skal vises for å bestemme akser.
+                    lastReceiveTimes = []
+                    lowestTemps = []
+                    highestTemps =[]
+                    for eui in tempData:
+                        lastReceiveTimes.append(tempData[eui]['timeReceived'][0])
+                        lowestTemps.append(min(tempData[eui]['temperature']))
+                        highestTemps.append(max(tempData[eui]['temperature']))
+                    if (len(tempData) > 1):
+                        lastReceiveTime = max(lastReceiveTimes)
+                        lowestTemp = min(lowestTemps)
+                        highestTemp = max(highestTemps)
+                    else:
+                        lastReceiveTime = lastReceiveTimes[0]
+                        lowestTemp = lowestTemps[0]
+                        highestTemp = highestTemps[0]
+                    trigger = dash.callback_context.triggered[0]['prop_id']
+                    if ((lastReceiveTime == lastMessurement['tempMessage']) and trigger == 'graph-update.n_intervals'):
+                        return dash.dash.no_update
+                    else:
+                        lastMessurement['tempMessage'] = lastReceiveTime
+                    # Tilordner X og Y på graf
+                    
+                    data=[]
+                    for key in tempData:
+                        data.append(
+                            go.Scatter(
+                                y=tempData[key]['temperature'],
+                                x=tempData[key]['timeReceived'],
+                                name=key,
+                                mode= 'lines+markers'
+                            )
+                        )
+                    return {
+                        'data': data,
+                        'layout' : go.Layout(
+                            yaxis=dict(range=[(lowestTemp - 10),(highestTemp + 10)], title='Temperatur [°C]'),
+                            title='Temperaturmåling',
+                            showlegend=True,
+                            legend=dict(orientation="h"),
+                            paper_bgcolor="#D3D3D3",
+                            plot_bgcolor="#D3D3D3",
+                        )
+                    }
         # Ved feilmelding skrives det til error txt fil.                                                 
         except Exception as e:
             with open('errors.txt','a') as f:
@@ -334,6 +341,9 @@ def callbacks(app):
                         yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
                         title=enhet_dict[måle_valg], tickangle=0,),
                         title='Målerelé: {}'.format(måle_valg),
+                        legend=dict(orientation="h"),
+                        paper_bgcolor="#D3D3D3",
+                        plot_bgcolor="#D3D3D3",
                     )
                 }                                                                                                                                                            
         except Exception as e:
