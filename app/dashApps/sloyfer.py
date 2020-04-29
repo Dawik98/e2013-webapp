@@ -205,8 +205,14 @@ def callbacks(app):
             fra_dato=fra_dato.strftime("%Y-%m-%d %H:%M:%S")
             # Henter inn ny data fra database
             tempData = update_tempData(sløyfe_valg, fra_dato, til_dato)
+            # Kontrollerer om det er innhold i mottatt data, begynner med antagelsen at listen er tom.
+            empthy = True
+            for eui in tempData:
+                if tempData[eui]['temperature']:
+                    empthy = False
+                    break
             # Dersom måle-array er tom returneres tom graf, hindrer at siden fryser
-            if not tempData:
+            if empthy:
                 return {
                     'data': [],
                     'layout' : go.Layout(
