@@ -62,40 +62,39 @@ layout = html.Div([
     # Header lastet inn fra layout
     header,
 dbc.Container(id='main-container', children = [
-dbc.Container([
     # Site title genereres av funksjon
     dbc.Row([html.Div(id='site-title-div')]),
-    dbc.Row([
-        dbc.Col([   
-            html.H5('Periode'),
-            dbc.DropdownMenu(label = 'Siste 6 timer', id='dropdown-område1', children=[
-            dbc.DropdownMenuItem('Siste time', id='1hours'),
-            dbc.DropdownMenuItem('Siste 6 timer', id='6hours'),
-            dbc.DropdownMenuItem('Siste 12 timer', id='12hours'),
-            dbc.DropdownMenuItem('Siste dag', id='day'),
-            dbc.DropdownMenuItem('Siste uke', id='week'),
-            ])
-        ], width=2),
-        ]),      
-]),
-# Ny kontainer til graf       
-dbc.Container([
-    # Setter graf på ny linje
-    dbc.Row([
-        dbc.Col([
-            dcc.Graph(id='live-graph', animate=False),
-                dcc.Interval(
-                    id='graph-update',
-                    # Oppdaterer hvert 15. sekund. Gri tid til å lese fra database
-                    interval=15*1000,
-                    n_intervals = 1
-            )
-      ],width={'size':12,'order':1}),
-# Fjerner uønsket marg fra raden.
-],no_gutters=True)
+    dbc.Jumbotron([
+        dbc.Row([
+            dbc.Col([   
+                html.H5('Periode'),
+                dbc.DropdownMenu(label = 'Siste 6 timer', id='dropdown-område1', children=[
+                dbc.DropdownMenuItem('Siste time', id='1hours'),
+                dbc.DropdownMenuItem('Siste 6 timer', id='6hours'),
+                dbc.DropdownMenuItem('Siste 12 timer', id='12hours'),
+                dbc.DropdownMenuItem('Siste dag', id='day'),
+                dbc.DropdownMenuItem('Siste uke', id='week'),
+                ])
+            ], width=2),
+            ]),   
+        # Setter graf på ny linje
+        dbc.Row([
+            dbc.Col([
+                dcc.Graph(id='live-graph', animate=False),
+                    dcc.Interval(
+                        id='graph-update',
+                        # Oppdaterer hvert 15. sekund. Gri tid til å lese fra database
+                        interval=15*1000,
+                        n_intervals = 1
+                )
+            ],width={'size':12,'order':1}),
+    # Fjerner uønsket marg fra raden.
+        ],no_gutters=True),
+    ])
 ]),
 # Graf for tempsensorer
 dbc.Container([
+    dbc.Jumbotron([
     dbc.Row([
         dbc.Col([
             html.H5('Periode'),   
@@ -108,17 +107,22 @@ dbc.Container([
             ])
         ], width=2),
         dbc.Col([
-            html.H5((html.Div(id='Overskrift-Graf'))),
-            dcc.Dropdown(
-                    id='måle-valg',
-                    options=[{'label': s,'value': s} for s in målinger_dict.keys()],
-                    value='Aktiv effekt',
-                ),
+            #html.H5((html.Div(id='Overskrift-Graf, rele'))),
+            html.H5('Målevalg'),
+            dbc.DropdownMenu(label = "Aktiv effekt", id="måle-valg", children=[
+            dbc.DropdownMenuItem("Aktiv effekt", id="activePower"),
+            dbc.DropdownMenuItem("Tilsynelatende effektt", id="apparentPower"),
+            dbc.DropdownMenuItem("Reaktiv effekt", id="reactivePower"),
+            dbc.DropdownMenuItem("Aktiv energi", id="activeEnergy"),
+            dbc.DropdownMenuItem("Tilsynelatende energi", id="apparentEnergy"),
+            dbc.DropdownMenuItem("Reaktiv energi", id="reactiveEnergy"),
+            dbc.DropdownMenuItem('Spenning', id='voltage'),
+            dbc.DropdownMenuItem('Strøm', id='current'),
+            dbc.DropdownMenuItem('Frekvens', id='frequency'),
+            ])
             ], width=5),
     ]),
-]),
 # Graf for målerele
-dbc.Container([
     dbc.Row([
         dbc.Col([
                 dcc.Graph(id='live-graph2', animate=False),
@@ -129,12 +133,13 @@ dbc.Container([
                                     n_intervals = 1
                             )
                 ],width={'size':12,'order':1}),
-],no_gutters=True)
+        ],no_gutters=True)
+    ]),
 ]),
+
 # Skjult knapp som triggrer ved refresh av siden
 # Brukes til å oppdatere dato feltene hver gang siden lastes inn
 dbc.Button(id='refresh-dato', style={'display': 'none'}),
-])
 ])
 
 
@@ -169,7 +174,7 @@ def callbacks(app):
             overskrift = "Ingen målerele på denne sløyfen!"
         else:
             options=[{'label': s,'value': s} for s in målinger_dict.keys()] 
-            overskrift= "Måle valg, relé"
+            overskrift= "Måle valg"
         return options, overskrift
 
     # Live temperatur data
@@ -219,6 +224,9 @@ def callbacks(app):
                         xaxis=dict(range=[fra_dato, til_dato]),
                         yaxis=dict(range=[0,120], title='Temperatur [°C]'),
                         title="Ingen målinger i valgt periode!",
+                        paper_bgcolor="#DCDCDC",
+                        plot_bgcolor="#D3D3D3",
+                        margin=dict(l=60, r=5, t=60, b=20),
                     )
                 }
             else:
@@ -239,27 +247,57 @@ def callbacks(app):
                 if ((lastReceiveTime == lastMessurement['tempMessage']) and trigger == 'graph-update.n_intervals'):
                     return dash.dash.no_update
                 else:
-                    lastMessurement['tempMessage'] = lastReceiveTime
-                # Tilordner X og Y på graf
-                data=[]
-                for eui in tempData:
-                    if tempData[eui]['temperature']:
+                    
+                    # Sjekker om det har kommet inn ny melding ved å sammenligne 'timeReceived' i nyeste melding
+                    # Detekterer samtidig laveste og høyeste temperatur som skal vises for å bestemme akser.
+                    lastReceiveTimes = []
+                    lowestTemps = []
+                    highestTemps =[]
+                    for eui in tempData:
+                        lastReceiveTimes.append(tempData[eui]['timeReceived'][0])
+                        lowestTemps.append(min(tempData[eui]['temperature']))
+                        highestTemps.append(max(tempData[eui]['temperature']))
+                    if (len(tempData) > 1):
+                        lastReceiveTime = max(lastReceiveTimes)
+                        lowestTemp = min(lowestTemps)
+                        highestTemp = max(highestTemps)
+                    else:
+                        lastReceiveTime = lastReceiveTimes[0]
+                        lowestTemp = lowestTemps[0]
+                        highestTemp = highestTemps[0]
+                    trigger = dash.callback_context.triggered[0]['prop_id']
+                    if ((lastReceiveTime == lastMessurement['tempMessage']) and trigger == 'graph-update.n_intervals'):
+                        return dash.dash.no_update
+                    else:
+                        lastMessurement['tempMessage'] = lastReceiveTime
+                    # Tilordner X og Y på graf
+                    
+                    data=[]
+                    for key in tempData:
                         data.append(
                             go.Scatter(
-                                y=tempData[eui]['temperature'],
-                                x=tempData[eui]['timeReceived'],
-                                name=eui,
+                                y=tempData[key]['temperature'],
+                                x=tempData[key]['timeReceived'],
+                                name=key,
                                 mode= 'lines+markers'
                             )
-                    )
-                return {
-                    'data': data,
-                    'layout' : go.Layout(
-                        yaxis=dict(range=[(lowestTemp - 10),(highestTemp + 10)], title='Temperatur [°C]'),
-                        title='Temperaturmåling',
-                        showlegend=True
-                    )
-                }
+                        )
+                    return {
+                        'data': data,
+                        'layout' : go.Layout(
+                            yaxis=dict(range=[(lowestTemp - 10),(highestTemp + 10)], title='Temperatur [°C]'),
+                            title='Temperaturmåling',
+                            #showlegend=True,
+                            legend=dict(orientation="h"),
+                            font=dict(
+                            family="historikk",
+                            size=18,
+                            ),
+                            paper_bgcolor="#DCDCDC",
+                            plot_bgcolor="#D3D3D3",
+                            margin=dict(l=60, r=5, t=60, b=20),
+                            )
+                    }
         # Ved feilmelding skrives det til error txt fil.                                                 
         except Exception as e:
             with open('errors.txt','a') as f:
@@ -269,7 +307,7 @@ def callbacks(app):
     @app.callback(Output('live-graph2', 'figure'),
                 [Input('graph-update2', 'n_intervals'),
                 Input('dropdown-område2', 'label'),
-                Input('måle-valg', 'value')],
+                Input('måle-valg', 'label')],
                 [State(component_id='url', component_property='pathname'),
                 ]) 
     # Funksjon som returnerer data som skal plottes
@@ -312,6 +350,9 @@ def callbacks(app):
                         yaxis=dict(range=[0, 100],
                         title=enhet_dict[måle_valg], tickangle=0,),
                         title="Ingen målinger i valgt periode!",
+                        paper_bgcolor="#DCDCDC",
+                        plot_bgcolor="#D3D3D3",
+                        margin=dict(l=60, r=5, t=60, b=20),
                     )
                 }
             else:
@@ -337,8 +378,15 @@ def callbacks(app):
                         yaxis=dict(range=[(min(Y)*.95),(max(Y)*1.05)],
                         title=enhet_dict[måle_valg], tickangle=0,),
                         title='Målerelé: {}'.format(måle_valg),
-                    )
-                }                                                                                                                                                            
+                        legend=dict(orientation="h"),
+                        font=dict(
+                        family="historikk",
+                        size=18,
+                        ),
+                        paper_bgcolor="#DCDCDC",
+                        plot_bgcolor="#D3D3D3",
+                        margin=dict(l=60, r=5, t=60, b=20),
+                    )}                                                                                                                                                            
         except Exception as e:
             with open('errors.txt','a') as f:
                 f.write(str(e))
@@ -386,5 +434,33 @@ def callbacks(app):
 
         if (n_1hours is None and n_6hours is None and n_12hours is None and n_day is None and n_week is None) or not ctx.triggered:
             return 'Siste 6 timer'
+
+        return label_clicked
+
+    # Oppdaterer knapp for målevalg
+    @app.callback(
+            Output(component_id='måle-valg', component_property='label'),
+            [Input(component_id="activePower", component_property='n_clicks'),
+            Input(component_id="reactivePower", component_property='n_clicks'),
+            Input(component_id='apparentPower', component_property='n_clicks'),
+            Input(component_id='activeEnergy', component_property='n_clicks'),
+            Input(component_id='apparentEnergy', component_property='n_clicks'),
+            Input(component_id='reactiveEnergy', component_property='n_clicks'),
+            Input(component_id='voltage', component_property='n_clicks'),
+            Input(component_id='current', component_property='n_clicks'),
+            Input(component_id='frequency', component_property='n_clicks'),
+            ])
+    def update_label(activePower, reactivePower, apparentPower, activeEnergy, apparentEnergy, reactiveEnergy, voltage, current, frequency):
+        id_lookup = {"activePower":"Aktiv effekt", "reactivePower":"Reaktiv effekt",
+        "apparentPower":"Tilsynelatende effekt", "activeEnergy":"Aktiv energi", "apparentEnergy": "Tilsynelatende energi","reactiveEnergy":"Reaktiv energi",
+        "voltage": "Spenning","current":"Strøm","frequency": "Frekvens"}
+
+        ctx = dash.callback_context
+
+        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        label_clicked = id_lookup[button_id]
+
+        if (activePower is None and reactivePower is None and  apparentPower is None and activeEnergy is None and  apparentEnergy is None and reactiveEnergy is None and voltage is None and current is None and frequency is None) or not ctx.triggered:
+            return 'Aktiv effekt'
 
         return label_clicked

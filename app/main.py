@@ -13,11 +13,11 @@ from flask_mail import Mail
 
 sys.path.append("./dashApps")
 
-# Velges avhengig av om appen kjøres lokalt eller i Azure
-usersFile = 'users.txt' # Azure
-# usersFile = 'app/users.txt' # Lokalt
-baseURL = 'http://e2013-ntnu.azurewebsites.net' # Azure
-# baseURL = 'http://localhost:8000' # Lokalt
+#Velges avhengig av om appen kjøres lokalt eller i Azure
+#usersFile = 'users.txt' # Azure
+usersFile = 'app/users.txt' # Lokalt
+#baseURL = 'http://e2013-ntnu.azurewebsites.net' # Azure
+baseURL = 'http://localhost:8000' # Lokalt
 
 def createServer():
     server = Flask(__name__)
@@ -45,9 +45,11 @@ def createServer():
     server.config['MAIL_USE_TLS'] = False
     server.config['MAIL_USE_SSL'] = True
     server.config['MAIL_DEFAULT_SENDER'] = 'bachelorgrupee2013@gmail.com'
-    # Brukernavn og Passord
-    server.config['MAIL_USERNAME'] = 'bachelorgruppee2013@gmail.com'
-    server.config['MAIL_PASSWORD'] = 'E2013LoRa'
+
+    # Legger brukernavn og passord til email 
+    server.config['MAIL_USERNAME'] = 'bachelorgruppee2013@gmail.com' # Lokalt
+    server.config['MAIL_PASSWORD'] = 'E2013LoRa' # Lokalt
+    
     
     from emails import connect_mail
     connect_mail(server)

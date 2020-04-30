@@ -74,68 +74,70 @@ layout = html.Div([
     #Header lastet inn fra layout
     header,
 dbc.Container([   
-    dbc.Row([
-        dbc.Col([
-        #Site title genereres av funksjon
-        html.Div(id='site-title-div')
-        ], align="center")
-    ]
-    ),
-    dbc.Row([
-        #Usynlig knapp for å plassere de andre knappene til venstre
-        dbc.Col([
-                html.Div(dbc.Button("",
-                id='formateringskanpp',
-                style={'display':'none'},
-                ),
-                )
-        ], width=8),
-        dbc.Col([
-                html.Div(dbc.Button("Oppdater data",
-                id='trigger-refresh',
-                color="secondary"),
-                )
-        ], width=2),
-        dbc.Col([
-                html.Div(dbc.Button("Last ned data",
-                id='download-excel',
-                color="secondary",
-                #Setter href til noe helt annet. Slik at når kanppen trykkes lastes urlen i callack på ny fullstendig. 
-                href='/hjem/',
-                target="_blank"),
-                )
+    dbc.Jumbotron([
+        dbc.Row([
+            dbc.Col([
+            #Site title genereres av funksjon
+            html.Div(id='site-title-div')
+            ], align="center")
+        ]
+        ),
+        dbc.Row([
+            #Usynlig knapp for å plassere de andre knappene til venstre
+            dbc.Col([
+                    html.Div(dbc.Button("",
+                    id='formateringskanpp',
+                    style={'display':'none'},
+                    ),
+                    )
+            ], width=8),
+            dbc.Col([
+                    html.Div(dbc.Button("Oppdater data",
+                    id='trigger-refresh',
+                    color="secondary"),
+                    )
+            ], width=2),
+            dbc.Col([
+                    html.Div(dbc.Button("Last ned data",
+                    id='download-excel',
+                    color="secondary",
+                    #Setter href til noe helt annet. Slik at når kanppen trykkes lastes urlen i callack på ny fullstendig. 
+                    href='/hjem/',
+                    target="_blank"),
+                    )
+            ]),
+
         ]),
+        # Ny rad med input felt og meny som brukes til å styre grafen
+        dbc.Row([
+            dbc.Col([
+            html.H5('Fra dato:'),
+            dbc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True)
+            ], width=2),
 
+            dbc.Col([
+            html.H5('Til dato:'),
+            dbc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True)
+            ], width=2),
+
+            dbc.Col([
+            html.H5('Måle valg:'),
+            dcc.Dropdown(id='måle-valg',
+                            options=[{'label': s,'value':s} for s in målinger_dict.keys()],
+                            #value='Temperatur',
+                            placeholder="Velg en eller flere målinger",
+                            multi=True
+                            ),
+            ], width=5),
+        ]),
+        #Setter graf på ny linje
+        dbc.Row([
+            dbc.Col([
+                html.Div([dcc.Graph(id="my-graph")]),
+            ],width={'size':12,'order':1}),
+        #Fjerner uønsket marg til rad   
+        ],no_gutters=True)
     ]),
-    # Ny rad med input felt og meny som brukes til å styre grafen
-    dbc.Row([
-        dbc.Col([
-        html.H5('Fra dato:'),
-        dbc.Input(id='fra_Dato', value=fra_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True)
-        ], width=2),
-
-        dbc.Col([
-        html.H5('Til dato:'),
-        dbc.Input(id='til_Dato', value=til_dato.strftime("%Y-%m-%d %H:%M:%S"), type='text',placeholder="YYYY-MM-DD HH:MM:SS",debounce=True)
-        ], width=2),
-
-        dbc.Col([
-        html.H5('Måle valg:'),
-        dcc.Dropdown(id='måle-valg',
-                        options=[{'label': s,'value':s} for s in målinger_dict.keys()],
-                        #value='Temperatur',
-                        placeholder="Velg en eller flere målinger",
-                        multi=True
-                        ),
-        ], width=5),
-    ]),
-    #Setter graf på ny linje
-    dbc.Row([
-        dbc.Col([
-            html.Div([dcc.Graph(id="my-graph")]),
-        ],width={'size':12,'order':1}),
-    #Fjerner uønsket marg til rad   
-    ],no_gutters=True)
 ], id='main-container'),
 #### Tomme divs for callbacks og datalagring ########
 #Bruker skjult input felt, som er avhenig av en verdi som blir oppdatert
@@ -253,7 +255,9 @@ def callbacks(app):
                                         #width=1700,
                                         height=800,
                                         showlegend=True,
-                                        #margin={'l':100,'r':100,'t':100,'b':100},
+                                        paper_bgcolor="#DCDCDC",
+                                        plot_bgcolor="#D3D3D3",
+                                        margin=dict(l=50, r=50, t=50, b=50),
                                                         )}
         else:
             data = []
@@ -373,7 +377,15 @@ def callbacks(app):
                     #width=1700,
                     height=800,
                     showlegend=True,
-                                                        )}
+                    legend=dict(orientation="h"),
+                    font=dict(
+                    family="historikk",
+                    size=18,
+                    ),
+                    paper_bgcolor="#DCDCDC",
+                    plot_bgcolor="#D3D3D3",
+                    margin=dict(l=50, r=50, t=50, b=50),
+                    )}
     #åpner ny fane som redirectes til /excel-download/.... i flask appen som har funksjon for å laste ned excel fil. 
     #Url kodes også med informasjon om hva som skal lastes ned
     @app.callback(

@@ -52,13 +52,13 @@ def connect_mosquitto(server):
             else:
                 controller[packetData['devicePlacement']].update_value(packetData['temperature'])
             
-        # Skriv til databesen dersom det ikke er en powerData-melding, eller hvis den aktive effekten i powerData-meldingen er høyere enn 5 W.
-        if (packetData['messageType'] != 'powerData'):
-            container_name = packetData['devicePlacement']
-            write_to_db(container_name, packetData)
-        elif (packetData['activePower'] > 5):
-            container_name = packetData['devicePlacement']
-            write_to_db(container_name, packetData)
+        # # Skriv til databesen dersom det ikke er en powerData-melding, eller hvis den aktive effekten i powerData-meldingen er høyere enn 5 W.
+        # if (packetData['messageType'] != 'powerData'):
+        #     container_name = packetData['devicePlacement']
+        #     write_to_db(container_name, packetData)
+        # elif (packetData['activePower'] > 5):
+        #     container_name = packetData['devicePlacement']
+        #     write_to_db(container_name, packetData)
 
 # Utsending av "Meter-data-request"
 def claimMeterdata(devicePlacement):

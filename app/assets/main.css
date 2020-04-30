@@ -41,3 +41,8 @@
 .fa-window-close {
     cursor: pointer;
 }
+.jumbotron{
+    background-color: #DCDCDC;
+    border-color: #DCDCDC;
+    border-radius: 10px;
+}
