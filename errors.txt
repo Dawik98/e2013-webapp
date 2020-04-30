@@ -1,2 +1,16 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ''
+=======
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+>>>>>>> bb9d3817b82699569ffc039cffac3c097ca3b99b
