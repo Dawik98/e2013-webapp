@@ -27,8 +27,8 @@ prew_dutycycle_confirm_count = 0
 prew_actuation_confirm_count = 0
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-#settingsFile = 'settings.txt' # Azure
-settingsFile = 'app/settings.txt' # Lokalt
+settingsFile = 'settings.txt' # Azure
+# settingsFile = 'app/settings.txt' # Lokalt
 
 def print_settings():
     """
@@ -279,7 +279,7 @@ def get_device_status(sløyfe, device_eui):
     time_diff = now-message_time 
 
     # Hvis enheten har sendt noe på 3 timer -> status grønn
-    if time_diff < timedelta(hours=3):
+    if time_diff < timedelta(minutes=30):
         title = "Siste data ble sendt: {}".format(message_time)
         icon_connection = html.I(className="fas fa-circle fa-lg", style={'color':'#86d01b'}, title=title)
         label = [icon_connection] + battery_label
