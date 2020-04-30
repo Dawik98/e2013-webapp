@@ -1,14 +1,15 @@
 import flask
 from flask import Flask, render_template, request, g, url_for, flash, redirect, Blueprint, send_file
 from flask_mqtt import Mqtt
-from forms import RegistrationForm, LoginForm
-from getUsers import get_users
+#from forms import RegistrationForm, LoginForm
+#from getUsers import get_users
 from flask_login import current_user, logout_user, login_required, login_user
 from cosmosDB import read_from_db, write_to_db
 from mqttCommunication import claimMeterdata
-from models import User, login_manager
-from emails import send_email_newUser
-from printData import print_historiskData
+
+from login import User, login_manager, send_email_newUser, RegistrationForm, LoginForm, get_users
+
+from graphData import print_historiskData
 from dashApps.innstillinger import get_sløyfer
 import pandas as pd
 import xlsxwriter

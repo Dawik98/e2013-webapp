@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ''
 =======
 list index out of range
@@ -14,3 +15,6 @@ list index out of range
 list index out of range
 list index out of range
 >>>>>>> bb9d3817b82699569ffc039cffac3c097ca3b99b
+=======
+''
+>>>>>>> 79c7b28d2b61867ed5a575e9c83439e9da7e9c06

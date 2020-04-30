@@ -4,8 +4,10 @@ import dash
 import flask_login
 import dash_bootstrap_components as dbc
 import logging
-from getUsers import get_users
-from models import User, login_manager
+
+from login import get_users, User, login_manager
+
+
 import json
 import os
 import sys
@@ -51,7 +53,7 @@ def createServer():
     server.config['MAIL_PASSWORD'] = 'E2013LoRa' # Lokalt
     
     
-    from emails import connect_mail
+    from login import connect_mail
     connect_mail(server)
 
     # Koble til Mosquitto
