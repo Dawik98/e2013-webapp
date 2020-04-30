@@ -478,7 +478,7 @@ def callbacks(app):
         button_id = ctx.triggered[0]["prop_id"].split(".")[0]
         label_clicked = id_lookup[button_id]
 
-        if (activePower is None and reactivePower is None and  apparentPower is None and activeEnergy is None and  apparentEnergy is None and reactiveEnergy is None and voltage is None and current is None and frequency is None) or not ctx.triggered:
+        if (activePower is None and reactivePower is None and apparentPower is None and activeEnergy is None and  apparentEnergy is None and reactiveEnergy is None and voltage is None and current is None and frequency is None) or not ctx.triggered:
             return 'Aktiv effekt'
 
         return label_clicked
