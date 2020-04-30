@@ -294,7 +294,7 @@ def callbacks(app):
                             ),
                             paper_bgcolor="#DCDCDC",
                             plot_bgcolor="#D3D3D3",
-                            margin=dict(l=60, r=5, t=60, b=5),
+                            margin=dict(l=60, r=5, t=60, b=20),
                             )
                     }
         # Ved feilmelding skrives det til error txt fil.                                                 
