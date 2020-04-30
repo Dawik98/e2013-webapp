@@ -149,8 +149,7 @@ def callbacks(app):
     layout_callbacks(app)
     update_sløyfe_callback(app, [['site-title-div', get_site_title]])
     # Laster inn ny data i datofeltet som kjøres når siden lastes inn
-    @app.callback([ Output('måle-valg', 'options'),
-                    Output('Overskrift-Graf', 'children')],
+    @app.callback([Output('Overskrift-Graf', 'children')],
                     [Input('refresh-dato', 'n_clicks')],
                     [State(component_id='url', component_property='pathname'),
                     ])
@@ -170,12 +169,12 @@ def callbacks(app):
                 devices.append(value[1])
         if 'powerSwitch' not in devices:
             # Returnerer tom dropdown meny
-            options={'label': "",'value': ""}
+            #options="Ingen målerele"
             overskrift = "Ingen målerele på denne sløyfen!"
-        else:
-            options=[{'label': s,'value': s} for s in målinger_dict.keys()] 
-            overskrift= "Måle valg"
-        return options, overskrift
+        #else:
+            #options=[{'label': s,'value': s} for s in målinger_dict.keys()] 
+            #overskrift= "Måle valg"
+            return overskrift
 
     # Live temperatur data
     @app.callback(Output('live-graph', 'figure'),
@@ -292,7 +291,7 @@ def callbacks(app):
                             yaxis=dict(range=[(lowestTemp - 10),(highestTemp + 10)], title='Temperatur [°C]'),
                             title='Temperaturmåling',
                             #showlegend=True,
-                            legend=dict(orientation="h"),
+                            legend=dict(orientation="h", y=-0.15),
                             font=dict(
                             family="historikk",
                             size=18,
@@ -347,18 +346,37 @@ def callbacks(app):
             Y = meterData[målinger_dict[måle_valg]]
             # Hindrer at siden fryser
             if not X:
-                return {
-                    'data': [],
-                    'layout': go.Layout(
-                        xaxis=dict(range=[fra_dato,til_dato]),
-                        yaxis=dict(range=[0, 100],
-                        title=enhet_dict[måle_valg], tickangle=0,),
-                        title="Ingen målinger i valgt periode!",
-                        paper_bgcolor="#DCDCDC",
-                        plot_bgcolor="#D3D3D3",
-                        margin=dict(l=60, r=5, t=60, b=20),
-                    )
-                }
+                allDevices=get_devices()
+                devices=[]
+                for key, value in allDevices.items():
+                    if value[0] == sløyfe_valg:
+                     devices.append(value[1])
+                if 'powerSwitch' not in devices:
+                    return {
+                        'data': [],
+                        'layout': go.Layout(
+                            xaxis=dict(range=[fra_dato,til_dato]),
+                            yaxis=dict(range=[0, 100],
+                            title=enhet_dict[måle_valg], tickangle=0,),
+                            title="Ingen målerele på denne sløyfen!",
+                            paper_bgcolor="#DCDCDC",
+                            plot_bgcolor="#D3D3D3",
+                            margin=dict(l=60, r=5, t=60, b=20),
+                        )
+                    }
+                else:
+                    return {
+                        'data': [],
+                        'layout': go.Layout(
+                            xaxis=dict(range=[fra_dato,til_dato]),
+                            yaxis=dict(range=[0, 100],
+                            title=enhet_dict[måle_valg], tickangle=0,),
+                            title="Ingen målinger i valgt periode!",
+                            paper_bgcolor="#DCDCDC",
+                            plot_bgcolor="#D3D3D3",
+                            margin=dict(l=60, r=5, t=60, b=20),
+                        )
+                    }
             else:
                 # Sjekker om det har kommet inn ny melding ved å sammenligne 'timeReceived' i nyeste melding
                 # Dersom callback-en ble trigget av interval-komponent og det ikke har kommet inn nye målinger skal ikke grafen oppdateres
