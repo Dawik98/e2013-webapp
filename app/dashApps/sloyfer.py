@@ -9,8 +9,7 @@ import pytz
 import plotly.graph_objs as go
 from datetime import datetime
 from dateutil.relativedelta import *
-from opp_temp import update_tempData
-from opp_meter import update_meterData
+from graphData import update_tempData, update_meterData
 from dashApps.innstillinger import settingsFile, print_settings, get_settings, get_devices
 
 # Importer standard layout

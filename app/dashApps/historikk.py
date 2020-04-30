@@ -13,7 +13,7 @@ from datetime import datetime
 from dateutil.relativedelta import *
 from collections import deque
 from cosmosDB import read_from_db
-from historie_data import update_historiskData
+from graphData import update_historiskData
 from main import baseURL
 
 #import standard layout

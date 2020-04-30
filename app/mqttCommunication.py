@@ -60,6 +60,11 @@ def connect_mosquitto(server):
             container_name = packetData['devicePlacement']
             write_to_db(container_name, packetData)
 
+    @mqtt.on_log()
+    def handle_logging(client, userdata, level, buf):
+        print('[MQTT] {}: {}'.format(level, buf))
+
+
 # Utsending av "Meter-data-request"
 def claimMeterdata(devicePlacement):
     startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel +01.00
