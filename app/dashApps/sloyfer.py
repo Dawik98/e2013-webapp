@@ -228,17 +228,13 @@ def callbacks(app):
                 lowestTemps = []
                 highestTemps =[]
                 for eui in tempData:
-                    lastReceiveTimes.append(tempData[eui]['timeReceived'][0])
-                    lowestTemps.append(min(tempData[eui]['temperature']))
-                    highestTemps.append(max(tempData[eui]['temperature']))
-                if (len(tempData) > 1):
-                    lastReceiveTime = max(lastReceiveTimes)
-                    lowestTemp = min(lowestTemps)
-                    highestTemp = max(highestTemps)
-                else:
-                    lastReceiveTime = lastReceiveTimes[0]
-                    lowestTemp = lowestTemps[0]
-                    highestTemp = highestTemps[0]
+                    if tempData[eui]['temperature']:
+                        lastReceiveTimes.append(tempData[eui]['timeReceived'][0])
+                        lowestTemps.append(min(tempData[eui]['temperature']))
+                        highestTemps.append(max(tempData[eui]['temperature']))
+                lastReceiveTime = max(lastReceiveTimes)
+                lowestTemp = min(lowestTemps)
+                highestTemp = max(highestTemps)
                 trigger = dash.callback_context.triggered[0]['prop_id']
                 if ((lastReceiveTime == lastMessurement['tempMessage']) and trigger == 'graph-update.n_intervals'):
                     return dash.dash.no_update
@@ -246,14 +242,15 @@ def callbacks(app):
                     lastMessurement['tempMessage'] = lastReceiveTime
                 # Tilordner X og Y på graf
                 data=[]
-                for key in tempData:
-                    data.append(
-                        go.Scatter(
-                            y=tempData[key]['temperature'],
-                            x=tempData[key]['timeReceived'],
-                            name=key,
-                            mode= 'lines+markers'
-                        )
+                for eui in tempData:
+                    if tempData[eui]['temperature']:
+                        data.append(
+                            go.Scatter(
+                                y=tempData[eui]['temperature'],
+                                x=tempData[eui]['timeReceived'],
+                                name=eui,
+                                mode= 'lines+markers'
+                            )
                     )
                 return {
                     'data': data,

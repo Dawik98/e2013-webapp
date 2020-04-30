@@ -45,13 +45,9 @@ def createServer():
     server.config['MAIL_USE_TLS'] = False
     server.config['MAIL_USE_SSL'] = True
     server.config['MAIL_DEFAULT_SENDER'] = 'bachelorgrupee2013@gmail.com'
-
-    # Legger brukernavn og passord inn i enviorment variabel. Det er tryggere enn å legge de direkte i source file
-    # Endres om vi kjører lokalt eller lastet opp i Azure ##
-    # server.config['MAIL_USERNAME'] = 'bachelorgruppee2013@gmail.com' # Lokalt
-    # server.config['MAIL_PASSWORD'] = 'E2013LoRa' # Lokalt
-    server.config['MAIL_USERNAME'] = os.environ.get('bachelorgruppee2013@gmail.com') # Azure
-    server.config['MAIL_PASSWORD'] = os.environ.get('E2013LoRa') # Azure
+    # Brukernavn og Passord
+    server.config['MAIL_USERNAME'] = 'bachelorgruppee2013@gmail.com'
+    server.config['MAIL_PASSWORD'] = 'E2013LoRa'
     
     from emails import connect_mail
     connect_mail(server)
