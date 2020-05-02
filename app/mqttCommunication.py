@@ -2,7 +2,12 @@ from decoder import decoder
 from flask_mqtt import Mqtt
 from powerControl import PI_controller
 from cosmosDB import connect_to_db, write_to_db, read_from_db
-import json, time, datetime, pytz
+import json, time, pytz, datetime
+from datetime import datetime as dt
+
+# Velges avhengig av om appen kjøres lokalt eller i Azure
+gatewayFile = 'gatewayStatus.txt' # Azure
+# gatewayFile = 'app/gatewayStatus.txt' # Lokalt
 
 mqtt = None
 
@@ -14,55 +19,75 @@ def connect_mosquitto(server):
     @mqtt.on_connect()
     def handle_connect(client, userdata, flags, rc):
         mqtt.subscribe('measurement')
-        print("[MQTT] Subscribed to measurement topic")
+        print("[MQTT] Subscribed to topic: measurement")
+        mqtt.subscribe('gatewayStatus')
+        print("[MQTT] Subscribed to topic: gatewayStatus")
     
     # run when new message is published to the subscribed topic
     @mqtt.on_message()
     def handle_mqtt_message(client, userdata, message):
         topic = message.topic
-        payload = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
     
         print("\n[MQTT] New message recieved at topic {}:".format(topic))
-        # print(payload)
-        global timeOslo
-        global packetData
-        packetData, timeOslo = decoder(payload)
-        print(packetData)
-        if (packetData['messageType'] == 'ioData'):
-            global outputState
-            outputState[packetData['devicePlacement']] = [packetData['output'], timeOslo]
-            print("outputState: {}".format(outputState[packetData['devicePlacement']][0]))
-        elif ((packetData['messageType'] == 'dataLog') and (packetData['devicePlacement'] in controller)):
-            from dashApps.innstillinger import get_temp_sensors_in_placement
-            devicesInPlacement = get_temp_sensors_in_placement(packetData['devicePlacement'])
-            if (len(devicesInPlacement) > 1):
-                query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - datetime.timedelta(minutes=7)))
-                lastTemps = read_from_db(packetData['devicePlacement'], query)
-                # Fjerner enhets-EUI til avsenderenhet fra listen over enheter i varmekretsen
-                devicesInPlacement.remove(packetData['deviceEui'])
-                otherTemperatureStates = []
-                for deviceEui in devicesInPlacement:
-                    for i in range(0, len(lastTemps)):
-                        if (lastTemps[i]['deviceEui'] == deviceEui):
-                            otherTemperatureStates.append(lastTemps[i]['temperature'])
-                            break
-                if ((otherTemperatureStates == []) or (packetData['temperature'] < min(otherTemperatureStates))):
-                    print(otherTemperatureStates)
+        if topic == 'measurement':
+            payload = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
+            # print(payload)
+
+            global timeOslo
+            global packetData
+            packetData, timeOslo = decoder(payload)
+            print(packetData)
+            if (packetData['messageType'] == 'ioData'):
+                global outputState
+                outputState[packetData['devicePlacement']] = [packetData['output'], timeOslo]
+                print("outputState: {}".format(outputState[packetData['devicePlacement']][0]))
+            elif ((packetData['messageType'] == 'dataLog') and (packetData['devicePlacement'] in controller)):
+                from dashApps.innstillinger import get_temp_sensors_in_placement
+                devicesInPlacement = get_temp_sensors_in_placement(packetData['devicePlacement'])
+                if (len(devicesInPlacement) > 1):
+                    query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - dt.timedelta(minutes=7)))
+                    lastTemps = read_from_db(packetData['devicePlacement'], query)
+                    # Fjerner enhets-EUI til avsenderenhet fra listen over enheter i varmekretsen
+                    devicesInPlacement.remove(packetData['deviceEui'])
+                    otherTemperatureStates = []
+                    for deviceEui in devicesInPlacement:
+                        for i in range(0, len(lastTemps)):
+                            if (lastTemps[i]['deviceEui'] == deviceEui):
+                                otherTemperatureStates.append(lastTemps[i]['temperature'])
+                                break
+                    if ((otherTemperatureStates == []) or (packetData['temperature'] < min(otherTemperatureStates))):
+                        print(otherTemperatureStates)
+                        controller[packetData['devicePlacement']].update_value(packetData['temperature'])
+                else:
                     controller[packetData['devicePlacement']].update_value(packetData['temperature'])
-            else:
-                controller[packetData['devicePlacement']].update_value(packetData['temperature'])
+                
+            # Skriv til databesen dersom det ikke er en powerData-melding, eller hvis den aktive effekten i powerData-meldingen er høyere enn 5 W.
+            # if (packetData['messageType'] != 'powerData'):
+            #     container_name = packetData['devicePlacement']
+            #     write_to_db(container_name, packetData)
+            # elif (packetData['activePower'] > 5):
+            #     container_name = packetData['devicePlacement']
+            #     write_to_db(container_name, packetData)
+
+        elif topic == 'gatewayStatus':
+            payload = message.payload.decode("utf-8") 
+            print(payload)
+
+            time = dt.now()
+            time = dt.strftime(time, '%d.%m.%Y %H:%M')
             
-        # # Skriv til databesen dersom det ikke er en powerData-melding, eller hvis den aktive effekten i powerData-meldingen er høyere enn 5 W.
-        # if (packetData['messageType'] != 'powerData'):
-        #     container_name = packetData['devicePlacement']
-        #     write_to_db(container_name, packetData)
-        # elif (packetData['activePower'] > 5):
-        #     container_name = packetData['devicePlacement']
-        #     write_to_db(container_name, packetData)
+            to_file = "\n[{}] : {}".format(time, payload)
+            f = open(gatewayFile, 'a')
+            f.write(to_file)
+            f.close
+
+    # @mqtt.on_log()
+    # def handle_logging(client, userdata, level, buf):
+    #         print('[MQTT] {}'.format(buf))
 
 # Utsending av "Meter-data-request"
 def claimMeterdata(devicePlacement):
-    startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel for Norge
+    startTime = dt.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel for Norge
     attempts = 0 # Initialiserer en forsøks-teller
     # Kjør while-løkke så lenge siste pakketype er ulik "powerData" || eller pakken tilhører en annen heat trace sløyfe || eller siste mottatte pakke er eldre enn
     # starttidspunktet til denne løkken || og det er gjennomført inntil 5 forsøk.
@@ -83,7 +108,7 @@ def claimMeterdata(devicePlacement):
 
 # Aktivering av varmekabel der sløyfevariabelen er argumentet (heatTrace1, heatTrace2, osv...)
 def activateHeatTrace(devicePlacement):
-    startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel for Norge
+    startTime = dt.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel for Norge
     attempts = 0 # Initialiserer en forsøks-teller
     # Kjør while-løkken dersom den aktuelle varmekabelen allerede er aktivert. Styringen er koblet NC (normal closed). Dermed er tilstanden TRUE
     # når varmekabelen er av. Løkken stopper dersom antall forsøk overstiges (maks 5 forsøk).
@@ -107,7 +132,7 @@ def activateHeatTrace(devicePlacement):
 
 # Deaktivering av varmekabel der sløyfevariabelen er argumentet (heatTrace1, heatTrace2, osv...)
 def deactivateHeatTrace(devicePlacement):
-    startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel for Norge
+    startTime = dt.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel for Norge
     attempts = 0 # Initialiserer en forsøks-teller
     # Kjør while-løkken dersom den aktuelle varmekabelen allerede er deaktivert. Styringen er koblet NC (normal closed). Dermed er tilstanden FALSE
     # når varmekabelen er på. Løkken stopper dersom antall forsøk overstiges (maks 5 forsøk).
@@ -132,7 +157,7 @@ def deactivateHeatTrace(devicePlacement):
 def createController(devicePlacement):
     global controller
     controller[devicePlacement] = PI_controller(devicePlacement, activateHeatTrace, deactivateHeatTrace)
-    outputState[devicePlacement] = [False, datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo'))]
+    outputState[devicePlacement] = [False, dt.now().astimezone(pytz.timezone('Europe/Oslo'))]
     print("creating new controller")
 
 def deleteController(devicePlacement):
@@ -162,7 +187,7 @@ def initialisation():
         for device in settings[sløyfe]['devices']:
             if 'Power Switch' in device.values():
                 controller[sløyfe] = PI_controller(sløyfe, activateHeatTrace, deactivateHeatTrace)
-                outputState[sløyfe] = [False, datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo'))]
+                outputState[sløyfe] = [False, dt.now().astimezone(pytz.timezone('Europe/Oslo'))]
 
 packetData = {}
 timeOslo = datetime.time()

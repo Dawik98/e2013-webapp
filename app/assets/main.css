@@ -1,7 +1,7 @@
 
 /* Definner vareiabler */
 :root {
-  --coll-width: 200px;
+  --coll-width: 185px;
 }
 
 .tableFixHead table {
@@ -21,7 +21,7 @@
 
 
 .tableFixHead thead th, tbody td{
-    width: var(--coll-width);  /* Optional */
+    width: var(--coll-width); 
 }
 
 /* Siste kolonne må være 12px kortere for å få plass til sccrollbar */
@@ -45,4 +45,8 @@
     background-color: #DCDCDC;
     border-color: #DCDCDC;
     border-radius: 10px;
+}
+
+.spaced-list{
+    padding-top: 1em;
 }

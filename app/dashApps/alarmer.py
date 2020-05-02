@@ -19,7 +19,7 @@ from cosmosDB import read_from_db, replace_in_db
 from dashApps.layout import header, update_sløyfe_callback, get_sløyfe_from_pathname
 from dashApps.layout import callbacks as layout_callbacks
 
-from dashApps.innstillinger import get_alarms
+from dashApps.innstillinger import get_alarms, get_devices_eui
 
 #num_of_alarms = '25'
 #time_range = 'day'
@@ -55,7 +55,8 @@ def confirm_alarms(chosen_sløyfe):
     """
 
     # hent alle ukvitterte alarmer
-    query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false".format(chosen_sløyfe)
+    #query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false".format(chosen_sløyfe)
+    query = "SELECT * FROM {0} WHERE {0}.alarmConfirmed = false".format(chosen_sløyfe)
     unconfirmed_alarms = read_from_db(chosen_sløyfe, query)
 
     # gå gjennom alle alarmer og kvitter de
@@ -135,7 +136,7 @@ def get_alarm_table(time_interval, chosen_sløyfe):
         query = "SELECT * FROM {0} WHERE {0}.timeReceived > '{1}' AND {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range)
         abnormal_values = read_from_db(chosen_sløyfe, query)
     else:
-        query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range)
+        query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe)
         abnormal_values = read_from_db(chosen_sløyfe, query)
 
     table_header = [html.Thead(html.Tr([html.Th("Tid"), html.Th("Enhetens plassering"), html.Th("Enhetens Eui"), html.Th("Verdi"),]))]
@@ -161,31 +162,102 @@ def get_alarm_table(time_interval, chosen_sløyfe):
     table_body=[html.Tbody(table_rows)]
 
     return dbc.Table(table_header+table_body, bordered=True)
-    
-# Lag dropdown meny for å velge hvor gamle alarmer som skal lastes inn
-dropdown = dbc.DropdownMenu(label = 'dag', id='dropdown-alarms', children=[
-    dbc.DropdownMenuItem('dag', id='day'),
-    dbc.DropdownMenuItem('uke', id='week'),
-    dbc.DropdownMenuItem('måned', id='month'),
-    dbc.DropdownMenuItem('Alle', id='Alle'),
-])
 
-label_dropdown = html.Div("Alarmer fra siste:", className='label-dropdown')
+def comm_alarms(chosen_sløyfe):
+    from mqttCommunication import gatewayFile
+    label = []
+
+    # Sjekker gateway status
+    f = open(gatewayFile, 'r')
+    lines = f.read().splitlines()
+    status = lines[-1]
+    status_time = status[status.find("[")+1:status.find("]")]
+
+    if 'Lost connection' in status:
+        label.append(html.Li('Mistet kontakt med gateway {}\n'.format(status_time), className='spaced-list'))
+
+    #Sjekker status til enhetene
+    for device_eui in get_devices_eui(chosen_sløyfe):
+        try:
+            query = "SELECT TOP 1 * FROM {0} WHERE {0}.deviceEui = '{1}' ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, device_eui)
+            data = read_from_db(chosen_sløyfe, query)
+            data = data[0]
+        except:
+            label.append(html.Li("Finnes ingen data mottatt fra {}\n".format(device_eui), className='spaced-list'))
+            continue
+
+        # Finner ut hvor lenge siden data ble sendt
+        message_time = data['timeReceived']
+        message_time = datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
+        now = datetime.now()
+        time_diff = now-message_time 
+
+        if time_diff > timedelta(minutes=30):
+            label.append(html.Li("Ingen data mottat fra {} siden {}\n".format(device_eui, message_time), className='spaced-list'))
+
+    if label == []:
+        label = 'Ingen problemer med kommunikasjon'
+    else:
+        label = html.Ul(label)
+
+    return label
+
+def jordfeil_alarms(chosen_sløyfe):
+    label = ""
+
+    try:
+        query = "SELECT TOP 1 * FROM {0} WHERE {0}.messageType = 'ioData' AND {0}.input = true AND {0}.alarmConfirmed = false ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe)
+        data = read_from_db(chosen_sløyfe, query)
+        data = data[0]
+    except:
+        return "Ingen nye jordfeil detektert"
+
+    message_time = data['timeReceived']
+    message_time = datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
+
+    return "Jordfeil detektert {}".format(message_time)
+
+    
+def dropdown():
+    # Lag dropdown meny for å velge hvor gamle alarmer som skal lastes inn
+    dropdown = dbc.DropdownMenu(label = 'dag', id='dropdown-alarms', children=[
+        dbc.DropdownMenuItem('dag', id='day'),
+        dbc.DropdownMenuItem('uke', id='week'),
+        dbc.DropdownMenuItem('måned', id='month'),
+        dbc.DropdownMenuItem('Alle', id='Alle'),
+    ])
+
+    label_dropdown = html.Div("Alarmer fra siste:", className='label-dropdown')
+
+    return [label_dropdown, dropdown]
 
 # Lag en knapp for kvittering av alarmer
-confirm_button = dbc.Button("Kvitter alarmer", id='button-confirm', color="success", className='ml-4')
+confirm_button = dbc.Button("Kvitter alle alarmer", id='button-confirm', color="success", className='ml-5')
 
 # layout definnneres i en funksjon for at den skal bli oppdatert når nettsiden refreshes
 def serve_layout():
     layout = html.Div([
-        dcc.Interval(id='refresh', n_intervals=0, interval=120*1000),
+        dcc.Interval(id='refresh', n_intervals=0, interval=60*1000),
         header,
         dbc.Container([
             dbc.Row(dbc.Col(html.Div(id='site-title'))),
-            dbc.Row(html.Div(id='table', className='tableFixHead')),
-            dbc.Row([dbc.Col(label_dropdown, width='auto'), dbc.Col(dropdown), dbc.Col(confirm_button)], justify='start', no_gutters=True),
+            dbc.Row(dropdown() + [confirm_button], className='mb-3 mt-2'),
+            dbc.Row([
+            dbc.Col([
+                dbc.Row(html.H2("Temperaturavvik")),
+                dbc.Row(html.Div(id='table', className='tableFixHead')),
+            ]),
 
-        ], id='main-container'),# Container
+            dbc.Col([
+                dbc.Row(html.H2("Kommunikasjons alarmer")),
+                dbc.Row(html.Div(id='comm-alarms', style={'font-size':'medium'})),
+
+                dbc.Row(html.H2("Jordfeil", className="mt-5")),
+                dbc.Row(html.Div(id='jordfeil-alarms', style={'font-size':'medium'})),
+            ], width = 5) #Col andre alarmer
+            ])
+
+        ], id='main-container', style={'max-width':'75%'}),# Container
         ])# Div
     return layout
 
@@ -221,6 +293,35 @@ def callbacks(app):
         else:
             chosen_sløyfe = get_sløyfe_from_pathname(pathname)
             return [get_alarm_table(time_range, chosen_sløyfe)]
+
+    # Oppdater kommunikasjons alarmer
+    @app.callback(
+        Output('comm-alarms', 'children'),
+        [Input('refresh', 'n_intervals')],
+        [State('url', 'pathname')])
+    def updtae_comm_alarms(n_intervals, pathname):
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+        return comm_alarms(chosen_sløyfe)
+
+    @app.callback(
+        Output('jordfeil-alarms', 'children'),
+        [Input('refresh', 'n_intervals'),
+        Input('button-confirm', 'n_clicks')],
+        [State('url', 'pathname')])
+    def updtae_comm_alarms(n_intervals, confirm_click, pathname):
+        ctx = dash.callback_context
+        triggered = ctx.triggered[0]['prop_id'].split('.')[0]
+        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
+
+        if triggered == None or ctx.triggered[0]['value'] == None:
+            raise PreventUpdate
+            #return [get_alarm_table(time_range, chosen_sløyfe)]
+        elif triggered == 'button-confirm':
+            return "Ingen nye jordfeil detektert"
+
+        else:
+            return jordfeil_alarms(chosen_sløyfe)
+    
 
     # oppdater label til dropdown menu
     @app.callback(

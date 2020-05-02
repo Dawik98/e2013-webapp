@@ -71,8 +71,11 @@ def decoder(payload):
             # This is a input-output-data message
             packetData['messageType'] = 'ioData'
 
-            if (data[5]): packetData['input'] = True
-            else: packetData['input'] = False
+            if (data[5]): 
+                packetData['input'] = True
+                packetData['alarmConfirmed'] = False
+            else: 
+                packetData['input'] = False
 
             if (data[9]): packetData['output'] = True
             else: packetData['output'] = False

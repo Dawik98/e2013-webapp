@@ -107,6 +107,15 @@ def get_temp_sensors_in_placement(devicePlacement):
             devices.append(devicesInPlacement[i]['device_eui'])
     return devices
 
+def get_devices_eui(sløyfe):
+    devices = []
+
+    with open(settingsFile) as json_file:
+        data = json.load(json_file)
+        for device in data[sløyfe]['devices']:
+            devices.append(device['device_eui'])
+
+    return devices
 
 def add_device(sløyfe, device_eui, device_type):
     """
