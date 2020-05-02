@@ -53,16 +53,16 @@ def connect_mosquitto(server):
                 controller[packetData['devicePlacement']].update_value(packetData['temperature'])
             
         # # Skriv til databesen dersom det ikke er en powerData-melding, eller hvis den aktive effekten i powerData-meldingen er høyere enn 5 W.
-        if (packetData['messageType'] != 'powerData'):
-            container_name = packetData['devicePlacement']
-            write_to_db(container_name, packetData)
-        elif (packetData['activePower'] > 5):
-            container_name = packetData['devicePlacement']
-            write_to_db(container_name, packetData)
+        # if (packetData['messageType'] != 'powerData'):
+        #     container_name = packetData['devicePlacement']
+        #     write_to_db(container_name, packetData)
+        # elif (packetData['activePower'] > 5):
+        #     container_name = packetData['devicePlacement']
+        #     write_to_db(container_name, packetData)
 
 # Utsending av "Meter-data-request"
 def claimMeterdata(devicePlacement):
-    startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel +01.00
+    startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel for Norge
     attempts = 0 # Initialiserer en forsøks-teller
     # Kjør while-løkke så lenge siste pakketype er ulik "powerData" || eller pakken tilhører en annen heat trace sløyfe || eller siste mottatte pakke er eldre enn
     # starttidspunktet til denne løkken || og det er gjennomført inntil 5 forsøk.
@@ -83,7 +83,7 @@ def claimMeterdata(devicePlacement):
 
 # Aktivering av varmekabel der sløyfevariabelen er argumentet (heatTrace1, heatTrace2, osv...)
 def activateHeatTrace(devicePlacement):
-    startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel +01.00
+    startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel for Norge
     attempts = 0 # Initialiserer en forsøks-teller
     # Kjør while-løkken dersom den aktuelle varmekabelen allerede er aktivert. Styringen er koblet NC (normal closed). Dermed er tilstanden TRUE
     # når varmekabelen er av. Løkken stopper dersom antall forsøk overstiges (maks 5 forsøk).
@@ -94,19 +94,20 @@ def activateHeatTrace(devicePlacement):
         print("Going to sleep for 5 seconds.")
         time.sleep(5) # Løkken sover i 5 sekunder for å vente på pakketransport.
         print("Woke up from sleep.")
-    # Dersom aktiveringstidspunktet var før denne funksjonen startet returneres denne beskjeden.
-    if (outputState[devicePlacement][1] < startTime):
-        return ("Varmekabelen er allerede aktivert.")
-    # Dersom utgangstilstanden fortsatt er True fungerte ikke aktiveringen, eller det er ikke mottatt bekreftelse på aktivering.
-    elif (outputState[devicePlacement][0] == True):
+    # Dersom utgangstilstanden fortsatt er TRUE fungerte ikke aktiveringen, eller det er ikke mottatt bekreftelse på aktivering.
+    if (outputState[devicePlacement][0] == True):
         return ("NB! Mottok ingen bekreftelse på aktivering. Aktiveringsmelding ble sendt 5 ganger.")
-    # I andre tilfeller har aktiveringen lyktes og informasjon med antall forsøk returneres.
-    else:
+    # I andre tilfeller er varmekabelen aktivert.
+    # Dersom det ble mottatt bekreftelse på aktivering etter starttidspunktet til funksjonen lyktes aktiveringen
+    elif (outputState[devicePlacement][1] > startTime):
         return ("Aktiveringsmelding ble sendt til gateway. Bekreftelse ble mottatt etter {}. forsøk.".format(attempts))
+    # Dersom aktiveringstidspunktet var før denne funksjonen startet returneres denne beskjeden.
+    else:
+        return ("Varmekabelen er allerede aktivert.")
 
 # Deaktivering av varmekabel der sløyfevariabelen er argumentet (heatTrace1, heatTrace2, osv...)
 def deactivateHeatTrace(devicePlacement):
-    startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel +01.00
+    startTime = datetime.datetime.now().astimezone(pytz.timezone('Europe/Oslo')) # Definerer starttidspunkt med tidssonestempel for Norge
     attempts = 0 # Initialiserer en forsøks-teller
     # Kjør while-løkken dersom den aktuelle varmekabelen allerede er deaktivert. Styringen er koblet NC (normal closed). Dermed er tilstanden FALSE
     # når varmekabelen er på. Løkken stopper dersom antall forsøk overstiges (maks 5 forsøk).
@@ -117,15 +118,16 @@ def deactivateHeatTrace(devicePlacement):
         print("Going to sleep for 5 seconds.")
         time.sleep(5) # Løkken sover i 5 sekunder for å vente på pakketransport.
         print("Woke up from sleep.")
-    # Dersom deaktiveringstidspunktet var før denne funksjonen startet returneres denne beskjeden.
-    if (outputState[devicePlacement][1] < startTime):
-        return ("Varmekabelen er allerede deaktivert.")
     # Dersom utgangstilstanden fortsatt er FALSE fungerte ikke deaktiveringen, eller det er ikke mottatt bekreftelse på deaktivering.
-    elif (outputState[devicePlacement][0] == False):
+    if (outputState[devicePlacement][0] == False):
         return ("NB! Mottok ingen bekreftelse på deaktivering. Deaktiveringsmelding ble sendt 5 ganger.")
-    # I andre tilfeller har deaktiveringen lyktes og informasjon med antall forsøk returneres.
-    else:
+    # I andre tilfeller er varmekabelen deaktivert.
+    # Dersom det ble mottatt bekreftelse på deaktivering etter starttidspunktet til funksjonen lyktes deaktiveringen
+    elif (outputState[devicePlacement][1] > startTime):
         return ("Deaktiveringsmelding ble sendt til gateway. Bekreftelse ble mottatt etter {}. forsøk.".format(attempts))
+    # Dersom deaktiveringstidspunktet var før denne funksjonen startet returneres denne beskjeden.
+    else:
+        return ("Varmekabelen er allerede deaktivert.")
 
 def createController(devicePlacement):
     global controller

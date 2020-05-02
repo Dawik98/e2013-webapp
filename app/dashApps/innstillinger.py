@@ -27,8 +27,8 @@ prew_dutycycle_confirm_count = 0
 prew_actuation_confirm_count = 0
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-settingsFile = 'settings.txt' # Azure
-# settingsFile = 'app/settings.txt' # Lokalt
+# settingsFile = 'settings.txt' # Azure
+settingsFile = 'app/settings.txt' # Lokalt
 
 def print_settings():
     """
@@ -475,7 +475,11 @@ def controller_settings(chosen_sløyfe):
             html.H2("Regulator-innstillinger"),
         ]),
         dbc.Row([
-            html.P(id='manual-actuation-dummy', children="Heat trace is on")
+            dcc.Loading(
+                id='loading-state',
+                type='default',
+                children=html.P(id='loading-state-output')
+            )
         ]),
         dbc.Row([
             dbc.Col(html.P("Automatisk AV/PÅ-styring", id='auto-actuation-label'), width=6),
@@ -1001,6 +1005,8 @@ def callbacks(app):
         [
             Output(component_id='manual-actuation-radioitems', component_property='options'),
             Output(component_id='manual-actuation-radioitems', component_property='value'),
+            Output(component_id='controller-mode-radioitems', component_property='options'),
+            Output(component_id='controller-mode-radioitems', component_property='value')
         ],
         [
             Input(component_id='auto-actuation-checklist', component_property='value'),
@@ -1019,21 +1025,39 @@ def callbacks(app):
         if auto_actuation:                                              # Kontrollerer om automatisk av/på-styring er aktivert
             print("Starting automatic on/off-controlling.")
             controller.start()                                          # Starter automatisk av/på-styring
-            return ([
-                {'label': "AV", 'value': False, 'disabled': True},
-                {'label': "PÅ", 'value': True, 'disabled': True}
-            ], not outputState)                                         # Deaktiverer mulighet for manuell styring og oppdaterer utgangsverdi
+            # Deaktiverer mulighet for manuell styring, oppdaterer utgangsverdi og aktiverer mulighet for regulatorinnstillinger
+            return (
+                [
+                    {'label': "AV", 'value': False, 'disabled': True},
+                    {'label': "PÅ", 'value': True, 'disabled': True}
+                ],
+                not outputState,
+                [
+                    {'label': "Auto", 'value': 'Auto', 'disabled': False},
+                    {'label': "Manuell", 'value': 'Manual', 'disabled': False}
+                ],
+                controller.mode
+            )
         else:
-            controller.stop()                                           # Stopper automatick av/på-styring
             print("Stoping automatic on/off-controlling.")
-            return ([
-                {'label': "AV", 'value': False, 'disabled': False},
-                {'label': "PÅ", 'value': True, 'disabled': False}
-            ], not outputState)                                         # Aktiverer mulighet for manuell styring og oppdaterer utgangsverdi
+            controller.stop()                                           # Stopper automatick av/på-styring
+            # Aktivererer mulighet for manuell styring, oppdaterer utgangsverdi og deaktiverer mulighet for regulatorinnstillinger
+            return (
+                [
+                    {'label': "AV", 'value': False, 'disabled': False},
+                    {'label': "PÅ", 'value': True, 'disabled': False}
+                ],
+                not outputState,
+                [
+                    {'label': "Auto", 'value': 'Auto', 'disabled': True},
+                    {'label': "Manuell", 'value': 'Manual', 'disabled': True}
+                ],
+                controller.mode
+            )
         
     # Manuell av/på-styring
     @app.callback(
-        Output(component_id='manual-actuation-dummy', component_property='children'),
+        Output(component_id='loading-state-output', component_property='children'),
         [
             Input(component_id='manual-actuation-radioitems', component_property='value'),
         ],
@@ -1058,16 +1082,23 @@ def callbacks(app):
 
     # Regulatormodus
     @app.callback(
-        Output(component_id='actuation-input', component_property='disabled'),
+        [
+            Output(component_id='actuation-input', component_property='disabled'),
+            Output(component_id='setpoint-input', component_property='disabled'),
+            Output(component_id='Kp-input', component_property='disabled'),
+            Output(component_id='Ti-input', component_property='disabled'),
+            Output(component_id='dutycycle-input', component_property='disabled')
+        ],
         [
             Input(component_id='controller-mode-radioitems', component_property='value'),
         ],
         [
             State(component_id='actuation-input', component_property='value'),
-            State(component_id='url', component_property='pathname'),
+            State(component_id='auto-actuation-checklist', component_property='value'),
+            State(component_id='url', component_property='pathname')
         ]
     )
-    def enable_disable_actuation_input(mode, actuation_input, pathname):
+    def enable_disable_actuation_input(mode, actuation_input, auto_actuation, pathname):
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
         try:
             controller = get_controller(chosen_sløyfe)
@@ -1076,10 +1107,12 @@ def callbacks(app):
         print("Innkommende modus: {}".format(mode))
         if (mode != controller.mode):
             controller.change_mode(mode, actuation_input)
-        if (mode == 'Auto'):
-            return True
+        if (not auto_actuation):
+            return True, True, True, True, True
+        elif (mode == 'Auto'):
+            return True, False, False, False, False
         else:
-            return False
+            return False, True, True, True, True
 
     # Oppdater pådraget i input-en til manuelt pådrag, når regulatoren er i auto-modus. (Sikrer rykkfri overgang)
     @app.callback(
