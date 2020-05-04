@@ -32,7 +32,9 @@ målinger_dict={ "Temperatur" : "temperature",
                 "Spenning" : "voltage",
                 "Strøm" : "current",
                 "Frekvens" : "frequency",
-                "Kjøretid" : "runTime",              
+                "Kjøretid" : "runTime",  
+                "Pådrag" : "actuation",
+                "Setpunkt" : "setpoint",            
 }
 #Brukes til å dynamisk skifte benemning på graf til målerelé.
 enhet_dict={"Temperatur" : "[°C]",
@@ -46,6 +48,8 @@ enhet_dict={"Temperatur" : "[°C]",
             "Strøm" : "[mA]",
             "Frekvens" : "[f]",
             "Kjøretid" : "[s]", 
+            "Pådrag" : "[%]",
+            "Setpunkt" : "[°C]",
 }          
 #Dager måledata med 5 min samplerate
 #antall_målinger = 288*1 
@@ -362,6 +366,24 @@ def callbacks(app):
                     data.append(
                         go.Scatter(y=historiskData[sløyfe_valg]["Power-Switch"]["runTime"],
                             x=historiskData[sløyfe_valg]["Power-Switch"]["timeReceived"], 
+                            mode='lines+markers',
+                            marker={"size": 3.5},
+                            name="{0} {1}".format(måling, enhet_dict[måling])
+                        )
+                    )
+                if måling == "Setpunkt":
+                    data.append(
+                        go.Scatter(y=historiskData[sløyfe_valg]["controllerData"]["setpoint"],
+                            x=historiskData[sløyfe_valg]["controllerData"]["timeReceived"], 
+                            mode='lines+markers',
+                            marker={"size": 3.5},
+                            name="{0} {1}".format(måling, enhet_dict[måling])
+                        )
+                    )
+                if måling == "Pådrag":
+                    data.append(
+                        go.Scatter(y=historiskData[sløyfe_valg]["controllerData"]["actuation"],
+                            x=historiskData[sløyfe_valg]["controllerData"]["timeReceived"], 
                             mode='lines+markers',
                             marker={"size": 3.5},
                             name="{0} {1}".format(måling, enhet_dict[måling])
