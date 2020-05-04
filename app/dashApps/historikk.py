@@ -374,7 +374,7 @@ def callbacks(app):
                 if måling == "Setpunkt":
                     data.append(
                         go.Scatter(y=historiskData[sløyfe_valg]["controllerData"]["setpoint"],
-                            x=historiskData[sløyfe_valg]["controllerData"]["timestamp"], 
+                            x=historiskData[sløyfe_valg]["controllerData"]["timeReceived"], 
                             mode='lines+markers',
                             marker={"size": 3.5},
                             name="{0} {1}".format(måling, enhet_dict[måling])
@@ -383,7 +383,7 @@ def callbacks(app):
                 if måling == "Pådrag":
                     data.append(
                         go.Scatter(y=historiskData[sløyfe_valg]["controllerData"]["actuation"],
-                            x=historiskData[sløyfe_valg]["controllerData"]["timestamp"], 
+                            x=historiskData[sløyfe_valg]["controllerData"]["timeReceived"], 
                             mode='lines+markers',
                             marker={"size": 3.5},
                             name="{0} {1}".format(måling, enhet_dict[måling])

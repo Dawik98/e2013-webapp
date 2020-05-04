@@ -68,7 +68,7 @@ def update_meterData(sløyfe_valg, fra_dato, til_dato):
 # Henter ALL data fra databasen slik grafen blir responsive i ettertid.
 def update_historiskData(sløyfe_valg):
     # Henter temperaturdata (messageType = dataLog) og effektdata (messageType = powerData) fra database
-    query = "SELECT {0}.timeReceived, {0}.messageType, {0}.deviceEui, {0}.timestamp, {0}.setpoint, {0}.actuation, {0}.temperature, {0}.activePower, {0}.reactivePower, {0}.apparentPower, {0}.activeEnergy, {0}.reactiveEnergy, {0}.apparentEnergy, {0}.voltage, {0}.current, {0}.frequency, {0}.runTime FROM {0} WHERE (({0}.messageType = 'dataLog') OR ({0}.messageType = 'powerData') OR ({0}.messageType = 'controllerData')) ORDER BY {0}.timeReceived DESC".format(sløyfe_valg)
+    query = "SELECT {0}.timeReceived, {0}.messageType, {0}.deviceEui, {0}.setpoint, {0}.actuation, {0}.temperature, {0}.activePower, {0}.reactivePower, {0}.apparentPower, {0}.activeEnergy, {0}.reactiveEnergy, {0}.apparentEnergy, {0}.voltage, {0}.current, {0}.frequency, {0}.runTime FROM {0} WHERE (({0}.messageType = 'dataLog') OR ({0}.messageType = 'powerData') OR ({0}.messageType = 'controllerData')) ORDER BY {0}.timeReceived DESC".format(sløyfe_valg)
     items = read_from_db(sløyfe_valg, query)
 
     # Forhåndsdefinerer et dictionary "historiskData" med tomme verdilister.
@@ -99,7 +99,7 @@ def update_historiskData(sløyfe_valg):
         "controllerData":{
                 "actuation":[],
                 "setpoint":[],
-                "timestamp":[],
+                "timeReceived":[],
             }
     }
     # Går igjennom samtlige dictionary's i mottatt data fra database (items) og sorterer data.
@@ -114,8 +114,8 @@ def update_historiskData(sløyfe_valg):
                 historiskData['controllerData'][messurment].append(items[i][messurment])
         else:
             for messurment in historiskData['Power-Switch']:
-                historiskData['Power-Switch'][messurment].append(items[i][messurment])
-    print(historiskData["controllerData"])            
+                historiskData['Power-Switch'][messurment].append(items[i][messurment])          
+    print(historiskData["controllerData"])
     #endrer fra Wh til kWh
     historiskData['Power-Switch'] = {key: (pd.Series(value) * 0.001).tolist() if key =='activeEnergy' or key =='apparentEnergy' else value for key, value in historiskData["Power-Switch"].items()}    
     return historiskData
