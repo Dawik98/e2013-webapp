@@ -68,7 +68,7 @@ def update_meterData(sløyfe_valg, fra_dato, til_dato):
 # Henter ALL data fra databasen slik grafen blir responsive i ettertid.
 def update_historiskData(sløyfe_valg):
     # Henter temperaturdata (messageType = dataLog) og effektdata (messageType = powerData) fra database
-    query = "SELECT {0}.timeReceived, {0}.messageType, {0}.deviceEui, {0}.temperature, {0}.activePower, {0}.reactivePower, {0}.apparentPower, {0}.activeEnergy, {0}.reactiveEnergy, {0}.apparentEnergy, {0}.voltage, {0}.current, {0}.frequency, {0}.runTime FROM {0} WHERE (({0}.messageType = 'dataLog') OR ({0}.messageType = 'powerData')) ORDER BY {0}.timeReceived DESC".format(sløyfe_valg)
+    query = "SELECT {0}.timeReceived, {0}.messageType, {0}.deviceEui, {0}.timestamp, {0}.setpoint, {0}.actuation, {0}.temperature, {0}.activePower, {0}.reactivePower, {0}.apparentPower, {0}.activeEnergy, {0}.reactiveEnergy, {0}.apparentEnergy, {0}.voltage, {0}.current, {0}.frequency, {0}.runTime FROM {0} WHERE (({0}.messageType = 'dataLog') OR ({0}.messageType = 'powerData') OR ({0}.messageType = 'controllerData')) ORDER BY {0}.timeReceived DESC".format(sløyfe_valg)
     items = read_from_db(sløyfe_valg, query)
 
     # Forhåndsdefinerer et dictionary "historiskData" med tomme verdilister.
@@ -95,7 +95,12 @@ def update_historiskData(sløyfe_valg):
             "runTime":[],
             "timeReceived":[],
         },
-        "Temperatur-Sensor": tempSensors
+        "Temperatur-Sensor": tempSensors,
+        "controllerData":{
+                "actuation":[],
+                "setpoint":[],
+                "timestamp":[],
+            }
     }
     # Går igjennom samtlige dictionary's i mottatt data fra database (items) og sorterer data.
     for i in range(0, len(items)):
@@ -104,9 +109,14 @@ def update_historiskData(sløyfe_valg):
                 if (items[i]['deviceEui'] == eui):
                     historiskData['Temperatur-Sensor'][eui]['temperature'].append(items[i]['temperature'])
                     historiskData['Temperatur-Sensor'][eui]['timeReceived'].append(items[i]['timeReceived'])
+        elif (items[i]['messageType'] == 'controllerData'):
+            for messurment in historiskData['controllerData']:
+                historiskData['controllerData'][messurment].append(items[i][messurment])
         else:
-            for key in historiskData['Power-Switch']:
-                historiskData['Power-Switch'][key].append(items[i][key])
+            for messurment in historiskData['Power-Switch']:
+                historiskData['Power-Switch'][messurment].append(items[i][messurment])
+    print(historiskData["controllerData"])            
+    #endrer fra Wh til kWh
     historiskData['Power-Switch'] = {key: (pd.Series(value) * 0.001).tolist() if key =='activeEnergy' or key =='apparentEnergy' else value for key, value in historiskData["Power-Switch"].items()}    
     return historiskData
 
@@ -156,7 +166,7 @@ def print_historiskData(sløyfe_valg,til_dato, fra_dato):
             "Temperatur-Sensor":{
             "temperature":temperature,
             "timeReceived":_tsTemp,
-            }
+            },
     }
     #Sorterer riktige målinger til riktig liste. Løper gjennom meterData. 
     for key, value in historiskData["Power-Switch"].items():
@@ -170,6 +180,11 @@ def print_historiskData(sløyfe_valg,til_dato, fra_dato):
     for key, value in historiskData["Temperatur-Sensor"].items():
         for i in items_temp:
             historiskData["Temperatur-Sensor"][key].append(i[key])
+    
+    #Sorterer riktige målinger til riktig liste. Løper gjennom controller data. 
+    for key, value in historiskData["Power-Controller"].items():
+        for i in items_temp:
+            historiskData["Power-Controller"][key].append(i[key])
 
     d = {'Time recived, temp': historiskData["Temperatur-Sensor"]["timeReceived"],
         'Temperature [°C]': historiskData["Temperatur-Sensor"]["temperature"],
@@ -185,7 +200,7 @@ def print_historiskData(sløyfe_valg,til_dato, fra_dato):
         'Frequency [f]': historiskData["Power-Switch"]["frequency"],
         'Runtime [s]': historiskData["Power-Switch"]["runTime"],
          }
-    #Unngår feil på grunn av ulike lengder på listene.
+    #Unngår feil på grunn av ulike lengder på listene. "Dobbel transponering"
     df = pd.DataFrame.from_dict(data=d, orient='index')
     df=df.transpose()
 

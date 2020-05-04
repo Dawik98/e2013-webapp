@@ -6,8 +6,8 @@ import json, time, pytz, datetime
 from datetime import datetime as dt
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-gatewayFile = 'gatewayStatus.txt' # Azure
-# gatewayFile = 'app/gatewayStatus.txt' # Lokalt
+#gatewayFile = 'gatewayStatus.txt' # Azure
+gatewayFile = 'app/gatewayStatus.txt' # Lokalt
 
 mqtt = None
 
