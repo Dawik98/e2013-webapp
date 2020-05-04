@@ -27,8 +27,8 @@ prew_dutycycle_confirm_count = 0
 prew_actuation_confirm_count = 0
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-# settingsFile = 'settings.txt' # Azure
-settingsFile = 'app/settings.txt' # Lokalt
+settingsFile = 'settings.txt' # Azure
+# settingsFile = 'app/settings.txt' # Lokalt
 
 def print_settings():
     """
@@ -374,7 +374,7 @@ def get_settings_table(chosen_sløyfe):
     settings = settings[chosen_sløyfe]['devices']
     #print(settings)
 
-    table_header = [html.Thead(html.Tr([html.Th("Enhetens eui"), html.Th("Enhet"), html.Th("Status", style=small_coll)]))]
+    table_header = [html.Thead(html.Tr([html.Th("Enhetens eui"), html.Th("Enhet"), html.Th("Status")]))]
     # Liste som vil inneholde alle rader
     table_rows = []
 
@@ -383,7 +383,7 @@ def get_settings_table(chosen_sløyfe):
     device_types = [dbc.DropdownMenuItem("Temperatur sensor", id='tempSensor'),
                     dbc.DropdownMenuItem("Power switch", id='powerSwitch')]
     add_type = dbc.DropdownMenu(device_types, label="Velg enhet type", id="add-type")#, toggleClassName="btn-outline-secondary")
-    add_device_row = dbc.Collapse(html.Tr([html.Td(add_eui), html.Td(add_type), html.Td(style=small_coll)]), id='add-row-collapse')#, is_open=False)
+    add_device_row = dbc.Collapse(html.Tr([html.Td(add_eui), html.Td(add_type), html.Td()]), id='add-row-collapse')#, is_open=False)
 
     # lag alle mulige rader i tabellen, vis bare de som har tilskrevet enhet
     for (key, status), setting_item in zip_longest(remove_buttons_ids.items(), settings):
@@ -405,7 +405,7 @@ def get_settings_table(chosen_sløyfe):
 
             dev_status = get_device_status(chosen_sløyfe, deviceEui)
 
-            row = html.Tr([html.Td(deviceEui), html.Td([deviceType, delete_button]), html.Td(dev_status, style=small_coll)])
+            row = html.Tr([html.Td(deviceEui), html.Td([deviceType, delete_button]), html.Td(dev_status)])
             table_rows.append(row)
         
         # hvis det finnes ikke flere enheter lag tome raader
@@ -575,14 +575,14 @@ def serve_layout():
             dbc.Row(className='mt-3', children=[
                 dbc.Col([
                     dbc.Row(html.H2("Enheter i sløyfen")),
-                    dbc.Row(html.Div(html.Div(id='table-div'), id='table', className='tableFixHead')),
+                    dbc.Row(html.Div(html.Div(id='table-div'), id='table', className='tableFixHead-settings')),
                     dbc.Row([add_device_button()]),
-                    dbc.Row([confirm_buttons()]),
+                    dbc.Row([confirm_buttons()], className='mb-3'),
                 ]),
                 dbc.Col([
                     html.Div(html.Div(id='controller-settings-div'), id='controller-settings'),
                     html.Div(id='alarm-settings-div'),
-                ])
+                ], className='controller-coll')
             ]),
         ], id='main-container'),# Container
         dcc.Interval(id='interval-component', interval=2000, n_intervals=0),

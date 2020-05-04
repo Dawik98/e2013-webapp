@@ -28,7 +28,7 @@ def get_home_table():
 
     sløyfer = get_sløyfer()
 
-    table_header = [html.Thead(html.Tr([html.Th("Sløyfe"), html.Th("Siste måling", colSpan = 2, style={'width':'270px'}), html.Th("Avvik"), html.Th("Alarm status")]))]
+    table_header = [html.Thead(html.Tr([html.Th("Sløyfe"), html.Th("Siste måling", colSpan = 2), html.Th("Avvik"), html.Th("Alarm status")]))]
     table_rows = []
     
     for sløyfe in sløyfer:
@@ -60,7 +60,7 @@ def get_home_table():
             avvik = "Fant ingen regulator"
 
         #Finn alarm status
-        query = "SELECT TOP 1 * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false ORDER BY {0}.timeReceived DESC".format(sløyfe)
+        query = "SELECT TOP 1 * FROM {0} WHERE {0}.alarmConfirmed = false ORDER BY {0}.timeReceived DESC".format(sløyfe)
         last_unconfirmed_alarm = read_from_db(sløyfe, query)
         
         def alarm_status_label(label):
@@ -69,8 +69,8 @@ def get_home_table():
             return alarm_link
 
         try:
-            if last_unconfirmed_alarm[0]['timeReceived'] == last_messure_time:
-                # Hvis siste måling er en alarm -> status = 'aktiv alarm' 
+            if last_unconfirmed_alarm[0]['timeReceived'] == last_messure_time or last_unconfirmed_alarm[0]['deviceType'] == 'powerSwitch':
+                # Hvis siste måling er en alarm eller en jordfeil er ikke kvittert -> status = 'aktiv alarm' 
                 alarm_label = [html.I(className='fas fa-exclamation-circle mr-2', style={'color':'red'}), "Aktiv alarm"]
                 alarm_status = alarm_status_label(alarm_label)
             else:
@@ -82,7 +82,7 @@ def get_home_table():
             alarm_label = [html.I(className='fas fa-check-circle mr-2', style={'color':'#86d01b'}), "Ingen nye alarmer"]
             alarm_status = alarm_status_label(alarm_label)
         
-        row = html.Tr([html.Td(sløyfe), html.Td(last_temp_link, style={'width':'100px'}), html.Td(last_messure_time_link, style={'width':'170px'}), html.Td(avvik), html.Td(alarm_status)])
+        row = html.Tr([html.Td(sløyfe), html.Td(last_temp_link), html.Td(last_messure_time_link), html.Td(avvik), html.Td(alarm_status)])
 
         table_rows.append(row)
         
@@ -96,7 +96,7 @@ def serve_layout():
         dbc.Container([
 
             html.H1("Sløyfe oversikt:", className="mb-2"),
-            html.Div(get_home_table(), id='table', className='tableFixHead')
+            html.Div(get_home_table(), id='table', className='tableFixHead-home')
         ])#container
     ])
     return layout
