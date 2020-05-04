@@ -4,10 +4,11 @@ from powerControl import PI_controller
 from cosmosDB import connect_to_db, write_to_db, read_from_db
 import json, time, pytz, datetime
 from datetime import datetime as dt
+from datetime import timedelta
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-gatewayFile = 'gatewayStatus.txt' # Azure
-# gatewayFile = 'app/gatewayStatus.txt' # Lokalt
+# gatewayFile = 'gatewayStatus.txt' # Azure
+gatewayFile = 'app/gatewayStatus.txt' # Lokalt
 
 mqtt = None
 
@@ -45,7 +46,7 @@ def connect_mosquitto(server):
                 from dashApps.innstillinger import get_temp_sensors_in_placement
                 devicesInPlacement = get_temp_sensors_in_placement(packetData['devicePlacement'])
                 if (len(devicesInPlacement) > 1):
-                    query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - dt.timedelta(minutes=7)))
+                    query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - timedelta(minutes=7)))
                     lastTemps = read_from_db(packetData['devicePlacement'], query)
                     # Fjerner enhets-EUI til avsenderenhet fra listen over enheter i varmekretsen
                     devicesInPlacement.remove(packetData['deviceEui'])
@@ -56,18 +57,16 @@ def connect_mosquitto(server):
                                 otherTemperatureStates.append(lastTemps[i]['temperature'])
                                 break
                     if ((otherTemperatureStates == []) or (packetData['temperature'] < min(otherTemperatureStates))):
-                        print(otherTemperatureStates)
                         controller[packetData['devicePlacement']].update_value(packetData['temperature'])
                 else:
                     controller[packetData['devicePlacement']].update_value(packetData['temperature'])
-                
             # Skriv til databesen dersom det ikke er en powerData-melding, eller hvis den aktive effekten i powerData-meldingen er høyere enn 5 W.
-            # if (packetData['messageType'] != 'powerData'):
-            #     container_name = packetData['devicePlacement']
-            #     write_to_db(container_name, packetData)
-            # elif (packetData['activePower'] > 5):
-            #     container_name = packetData['devicePlacement']
-            #     write_to_db(container_name, packetData)
+            if (packetData['messageType'] != 'powerData'):
+                container_name = packetData['devicePlacement']
+                write_to_db(container_name, packetData)
+            elif (packetData['activePower'] > 5):
+                container_name = packetData['devicePlacement']
+                write_to_db(container_name, packetData)
 
         elif topic == 'gatewayStatus':
             payload = message.payload.decode("utf-8") 

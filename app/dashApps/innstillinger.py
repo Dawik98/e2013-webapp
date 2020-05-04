@@ -1121,7 +1121,7 @@ def callbacks(app):
         elif (mode == 'Auto'):
             return True, False, False, False, False
         else:
-            return False, True, True, True, True
+            return False, True, True, True, False
 
     # Oppdater pådraget i input-en til manuelt pådrag, når regulatoren er i auto-modus. (Sikrer rykkfri overgang)
     @app.callback(

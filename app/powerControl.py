@@ -1,10 +1,12 @@
 from threading import Thread, Lock
-from time import time, ctime, sleep
+from time import time, sleep
+from datetime import datetime as dt
+import pytz
+from cosmosDB import write_to_db
 
 class PI_controller:
-    def __init__(self, devicePlacement, activate_func, deactivate_func, mode='Auto', duty_cycle=1.0, log_results=False):
+    def __init__(self, devicePlacement, activate_func, deactivate_func, mode='Auto', duty_cycle=1.0):
         self.devicePlacement = devicePlacement
-        self.log_results = log_results
 
         self.Kp = 0.0 # Proportional forsterkning
         self.Ti = 0.0 # Integraltid
@@ -38,15 +40,6 @@ class PI_controller:
 
     def get_device_placement(self):
         return self.devicePlacement
-
-    # Skriv til loggen
-    def writer(self, data):
-         file = open(self.devicePlacement+'_log.txt', 'a')
-         for i in data:
-             file.write(str(i))
-             file.write('|')
-         file.write('\n')
-         file.close()
 
     def update_parameters(self, Kp, Ti):
         self.Kp = Kp # Proporsjonal forsterkning
@@ -110,22 +103,30 @@ class PI_controller:
             self.proportional()
             print("Proporsjonalbidraget er {} %".format(self.u_p))
             self.integral()
-            u_tot = self.u_p + self.u_i
             print("Integralbidraget er {} %".format(self.u_i))
+            u_tot = self.u_p + self.u_i
 
             # Anti windup:
             if u_tot > 100.0:
-                self.set_u_tot(100.0)
+                u_tot = 100.0
             elif u_tot < 0.0:
-                self.set_u_tot(0.0)
+                u_tot = 0.0
             else:
-                self.set_u_tot(round(u_tot, 2))
-
-            results = [ctime(), self.value, self.setpoint, self.u_tot, self.u_p, self.u_i, self.Kp, self.Ti]
-
-            # Logg resulateter hvis dette er aktivert (default = FALSE)
-            if self.log_results:
-                self.writer(results)
+                u_tot = round(u_tot, 2)
+            self.set_u_tot(u_tot)
+            # Skriver regulator-data som item til databasen, slik at dette senere kan plottes under "Historikk"
+            timestamp = dt.now()
+            timestamp = timestamp.astimezone(pytz.timezone('Europe/Oslo'))
+            timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')             # Tidspunkt for nytt pådrag
+            controllerData = {
+                'devicePlacement': self.devicePlacement,
+                'messageType': "controllerData",
+                'timeReceived': timestamp,
+                'setpoint': self.setpoint,
+                'actuation': u_tot
+            }
+            # Skriver til databasen med container lik devicePlacement.
+            write_to_db(self.devicePlacement, controllerData)
     
     def change_mode(self, mode, actuation=0.0):
         """
