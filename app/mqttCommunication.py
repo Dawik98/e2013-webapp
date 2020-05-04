@@ -46,7 +46,7 @@ def connect_mosquitto(server):
                 from dashApps.innstillinger import get_temp_sensors_in_placement
                 devicesInPlacement = get_temp_sensors_in_placement(packetData['devicePlacement'])
                 if (len(devicesInPlacement) > 1):
-                    query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE {0}.timeReceived > '{1}' ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - timedelta(minutes=7)))
+                    query = "SELECT {0}.temperature, {0}.deviceEui FROM {0} WHERE (({0}.timeReceived > '{1}') AND ({0}.messageType = 'dataLog')) ORDER BY {0}.timeReceived DESC".format(packetData['devicePlacement'], (timeOslo - timedelta(minutes=7)))
                     lastTemps = read_from_db(packetData['devicePlacement'], query)
                     # Fjerner enhets-EUI til avsenderenhet fra listen over enheter i varmekretsen
                     devicesInPlacement.remove(packetData['deviceEui'])

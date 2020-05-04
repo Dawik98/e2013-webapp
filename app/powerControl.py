@@ -114,19 +114,20 @@ class PI_controller:
             else:
                 u_tot = round(u_tot, 2)
             self.set_u_tot(u_tot)
-            # Skriver regulator-data som item til databasen, slik at dette senere kan plottes under "Historikk"
-            timestamp = dt.now()
-            timestamp = timestamp.astimezone(pytz.timezone('Europe/Oslo'))
-            timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')             # Tidspunkt for nytt pådrag
-            controllerData = {
-                'devicePlacement': self.devicePlacement,
-                'messageType': "controllerData",
-                'timeReceived': timestamp,
-                'setpoint': self.setpoint,
-                'actuation': u_tot
-            }
-            # Skriver til databasen med container lik devicePlacement.
-            write_to_db(self.devicePlacement, controllerData)
+            # Dersom automatisk av/på reglering er aktivert skriver regulator-data som item til databasen, slik at dette senere kan plottes under "Historikk"
+            if self.run_actuation:
+                timestamp = dt.now()
+                timestamp = timestamp.astimezone(pytz.timezone('Europe/Oslo'))
+                timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')             # Tidspunkt for nytt pådrag
+                controllerData = {
+                    'devicePlacement': self.devicePlacement,
+                    'messageType': "controllerData",
+                    'timeReceived': timestamp,
+                    'setpoint': self.setpoint,
+                    'actuation': u_tot
+                }
+                # Skriver til databasen med container lik devicePlacement.
+                write_to_db(self.devicePlacement, controllerData)
     
     def change_mode(self, mode, actuation=0.0):
         """
