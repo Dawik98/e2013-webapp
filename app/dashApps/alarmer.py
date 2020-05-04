@@ -21,10 +21,6 @@ from dashApps.layout import callbacks as layout_callbacks
 
 from dashApps.innstillinger import get_alarms, get_devices_eui
 
-#num_of_alarms = '25'
-#time_range = 'day'
-#not_confirmed_alarms = []
-
 def get_site_title(chosen_sløyfe):
     """
     get_site_title returner side tittel som vises helt øvers på siden og sier hvilken sløyfe som vises på siden 
@@ -44,7 +40,7 @@ def get_site_title(chosen_sløyfe):
 
 site_title = html.Div(html.H1("Alarmer for alle sløyfer"), className="page-header") 
 
-def confirm_alarms(chosen_sløyfe):
+def confirm_alarms(chosen_sløyfe, deviceType):
     """
     confirm_alarms kvitterer alle ukvitterte alarmer
 
@@ -56,7 +52,7 @@ def confirm_alarms(chosen_sløyfe):
 
     # hent alle ukvitterte alarmer
     #query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmConfirmed = false".format(chosen_sløyfe)
-    query = "SELECT * FROM {0} WHERE {0}.alarmConfirmed = false".format(chosen_sløyfe)
+    query = "SELECT * FROM {0} WHERE {0}.alarmConfirmed = false AND {0}.deviceType = '{1}'".format(chosen_sløyfe, deviceType)
     unconfirmed_alarms = read_from_db(chosen_sløyfe, query)
 
     # gå gjennom alle alarmer og kvitter de
@@ -108,7 +104,7 @@ def get_time_range(time_interval):
     result = datetime.strftime(result, '%Y-%m-%d %H:%M')
     return result
 
-def get_alarm_table(time_interval, chosen_sløyfe):
+def get_temp_alarm_table(time_interval, chosen_sløyfe):
     """
     get_alarm_table lager en tabell som inneholder alle alarmer fra valgt tidsperiode
 
@@ -126,12 +122,6 @@ def get_alarm_table(time_interval, chosen_sløyfe):
     """
     time_range = get_time_range(time_interval)
 
-    #alarms = get_alarms(chosen_sløyfe)
-    #min_val = alarms[0]
-    #max_val = alarms[1]
-
-    #print("updating from " + time_range)
-
     if (time_interval != "Alle"):
         query = "SELECT * FROM {0} WHERE {0}.timeReceived > '{1}' AND {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, time_range)
         abnormal_values = read_from_db(chosen_sløyfe, query)
@@ -139,85 +129,29 @@ def get_alarm_table(time_interval, chosen_sløyfe):
         query = "SELECT * FROM {0} WHERE {0}.deviceType = 'tempSensor' AND {0}.alarmValue = true ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe)
         abnormal_values = read_from_db(chosen_sløyfe, query)
 
-    table_header = [html.Thead(html.Tr([html.Th("Tid"), html.Th("Enhetens plassering"), html.Th("Enhetens Eui"), html.Th("Verdi"),]))]
+    table_header = [html.Thead(html.Tr([html.Th("Tid"), html.Th("Enhetens Eui"), html.Th("Temperatur")]))]
     table_rows = []
     
     for item in abnormal_values:
         # Gjør dato formatet for at den skal bli mer lesbar
         time = datetime.strptime(item["timeReceived"], '%Y-%m-%d %H:%M:%S')
         time = datetime.strftime(time, '%d.%m.%Y   %H:%M')
-        devicePlacement = item["devicePlacement"]
         deviceEui = item["deviceEui"]
         temperature = item["temperature"]
 
         # Lag ny rad for hver alarm
         # Hvis alarmen ikke er kvittert bruk rød bakgrunnsfarge
         if item['alarmConfirmed'] == False:
-            row = html.Tr([html.Td(time), html.Td(devicePlacement), html.Td(deviceEui), html.Td("{} °C".format(temperature), className="scrollBarColl")], className='table-danger')
+            row = html.Tr([html.Td(time), html.Td(deviceEui), html.Td("{} °C".format(temperature))], className='table-danger')
         else:
-            row = html.Tr([html.Td(time), html.Td(devicePlacement), html.Td(deviceEui), html.Td("{} °C".format(temperature), className="scrollBarColl")])
+            row = html.Tr([html.Td(time), html.Td(deviceEui), html.Td("{} °C".format(temperature))])
 
         table_rows.append(row)
 
     table_body=[html.Tbody(table_rows)]
 
-    return dbc.Table(table_header+table_body, bordered=True)
+    return dbc.Table(table_header + table_body, bordered=True)
 
-def comm_alarms(chosen_sløyfe):
-    from mqttCommunication import gatewayFile
-    label = []
-
-    # Sjekker gateway status
-    f = open(gatewayFile, 'r')
-    lines = f.read().splitlines()
-    status = lines[-1]
-    status_time = status[status.find("[")+1:status.find("]")]
-
-    if 'Lost connection' in status:
-        label.append(html.Li('Mistet kontakt med gateway {}\n'.format(status_time), className='spaced-list'))
-
-    #Sjekker status til enhetene
-    for device_eui in get_devices_eui(chosen_sløyfe):
-        try:
-            query = "SELECT TOP 1 * FROM {0} WHERE {0}.deviceEui = '{1}' ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, device_eui)
-            data = read_from_db(chosen_sløyfe, query)
-            data = data[0]
-        except:
-            label.append(html.Li("Finnes ingen data mottatt fra {}\n".format(device_eui), className='spaced-list'))
-            continue
-
-        # Finner ut hvor lenge siden data ble sendt
-        message_time = data['timeReceived']
-        message_time = datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
-        now = datetime.now()
-        time_diff = now-message_time 
-
-        if time_diff > timedelta(minutes=30):
-            label.append(html.Li("Ingen data mottat fra {} siden {}\n".format(device_eui, message_time), className='spaced-list'))
-
-    if label == []:
-        label = 'Ingen problemer med kommunikasjon'
-    else:
-        label = html.Ul(label)
-
-    return label
-
-def jordfeil_alarms(chosen_sløyfe):
-    label = ""
-
-    try:
-        query = "SELECT TOP 1 * FROM {0} WHERE {0}.messageType = 'ioData' AND {0}.input = true AND {0}.alarmConfirmed = false ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe)
-        data = read_from_db(chosen_sløyfe, query)
-        data = data[0]
-    except:
-        return "Ingen nye jordfeil detektert"
-
-    message_time = data['timeReceived']
-    message_time = datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
-
-    return "Jordfeil detektert {}".format(message_time)
-
-    
 def dropdown():
     # Lag dropdown meny for å velge hvor gamle alarmer som skal lastes inn
     dropdown = dbc.DropdownMenu(label = 'dag', id='dropdown-alarms', children=[
@@ -231,8 +165,83 @@ def dropdown():
 
     return [label_dropdown, dropdown]
 
-# Lag en knapp for kvittering av alarmer
-confirm_button = dbc.Button("Kvitter alle alarmer", id='button-confirm', color="success", className='ml-5')
+def confirm_button_temp():
+    # Lag en knapp for kvittering av alarmer
+    confirm_button = dbc.Button("Kvitter alle temperaturavvik", id='button-confirm', color="success")
+    return confirm_button
+
+
+def get_comm_alarms(chosen_sløyfe):
+    from mqttCommunication import gatewayFile
+    table_rows = []
+
+    # Sjekker gateway status
+    f = open(gatewayFile, 'r')
+    lines = f.read().splitlines()
+    status = lines[-1]
+    status_time = status[status.find("[")+1:status.find("]")]
+
+    if 'Lost connection' in status:
+        table_rows.append(html.Tr([html.Td(status_time), html.Td("Kommunikasjon"), html.Td("Gateway mistet kommuniksajon med Mosquitto")], className='table-warning'))
+
+    #Sjekker status til enhetene
+    for device_eui in get_devices_eui(chosen_sløyfe):
+        try:
+            query = "SELECT TOP 1 * FROM {0} WHERE {0}.deviceEui = '{1}' ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe, device_eui)
+            data = read_from_db(chosen_sløyfe, query)
+            data = data[0]
+        except:
+            continue
+
+        # Finner ut hvor lenge siden data ble sendt
+        message_time = data['timeReceived']
+        message_time = datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
+        now = datetime.now()
+        time_diff = now-message_time 
+
+        message_time = datetime.strftime(message_time, '%d.%m.%Y   %H:%M')
+
+        if time_diff > timedelta(minutes=30):
+            table_rows.append(html.Tr([html.Td(message_time), html.Td("Kommunikasjon"), html.Td("Ingen melding på over 30min fra {}".format(device_eui))], className='table-warning'))
+
+    return table_rows
+
+def get_jordfeil(chosen_sløyfe):
+    try:
+        query = "SELECT TOP 1 * FROM {0} WHERE {0}.messageType = 'ioData' AND {0}.input = true AND {0}.alarmConfirmed = false ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe)
+        data = read_from_db(chosen_sløyfe, query)
+        data = data[0]
+    except:
+        return 
+        #return "Ingen nye jordfeil detektert"
+
+    message_time = data['timeReceived']
+    message_time = datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
+    message_time = datetime.strftime(message_time, '%d.%m.%Y   %H:%M')
+
+    table_row = html.Tr([html.Td(message_time), html.Td("Jordfeil"), html.Td("")], className='table-danger')
+
+    return table_row
+
+def other_alarms(chosen_sløyfe):
+
+    table_header = [html.Thead(html.Tr([html.Th("Tid"), html.Th("Alarm type"), html.Th("Info")]))]
+
+    table_rows = []
+    table_rows.append(get_jordfeil(chosen_sløyfe))
+    table_rows += get_comm_alarms(chosen_sløyfe)
+
+    if table_rows == [None]:
+        return "Ingen alarmer"
+
+    table_body = [html.Tbody(table_rows)]
+
+    return dbc.Table(table_header + table_body, bordered=True)
+
+def confirm_button_jordfeil():
+    # Lag en knapp for kvittering av alarmer
+    confirm_button = dbc.Button("Kvitter jordfeil", id='button-confirm-jordfeil', color="success")
+    return confirm_button
 
 # layout definnneres i en funksjon for at den skal bli oppdatert når nettsiden refreshes
 def serve_layout():
@@ -241,19 +250,18 @@ def serve_layout():
         header,
         dbc.Container([
             dbc.Row(dbc.Col(html.Div(id='site-title'))),
-            dbc.Row(dropdown() + [confirm_button], className='mb-3 mt-2'),
+            dbc.Row(dropdown(), className='mb-3 mt-2'),
             dbc.Row([
             dbc.Col([
                 dbc.Row(html.H2("Temperaturavvik")),
-                dbc.Row(html.Div(id='table', className='tableFixHead')),
+                dbc.Row(html.Div(id='table', className='tableFixHead-3colls')),
+                dbc.Row(confirm_button_temp(), className='mb-3 mt-2'),
             ]),
 
             dbc.Col([
-                dbc.Row(html.H2("Kommunikasjons alarmer")),
-                dbc.Row(html.Div(id='comm-alarms', style={'font-size':'medium'})),
-
-                dbc.Row(html.H2("Jordfeil", className="mt-5")),
-                dbc.Row(html.Div(id='jordfeil-alarms', style={'font-size':'medium'})),
+                dbc.Row(html.H2("Andre alarmer")),
+                dbc.Row(html.Div(id='other-alarms', className='tableFixHead-3colls')),
+                dbc.Row(confirm_button_jordfeil(), className='mb-3 mt-2'),
             ], width = 5) #Col andre alarmer
             ])
 
@@ -288,27 +296,19 @@ def callbacks(app):
             #return [get_alarm_table(time_range, chosen_sløyfe)]
         elif triggered == 'button-confirm':
             print('confirming_alarms')
-            confirm_alarms(chosen_sløyfe)
-            return [get_alarm_table(time_range, chosen_sløyfe)]
+            confirm_alarms(chosen_sløyfe, 'tempSensor')
+            return [get_temp_alarm_table(time_range, chosen_sløyfe)]
         else:
             chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-            return [get_alarm_table(time_range, chosen_sløyfe)]
+            return [get_temp_alarm_table(time_range, chosen_sløyfe)]
 
-    # Oppdater kommunikasjons alarmer
+    # Oppdater andre alarmer
     @app.callback(
-        Output('comm-alarms', 'children'),
-        [Input('refresh', 'n_intervals')],
-        [State('url', 'pathname')])
-    def updtae_comm_alarms(n_intervals, pathname):
-        chosen_sløyfe = get_sløyfe_from_pathname(pathname)
-        return comm_alarms(chosen_sløyfe)
-
-    @app.callback(
-        Output('jordfeil-alarms', 'children'),
+        Output('other-alarms', 'children'),
         [Input('refresh', 'n_intervals'),
-        Input('button-confirm', 'n_clicks')],
+        Input('button-confirm-jordfeil', 'n_clicks')],
         [State('url', 'pathname')])
-    def updtae_comm_alarms(n_intervals, confirm_click, pathname):
+    def updtae_other_alarms(n_intervals, confirm_click, pathname):
         ctx = dash.callback_context
         triggered = ctx.triggered[0]['prop_id'].split('.')[0]
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
@@ -316,11 +316,11 @@ def callbacks(app):
         if triggered == None or ctx.triggered[0]['value'] == None:
             raise PreventUpdate
             #return [get_alarm_table(time_range, chosen_sløyfe)]
-        elif triggered == 'button-confirm':
-            return "Ingen nye jordfeil detektert"
-
+        elif triggered == 'button-confirm-jordfeil':
+            confirm_alarms(chosen_sløyfe, 'powerSwitch')
+            return other_alarms(chosen_sløyfe)
         else:
-            return jordfeil_alarms(chosen_sløyfe)
+            return other_alarms(chosen_sløyfe)
     
 
     # oppdater label til dropdown menu

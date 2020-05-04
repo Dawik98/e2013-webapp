@@ -1,32 +1,93 @@
 
 /* Definner vareiabler */
 :root {
-  --coll-width: 185px;
+  --coll-width: 12rem;
+  --small-coll-width: 8rem;
+  --row-height: 3rem;
 }
 
-.tableFixHead table {
-    width: auto;
+.tableFixHead-3colls table {
+    width: calc(var(--coll-width) * 3);
+    margin-bottom: 0.5rem;
 }
 
-
-.tableFixHead tbody{
-    height: 450px;
+.tableFixHead-3colls tbody{
+    height: calc(var(--row-height)*9.5);
     overflow-y: auto;
+    scrollbar-width: none;
 }
 
-.tableFixHead tbody, thead {
+.tableFixHead-3colls tbody, thead {
     display:block;
-    width: 100%;
 }
 
-
-.tableFixHead thead th, tbody td{
+.tableFixHead-3colls thead th, tbody td{
     width: var(--coll-width); 
+    height: var(--row-height);
 }
 
-/* Siste kolonne må være 12px kortere for å få plass til sccrollbar */
-.scrollBarColl {
-    width: calc(var(--coll-width) - 12px);
+
+.tableFixHead-home tbody{
+    height: calc(var(--row-height)*9.5);
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.tableFixHead-home tbody, thead {
+    display:block;
+}
+
+.tableFixHead-home thead th, tbody td{
+    width: var(--coll-width); 
+    height: var(--row-height);
+}
+.tableFixHead-home table {
+    width: calc(var(--coll-width) * 4.5);
+    margin-bottom: 0.5rem;
+}
+
+.tableFixHead-home td + td { width: calc(var(--coll-width) * 0.5)}
+.tableFixHead-home td + td + td { width: var(--coll-width)}
+.tableFixHead-home th + th { width: calc(var(--coll-width)*1.5)}
+.tableFixHead-home th + th +th { width: var(--coll-width)}
+
+
+
+
+.tableFixHead-settings table {
+    width: calc(var(--coll-width) * 2 + var(--small-coll-width));
+    margin-bottom: 0.5rem;
+}
+
+.tableFixHead-settings tbody{
+    height: calc(var(--row-height)*9.5);
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.tableFixHead-settings tbody, thead {
+    display:block;
+}
+
+.tableFixHead-settings thead th, tbody td{
+    width: var(--coll-width); 
+    height: var(--row-height);
+}
+
+.tableFixHead-settings td + td + td{
+    width: var(--small-coll-width)
+}
+
+.tableFixHead-settings th + th + th{
+    width: var(--small-coll-width)
+}
+
+
+
+.controller-coll{
+    min-width: 25rem;
+    width: 25rem;
+    margin-left: 4rem;
 }
 
 .label-dropdown {
