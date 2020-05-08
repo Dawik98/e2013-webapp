@@ -14,6 +14,7 @@ class PI_controller:
 
         self.setpoint = 0
         self.error = 0
+        self.error_prev = 0
 
         self.u_p = 0
         self.u_i = 0
@@ -68,7 +69,8 @@ class PI_controller:
     # Intagralbidrag
     def integral(self):
         try:
-            u_i = self.Kp * self.Ts / self.Ti * self.error + self.u_i
+            u_i = ((self.Kp / self.Ti) * 0.5 * self.Ts * (self.error + self.error_prev)) + self.u_i # Trapez
+            # u_i = self.Kp * self.Ts / self.Ti * self.error + self.u_i # Rektangel
             self.u_i = round(u_i,2)
 
             # Anti windup:
@@ -84,10 +86,12 @@ class PI_controller:
         # Kjør denne funksjonen hvis det byttes til regulatorstyring etter å ha brukt manuelt pådrag
         # "Reset" tida og bruk integralvirkning som det gamle pådraget
         self.u_i = u_tot
+        self.error_prev = 0
         self.get_sample_time()
             
     # Kalkuler avvik
     def get_error(self):
+        self.error_prev = self.error
         error = self.setpoint - self.value
         self.error = round(error,2)
 
