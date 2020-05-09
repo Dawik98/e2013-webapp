@@ -212,14 +212,14 @@ def get_jordfeil(chosen_sløyfe):
         data = read_from_db(chosen_sløyfe, query)
         data = data[0]
     except:
-        return 
+        return html.Tr(id='earth-leakage')
         #return "Ingen nye jordfeil detektert"
 
     message_time = data['timeReceived']
     message_time = datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
     message_time = datetime.strftime(message_time, '%d.%m.%Y   %H:%M')
 
-    table_row = html.Tr([html.Td(message_time), html.Td("Jordfeil"), html.Td("")], className='table-danger')
+    table_row = html.Tr([html.Td(message_time), html.Td("Jordfeil"), html.Td("Det er detektert jordlekkasje på over 2 mA.")], className='table-danger', id='earth-leakage')
 
     return table_row
 
@@ -231,16 +231,16 @@ def other_alarms(chosen_sløyfe):
     table_rows.append(get_jordfeil(chosen_sløyfe))
     table_rows += get_comm_alarms(chosen_sløyfe)
 
-    if table_rows == [None]:
-        return "Ingen alarmer"
-
     table_body = [html.Tbody(table_rows)]
 
     return dbc.Table(table_header + table_body, bordered=True)
 
 def confirm_button_jordfeil():
     # Lag en knapp for kvittering av alarmer
-    confirm_button = dbc.Button("Kvitter jordfeil", id='button-confirm-jordfeil', color="success")
+    confirm_button = dbc.Collapse(
+        dbc.Button("Kvitter jordfeil", id='button-confirm-jordfeil', color="success"),
+        id='button-confirm-jordfeil-collapse'
+    )
     return confirm_button
 
 # layout definnneres i en funksjon for at den skal bli oppdatert når nettsiden refreshes
@@ -308,7 +308,7 @@ def callbacks(app):
         [Input('refresh', 'n_intervals'),
         Input('button-confirm-jordfeil', 'n_clicks')],
         [State('url', 'pathname')])
-    def updtae_other_alarms(n_intervals, confirm_click, pathname):
+    def update_other_alarms(n_intervals, confirm_click, pathname):
         ctx = dash.callback_context
         triggered = ctx.triggered[0]['prop_id'].split('.')[0]
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)
@@ -345,3 +345,15 @@ def callbacks(app):
 
         return label_clicked
 
+    @app.callback(
+        Output(component_id='button-confirm-jordfeil-collapse', component_property='is_open'),
+        [
+            Input(component_id='earth-leakage', component_property='children')
+        ]
+    )
+    def show_hide_confirm_earth_leakage(earth_leakage):
+        print(earth_leakage)
+        if (earth_leakage == None):
+            return False
+        else:
+            return True

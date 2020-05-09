@@ -2,3 +2,4 @@
 [01.05.2020 14:09] : Connected
 [01.05.2020 14:10] : Lost connection
 [01.05.2020 15:24] : Connected
+[04.05.2020 19:32] : Lost connection
