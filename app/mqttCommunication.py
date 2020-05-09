@@ -7,8 +7,8 @@ from datetime import datetime as dt
 from datetime import timedelta
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-# gatewayFile = 'gatewayStatus.txt' # Azure
-gatewayFile = 'app/gatewayStatus.txt' # Lokalt
+gatewayFile = 'gatewayStatus.txt' # Azure
+# gatewayFile = 'app/gatewayStatus.txt' # Lokalt
 
 mqtt = None
 
