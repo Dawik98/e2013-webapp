@@ -284,7 +284,7 @@ def callbacks(app):
         [State('url', 'pathname')]
     )
     def update_url(*args): 
-    # Hvis en sløyfe som er åpen slettes send bruker til home siden
+    # Hvis en sløyfe som er åpen slettes send bruker til hjem-siden
         from dashApps.innstillinger import get_sløyfer
         from time import sleep
         sleep(0.2)
@@ -298,7 +298,7 @@ def callbacks(app):
         if chosen_sløyfe in sløyfer or chosen_sløyfe == '':
             raise PreventUpdate
         else:
-            return '/Home/'
+            return '/hjem/'
 
     # Vis / skjul input for å leggen inn ny enhet
     @app.callback(

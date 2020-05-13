@@ -23,12 +23,12 @@ from datetime import datetime, timedelta
 prew_setpoint_confirm_count = 0
 prew_Kp_confirm_count = 0
 prew_Ti_confirm_count = 0
-prew_dutycycle_confirm_count = 0
+prew_period_confirm_count = 0
 prew_actuation_confirm_count = 0
 
 # Velges avhengig av om appen kjøres lokalt eller i Azure
-# settingsFile = 'settings.txt' # Azure
-settingsFile = 'app/settings.txt' # Lokalt
+settingsFile = 'settings.txt' # Azure
+# settingsFile = 'app/settings.txt' # Lokalt
 
 def print_settings():
     """
@@ -287,13 +287,13 @@ def get_device_status(sløyfe, device_eui):
     now = datetime.now()
     time_diff = now-message_time 
 
-    # Hvis enheten har sendt noe på 3 timer -> status grønn
+    # Hvis enheten har sendt noe siste 30 minutter -> status grønn
     if time_diff < timedelta(minutes=30):
         title = "Siste data ble sendt: {}".format(message_time)
         icon_connection = html.I(className="fas fa-circle fa-lg", style={'color':'#86d01b'}, title=title)
         label = [icon_connection] + battery_label
         return label
-    # Hvis enheten har ikke sendt noe på 3 timer -> status rødt
+    # Hvis enheten har ikke sendt noe siste 30 minutter -> status rødt
     else:
         title = "Ingen nye data siden: {}".format(message_time)
         icon_no_connection = html.I(className="fas fa-circle fa-lg", style={'color':'red'}, title=title)
@@ -529,9 +529,9 @@ def controller_settings(chosen_sløyfe):
             dbc.Col(confirm_controller_buttons('Ti-confirm-button', 'Ti-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
-            dbc.Col(html.P("Dutycycle [min]:", id='dutycycle-label'), width=6),
-            dbc.Col(dbc.Input(type='number', step=0.1, id='dutycycle-input', value=controller.get_dutycycle()), width=2),
-            dbc.Col(confirm_controller_buttons('dutycycle-confirm-button', 'dutycycle-confirm-button-collapse')),
+            dbc.Col(html.P("period [min]:", id='period-label'), width=6),
+            dbc.Col(dbc.Input(type='number', step=0.1, id='period-input', value=controller.get_period()), width=2),
+            dbc.Col(confirm_controller_buttons('period-confirm-button', 'period-confirm-button-collapse')),
         ], form=True, className='mb-5'),
     ])
     return controller_settings
@@ -553,7 +553,7 @@ def get_alarm_settings_inputs(chosen_sløyfe):
 
 def get_alarm_settings(chosen_sløyfe):
     alarm_settings_div = [
-        dbc.Row([html.H2("Alarm innstillinger")]),
+        dbc.Row([html.H2("Alarm-innstillinger")]),
         html.Div(get_alarm_settings_inputs(chosen_sløyfe), id='alarm-settings'),
         dbc.Row(
             dbc.Collapse(dbc.Button("Oppdater alarm innstillinger", id='button-alarm-confirm'), id='collapse-alarm-confirm', is_open=False)
@@ -945,32 +945,32 @@ def callbacks(app):
         else:
             return True                                                     # Bekreftelsesknapp vises dersom Ti er forskjellig fra input-verdien
 
-    # Oppdatering av dutycycle fra input
+    # Oppdatering av periodetid fra input
     @app.callback(
-        Output(component_id='dutycycle-confirm-button-collapse', component_property='is_open'),
+        Output(component_id='period-confirm-button-collapse', component_property='is_open'),
         [
-            Input(component_id='dutycycle-input', component_property='value'),
-            Input(component_id='dutycycle-confirm-button', component_property='n_clicks'),
+            Input(component_id='period-input', component_property='value'),
+            Input(component_id='period-confirm-button', component_property='n_clicks'),
         ],
         [
             State(component_id='url', component_property='pathname'),
         ]
     )
-    def display_dutycycle_confirm(dutycycle_input, button_clicks, pathname):
-        global prew_dutycycle_confirm_count                                 # Definerer global tellevariabel
+    def display_period_confirm(period_input, button_clicks, pathname):
+        global prew_period_confirm_count                                    # Definerer global tellevariabel
         chosen_sløyfe = get_sløyfe_from_pathname(pathname)                  # Bestemmer valgt sløyfe ut ifra pathname
         try:
             controller = get_controller(chosen_sløyfe)                      # Velger regulator avhengig av valgt sløyfe
         except:
             raise PreventUpdate                    
         if (button_clicks == None):                                         # button_clicks er None etter at siden lastes inn på nytt
-            prew_dutycycle_confirm_count = 0                                # Resetter tellevariabelen
-        elif (button_clicks > prew_dutycycle_confirm_count):                # Dersom knappen er trykt bekreftes ny syklustid:
-            print("New dutycycle: {} minute/-s".format(dutycycle_input))
-            prew_dutycycle_confirm_count = button_clicks                    # Tellevariabel oppdateres
-            controller.set_dutycycle(dutycycle_input)                       # Syklustid skrives til regulatoren
+            prew_period_confirm_count = 0                                   # Resetter tellevariabelen
+        elif (button_clicks > prew_period_confirm_count):                   # Dersom knappen er trykt bekreftes ny syklustid:
+            print("New period: {} minute/-s".format(period_input))
+            prew_period_confirm_count = button_clicks                       # Tellevariabel oppdateres
+            controller.set_period(period_input)                             # Syklustid skrives til regulatoren
             return False                                                    # Bekreftelsesknapp skjules etter bekreftelse
-        if (dutycycle_input == controller.get_dutycycle()):                 # Kontrollerer om syklustiden er forandret
+        if (period_input == controller.get_period()):                       # Kontrollerer om syklustiden er forandret
             return False                                                    # Bekreftelsesknapp vises ikke dersom regulatorens syklustid stemmer med input-verdien
         else:
             return True                                                     # Bekreftelsesknapp vises dersom syklustiden er forskjellig fra input-verdien
@@ -1096,7 +1096,7 @@ def callbacks(app):
             Output(component_id='setpoint-input', component_property='disabled'),
             Output(component_id='Kp-input', component_property='disabled'),
             Output(component_id='Ti-input', component_property='disabled'),
-            Output(component_id='dutycycle-input', component_property='disabled')
+            Output(component_id='period-input', component_property='disabled')
         ],
         [
             Input(component_id='controller-mode-radioitems', component_property='value'),

@@ -114,8 +114,7 @@ def update_historiskData(sløyfe_valg):
                 historiskData['controllerData'][messurment].append(items[i][messurment])
         else:
             for messurment in historiskData['Power-Switch']:
-                historiskData['Power-Switch'][messurment].append(items[i][messurment])          
-    print(historiskData["controllerData"])
+                historiskData['Power-Switch'][messurment].append(items[i][messurment])
     #endrer fra Wh til kWh
     historiskData['Power-Switch'] = {key: (pd.Series(value) * 0.001).tolist() if key =='activeEnergy' or key =='apparentEnergy' else value for key, value in historiskData["Power-Switch"].items()}    
     return historiskData

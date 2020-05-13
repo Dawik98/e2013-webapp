@@ -27,8 +27,8 @@ class PI_controller:
         self.time_now = time()
         self.time_prev = 0
 
-        self.dutycycle = duty_cycle # Dutycycle i minutter
-        self.lock = Lock() # Lock for u_tot and dutycycle
+        self.period = duty_cycle # period i minutter
+        self.lock = Lock() # Lock for u_tot and period
 
         self.mode = mode
         self.run_actuation = False # Reléstyring er "default off"
@@ -150,15 +150,15 @@ class PI_controller:
 
     def actuationControl(self):
         """
-        actuationControl() skrur reléet av og på i en syklus (dutycycle) avhengig av pådragstall.
+        actuationControl() skrur reléet av og på i en syklus (periode) avhengig av pådragstall.
         Funksjonen kjøres som en individuell tråd. Styringen av reléet kjøres avhengig av tilstanden til self.run_actuation.
         """
         while True:
             if self.run_actuation:
-                dutycycle = self.get_dutycycle() * 60
+                period = self.get_period() * 60
                 actuation = self.get_u_tot()
-                t_on = (actuation/100) * dutycycle
-                t_off = dutycycle - t_on
+                t_on = (actuation/100) * period
+                t_off = period - t_on
                 if (t_on != 0):
                     self.activate_func(self.devicePlacement)
                     print("{} will be on for {} seconds.".format(self.devicePlacement, t_on))
@@ -172,24 +172,24 @@ class PI_controller:
             else:
                 sleep(1)
 
-    def set_dutycycle(self, dutycycle):
+    def set_period(self, period):
         """
-        set_dutycycle() setter ny dutycycle til reléstyringen. Funksjonen benytter lock for sikker behandling av delte variabler.
+        set_period() setter ny periodetid til reléstyringen. Funksjonen benytter lock for sikker behandling av delte variabler.
         """
         self.lock.acquire()
         try:
-            self.dutycycle = dutycycle
-            print("New dutycycle is set: {} minutes".format(dutycycle))
+            self.period = period
+            print("New period is set: {} minutes".format(period))
         finally:
             self.lock.release()
 
-    def get_dutycycle(self):
+    def get_period(self):
         """
-        get_dutycycle() returnerer dutycycle til reléstyringen. Funksjonen benytter lock for sikker behandling av delte variabler.
+        get_period() returnerer periodetiden til reléstyringen. Funksjonen benytter lock for sikker behandling av delte variabler.
         """
         self.lock.acquire()
         try:
-            return self.dutycycle
+            return self.period
         finally:
             self.lock.release()
 
