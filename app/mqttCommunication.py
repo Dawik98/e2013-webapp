@@ -13,10 +13,11 @@ gatewayFile = 'gatewayStatus.txt' # Azure
 mqtt = None
 
 def connect_mosquitto(server):
+    # lager en mqtt klient
     global mqtt
     mqtt = Mqtt(server)
 
-    # run when connection with the broker
+    # Subscribe til ønskede topics når kommunikasjonen med Mosquitto er oprettet
     @mqtt.on_connect()
     def handle_connect(client, userdata, flags, rc):
         mqtt.subscribe('measurement')
@@ -24,19 +25,19 @@ def connect_mosquitto(server):
         mqtt.subscribe('gatewayStatus')
         print("[MQTT] Subscribed to topic: gatewayStatus")
     
-    # run when new message is published to the subscribed topic
+    # kjører denne når en melding er mottat fra Mosquitto
     @mqtt.on_message()
     def handle_mqtt_message(client, userdata, message):
         topic = message.topic
-    
         print("\n[MQTT] New message recieved at topic {}:".format(topic))
+
         if topic == 'measurement':
-            payload = json.loads(message.payload.decode()) # get payload and convert it to a dictionary
+            payload = json.loads(message.payload.decode()) #last ned payload som en dictionary
             # print(payload)
 
             global timeOslo
             global packetData
-            packetData, timeOslo = decoder(payload)
+            packetData, timeOslo = decoder(payload) # dekoder payload
             print(packetData)
             if (packetData['messageType'] == 'ioData'):
                 global outputState
@@ -61,17 +62,18 @@ def connect_mosquitto(server):
                 else:
                     controller[packetData['devicePlacement']].update_value(packetData['temperature'])
             # Skriv til databesen dersom det ikke er en powerData-melding, eller hvis den aktive effekten i powerData-meldingen er høyere enn 5 W.
-            # if (packetData['messageType'] != 'powerData'):
-            #     container_name = packetData['devicePlacement']
-            #     write_to_db(container_name, packetData)
-            # elif (packetData['activePower'] > 5):
-            #     container_name = packetData['devicePlacement']
-            #     write_to_db(container_name, packetData)
+            if (packetData['messageType'] != 'powerData'):
+                container_name = packetData['devicePlacement']
+                write_to_db(container_name, packetData)
+            elif (packetData['activePower'] > 5):
+                container_name = packetData['devicePlacement']
+                write_to_db(container_name, packetData)
 
         elif topic == 'gatewayStatus':
             payload = message.payload.decode("utf-8") 
             print(payload)
 
+            # Lagre gateway status til 'gatewayStatus.txt'
             time = dt.now()
             time = dt.strftime(time, '%d.%m.%Y %H:%M')
             
@@ -153,6 +155,8 @@ def deactivateHeatTrace(devicePlacement):
     else:
         return ("Varmekabelen er allerede deaktivert.")
 
+
+# Funksjoner som brukes til å lage og hente regulatorer
 def createController(devicePlacement):
     global controller
     controller[devicePlacement] = PI_controller(devicePlacement, activateHeatTrace, deactivateHeatTrace)

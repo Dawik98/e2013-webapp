@@ -81,9 +81,8 @@ def createServer():
     from dashApps.innstillinger import callbacks as callbacks_innstillinger
     addDashApp(server, '/innstillinger/', 'Innstillinger', layout_innstillinger, callbacks_innstillinger)
 
-
+    # legg til sidene skrevet i flaskApp.py
     from flaskApp import app
-    
     server.register_blueprint(app)
 
     return server
@@ -97,7 +96,7 @@ def _protect_dashviews(dashapp):
 # Lager en funksjon for å kunne enkelt legge til flere dash-apps
 def addDashApp(server, path, title, layout, callbacks):
 
-    # Inkluderer en font med ikoner
+    # Inkluderer "Font Awesome", en font med ikoner
     font_awesome_stylesheets = [{
         "href" : "https://kit.fontawesome.com/274a562a3f.js",
         "crossorigin" : "anonymous"
@@ -136,6 +135,5 @@ def addDashApp(server, path, title, layout, callbacks):
     _protect_dashviews(dashApp)
 
 if __name__ == '__main__':
-
     server = createServer()
     server.run(host="0.0.0.0", port=8000)

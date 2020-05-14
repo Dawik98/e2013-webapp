@@ -321,6 +321,7 @@ def make_id_dict():
     remove_buttons_ids = {}
     remove_buttons = {}
 
+    # Her kan man velge mer enn 20 hvis man trenger flere enheter !!!!
     for i in range(20):
         id_ = "delete-row-{}".format(i+1)
         remove_buttons_ids[id_] = None

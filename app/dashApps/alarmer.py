@@ -172,6 +172,7 @@ def confirm_button_temp():
 
 
 def get_comm_alarms(chosen_sløyfe):
+    # Finn om det er noen kommuikasjons problemer
     from mqttCommunication import gatewayFile
     table_rows = []
 
@@ -201,19 +202,20 @@ def get_comm_alarms(chosen_sløyfe):
 
         message_time = datetime.strftime(message_time, '%d.%m.%Y   %H:%M')
 
+        # Her kan man stille tid på hvor lenge må en enhet ikke sende melding for at det skal komme opp som en alarm
         if time_diff > timedelta(minutes=30):
             table_rows.append(html.Tr([html.Td(message_time), html.Td("Kommunikasjon"), html.Td("Ingen melding på over 30min fra {}".format(device_eui))], className='table-warning'))
 
     return table_rows
 
 def get_jordfeil(chosen_sløyfe):
+    # Finn ut om noen jordfeil ble detektert
     try:
         query = "SELECT TOP 1 * FROM {0} WHERE {0}.messageType = 'ioData' AND {0}.input = true AND {0}.alarmConfirmed = false ORDER BY {0}.timeReceived DESC".format(chosen_sløyfe)
         data = read_from_db(chosen_sløyfe, query)
         data = data[0]
     except:
         return html.Tr(id='earth-leakage')
-        #return "Ingen nye jordfeil detektert"
 
     message_time = data['timeReceived']
     message_time = datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
@@ -224,9 +226,9 @@ def get_jordfeil(chosen_sløyfe):
     return table_row
 
 def other_alarms(chosen_sløyfe):
+    # Lager tabell for 'Andre alarmer'
 
     table_header = [html.Thead(html.Tr([html.Th("Tid"), html.Th("Alarm type"), html.Th("Info")]))]
-
     table_rows = []
     table_rows.append(get_jordfeil(chosen_sløyfe))
     table_rows += get_comm_alarms(chosen_sløyfe)
@@ -236,7 +238,8 @@ def other_alarms(chosen_sløyfe):
     return dbc.Table(table_header + table_body, bordered=True)
 
 def confirm_button_jordfeil():
-    # Lag en knapp for kvittering av alarmer
+    # Lag en knapp for kvittering av jordfeil alarmer
+
     confirm_button = dbc.Collapse(
         dbc.Button("Kvitter jordfeil", id='button-confirm-jordfeil', color="success"),
         id='button-confirm-jordfeil-collapse'
@@ -278,6 +281,7 @@ def callbacks(app):
     # oppdater site-title når ny sløyfe blir valgt
     update_sløyfe_callback(app, [['site-title', get_site_title],
                                  ])
+
     # Oppdater alarm tabellen etter en hvis tidsintervall, når alarmer kvitteres og når ny tidsintervall velges
     @app.callback(
         Output(component_id='table', component_property='children'),
@@ -345,6 +349,7 @@ def callbacks(app):
 
         return label_clicked
 
+    # Skjul 'kvitter jordfeil' knappen hvis det er ikke noe jordfeil alarmer
     @app.callback(
         Output(component_id='button-confirm-jordfeil-collapse', component_property='is_open'),
         [
