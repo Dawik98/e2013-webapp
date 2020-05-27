@@ -13,25 +13,81 @@
         }, 5000); // will refresh every 5 seconds = 5000 ms
     </script>
 
-    <div id="header">
-    <h2>Oppgaven</h2>
-    </div>
+    <div class="container" style="max-width: inherit;">
 
-    <div id="Om gruppen">
-    <h2>Om gruppen</h2>
-    </div>
+    <div class='row mt-5 ml-5 mr-5'>
+        <div class='col' style="text-align: center;">
+            <h1>Innovativ trådløs overvåkning og styring</h1>
+            <h2>Olav Magnus A. Goa, Kristoffer B. Hovland, Kjetil A. Hveem, Dawid Kalicki</h2>
+            <h3>Fakultetet for informasjonsteknologi og elektroteknikk, NTNU</h3>
+        </div>
+        <hr>
 
-    <h2>Gruppemedlemmer</h2>
-        <article class="media content-section">
-            <div class="media-body">
-                <div class="article-metadata">
-                <a class="mr-2" href="#">"Bla"</a>
-                <small class="text-muted">"Bla bla"</small>
-                </div>
-                <h2><a class="article-title" href="#">"Gruppemedlem"</a></h2>
-                <p class="article-content">"Fra"</p>
+    </div>
+        
+    <div class='row mt-5 ml-5 mr-5'>
+        <div class='col-8 col-sm'>
+            <h2>Problemstilling</h2>
+            <p style="text-align:justify;">
+                Selvregulerende varmekabler har som formål å styre temperaturen i forskjellige prosesser. Forstyrrelser fører ofte til et stort avvik mellom ønsket og faktisk temperatur. For å redusere vedlikeholdskostnader er det ønskelig å finne en rimelig måte for overvåking og styring av temperatur.
+            </p>
+            <h2>Introduksjon</h2>
+            <p style="text-align:justify;">
+                Dagens IoT-teknologi er i stadig utvikling og det oppdages stadig flere bruksområder. I denne oppgaven undersøker vi mulige bruksområder for IoT-teknologi i prosess industrien. Dagens trådløse sensorer som benyttes baserer seg primært på WirelessHART eller ISA100 standardene er og er relativt kostbare. Ved å benytte trådløse LoRaWAN sensorer kan vi oppnå rimelig og tilstrekkelig overvåkning av mindre kritiske systemer.
+                <br>
+                I denne rapporten ser vi på muligheten til å overvåkning og regulere \textit{heat-trace} (varmekretser) trådløst. 
+                Jordfeil er et kjent fenomen i varmekabler som ofte skyldes fukt. I løsningen har vi også funnet en metode for å detektere begynnende jordfeil. Målet er å varsle om mulig jordfeil før jordfeilbryter slår ut.
+                <br>
+                Selvregulerende varmekabler dimensjoneres med hensyn prosessen de skal brukes. Men forstyrrelser av omgivelsene vil føre til et temperatur avvik. Dersom temperaturen ikke holdes innenfor bestemte grenser kan det føre til dannelse av hydratplugger og frost i sikkerhetsventiler. Dersom en overvåker temperaturen flere steder langs varmekabelen er det mulig å opprettholde en mer stabil temperatur ved å benytte en regulator. På denne måten vil man kunne gå over til mer tilstandsbasert vedlikehold og øke sikkerheten.
+            </p>
+            <h2>Testrigg</h2>
+            <p style="text-align:justify;">
+                Formålet med testriggen er å kunne teste utstyr i tilnærmet samme miljø som utstyret er tenkt å brukes i. Vi vil aldri kunne simulere de forholdene som utstyret blir utsatt for med tanke på vær, vind, prosess- og temperaturendringer. Ved hjelp av testriggen vil vi kunne optimalisere en løsning for fremtidig bruk i fabrikkområde. Testriggen består av et rør med gjennomgang av kaldt vann og en varmekabel trekt rundt. Ved hjelp av oppsatt styresystem reguleres temperaturen på røret trådløst. 
+            </p>
+            
+            <div class='text-center'><img src="{{url_for('static', filename='Isometrisk_visning_hvit_bakgunn.png')}}" alt='Testrigg' style="width: 90%;"></div>
+
+            <h2>Styresystem</h2>
+            <p style="text-align:justify;">
+                Kommunikasjonen i overvåknings- og styresystemer foregår over to protokoller; LoRaWAN og TCP/IP. Bindeleddet mellom de to er en gateway. Målinger fra sensorene sendes til gatewayen og blir videreformidlet til en MQTT-broker. Data fra alle LoRa-enhetene blir bearbeidet i en webapplikasjon og lagret i en database.
+                <br>
+                I webappen er det programmert en PI-regulator, denne blir benyttet til desentralisert regulering av varmekabler. Ved å bruke en regulator kan vi potensielt fjerne avvik og holde temperaturen stabil uavhengig av varierende forstyrrelser. Pådraget fra regulator blir sendt til effektbryter i form av et pulsbreddemodulert signal. Noen av utfordringene med denne typen regulering er pakketap og treghet i systemet. Hovedhensikten var å teste bruksområdet til LoRaWAN i styresystemer.
+                <br>
+                Brukergrensesnittet ble laget i form av en nettside. Målet med brukergrensesnittet var å lage en enkelt skalerbar oversikt over alle sensorene. Nettsiden inneholder derfor funksjoner som trend, historikk, alarmer og innstillinger. Det er også mulig å kvittere de forskjellige alarmer og endre på regulator innstilinger. 
+            </p>
+            <div class='text-center'><img src="{{url_for('static', filename='Kommunikasjon.png')}}" alt='Kommunikasjonsoversikt' style="width: 90%;"></div>
+
+            <h2>Jordfeildeteksjon</h2>
+            <p style="text-align:justify;">
+                Detekteringen av jordlekkasje foregår ved at tilførselslederne føres gjennom en sumstrømstrafo. Dersom det ikke er noe jordfeil vil magnetfelter fra de to lederen kansellere hverandre og det vil ikke bli indusert noe strøm i trafoen. Hvis det derimot er noe strømlekkasje vil det dannes et magnetfelt. Denne vil indusere strøm i spolen som føres videre til Arduino, hvor lekkasjestrømmen beregnes. Hvis lekkasjestrømmen overstiger 2 mA sendes det signal til webappen og brukeren bli varslet om jordfeil i hver enkelt varmekabel.
+            </p>
+            <div class='text-center'><img src="{{url_for('static', filename='Styrebokser_uten_lokk_2.jpg')}}" alt='Styreboks' style="width: 50%;"></div>
+
+            <h2>Resultat</h2>
+
+            <p style="text-align:justify;">
+                <b>LoRaWAN</b> sensorene ble testet på Equinor Tjeldbergodden. I tabellen under vises det noe av resultater fra testingen. Tabellen skal gi oversikt over hindringer mellom gatewayen og sensorene, og pakketap. Avstand er gitt i luftlinje.
+            </p>
+
+            <div class='text-center'>
+            <table class='table table-sm table-bordered' style="width: 50%; margin-right: auto; margin-left: auto;"><thead><tr><th>Avstand</th><th>Hindringer</th><th>Pakketap</th></tr></thead><tbody><tr><td>87m</td><td>Mye</td><td><span style="font-weight:400;font-style:normal">Middels</span></td></tr><tr><td>113m</td><td>Middels</td><td>Lite</td></tr><tr><td>121m</td><td><span style="font-weight:400;font-style:normal">Mye</span></td><td><span style="font-weight:400;font-style:normal">Middels</span></td></tr><tr><td>131m</td><td><span style="font-weight:400;font-style:normal">Mye</span></td><td>Mye</td></tr><tr><td>315m</td><td><span style="font-weight:400;font-style:normal">Mye</span></td><td><span style="font-weight:400;font-style:normal">Lite</span></td></tr><tr><td>414m</td><td><span style="font-weight:400;font-style:normal">Middels</span></td><td><span style="font-weight:400;font-style:normal">Lite</span></td></tr><tr><td>462m</td><td><span style="font-weight:400;font-style:normal">Middels</span></td><td><span style="font-weight:400;font-style:normal">Lite</span></td></tr><tr><td>536m</td><td><span style="font-weight:400;font-style:normal">Mye</span></td><td><span style="font-weight:400;font-style:normal">Lite</span></td></tr><tr><td>658m</td><td><span style="font-weight:400;font-style:normal">Mye</span></td><td><span style="font-weight:400;font-style:normal">Lite</span></td></tr><tr><td>840m</td><td><span style="font-weight:400;font-style:normal">Mye</span></td><td><span style="font-weight:400;font-style:normal">Lite</span></td></tr><tr><td>857m</td><td><span style="font-weight:400;font-style:normal">Middels</span></td><td><span style="font-weight:400;font-style:normal">Lite</span></td></tr></tbody></table>
             </div>
-        </article>
-    
+
+            <p style="text-align:justify;">
+                <b>Resultater fra testing av regulator</b>
+                Figuren under viser en PI regulator som skal opprettholder temperaturen på 20°C med varierende vannstrømning.
+            </p>
+            <div class='text-center'><img src="{{url_for('static', filename='PI20_grader_med_sprang.png')}}" alt='Sprangrespons' style="width: 70%;"></div>
+            
+            <h2>Konklusjon</h2>
+            <p style="text-align:justify;">
+                Temperaturovervåkning via LoRaWAN har gitt gode resultater ved test i anlegget på Tjeldbergodden. Dette vil fungere bra til ren temperaturovervåkning av varmekabler og annen tilstandsovervåkning.
+                <br>
+                Løsningen med å regulere temperaturen rundt en varmekabel ved å sende AV/PÅ-meldinger trådløst er ikke ideell. Til regulering er en samplingstid på 5 minutter for sjelden. Desentralisert trådløs styring har i seg selv flere svakheter. Svikt i kommunikasjonen vil bryte reguleringssløyfen og føre til reguleringsavvik. I tillegg vil også variable forsinkelser i nettverket føre til en forvrenging av pådragssignalet. Per i dag kan ikke trådløs desentralisert regulering av varmekabler erstatte tradisjonelle sentrale termostater. Det kan i stedet benyttes sentrale termostater som kan kommunisere trådløst. LoRaWAN vil være utmerket til trådløs overvåkning av temperatur, forbruk og vedlikeholds-parametere. Jordfeil bør overvåkes og en eventuell lekkasjestrøm kan varsles via trådløs kommunikasjon. Dette er meget fordelaktig og vil gjøre vedlikeholdsarbeid mye enklere.
+            </p>
+        </div>    
+    </div>    
+    </div>    
+
 
 {% endblock content %}

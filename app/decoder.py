@@ -21,8 +21,8 @@ def decoder(payload):
         elif (data[0] == 0x01):
             packetData['messageType'] = 'dataLog'
             packetData['batteryLevel'] = int.from_bytes(data[1:2], byteorder='big', signed=False) * 100/256
-        dataLength = len(data)
-        packetData['temperature'] = int.from_bytes(data[dataLength-2:dataLength], byteorder='big', signed=True) / 16
+            dataLength = len(data)
+            packetData['temperature'] = int.from_bytes(data[dataLength-2:dataLength], byteorder='big', signed=True) / 16
 
         # Håndtering av alarm-verdier
         from dashApps.innstillinger import get_alarms
