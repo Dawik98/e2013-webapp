@@ -2,6 +2,7 @@
 <!-- Henter inn  standard layout -->
 {% extends "layout.html" %}
 {% block content %}
+<div class="col-md-8">
     <div class="content-section">
         <form method="POST" action="">
             {{ form.hidden_tag() }}
@@ -48,4 +49,5 @@
             Har du ikke en konto? <a class="ml-2" href='/register'>Registrer deg her!</a>
         </small>
     </div>
+</div>>
 {% endblock content %}
