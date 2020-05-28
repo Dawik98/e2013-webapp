@@ -510,27 +510,27 @@ def controller_settings(chosen_sløyfe):
             ], id='controller-mode-radioitems', inline=True, value=controller.mode)),
         ], form=True),
         dbc.Row([
-            dbc.Col(html.P("Pådrag: [%]", id='actuation-label'), width=6),
+            dbc.Col(html.P("Pådrag [%]", id='actuation-label'), width=6),
             dbc.Col(dbc.Input(type='number', step=0.1, id='actuation-input', value=controller.get_u_tot(), disabled=disabled), width=2),
             dbc.Col(confirm_controller_buttons('actuation-confirm-button', 'actuation-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
-            dbc.Col(html.P("Setpunkt: [°C]", id='setpoint-label'), width=6),
+            dbc.Col(html.P("Setpunkt [°C]", id='setpoint-label'), width=6),
             dbc.Col(dbc.Input(type='number', step=0.1, id='setpoint-input', value=controller.setpoint), width=2),
             dbc.Col(confirm_controller_buttons('setpoint-confirm-button', 'setpoint-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
-            dbc.Col(html.P("Proporsjonalforsterkning, Kp:", id='Kp-label'), width=6),
+            dbc.Col(html.P("Proporsjonalforsterkning, Kp", id='Kp-label'), width=6),
             dbc.Col(dbc.Input(type='number', step=0.01, id='Kp-input', value=controller.Kp), width=2),
             dbc.Col(confirm_controller_buttons('Kp-confirm-button', 'Kp-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
-            dbc.Col(html.P("Integraltid, Ti [s]:", id='Ti-label'), width=6),
+            dbc.Col(html.P("Integraltid, Ti [s]", id='Ti-label'), width=6),
             dbc.Col(dbc.Input(type='number', step=10, id='Ti-input', value=controller.Ti), width=2),
             dbc.Col(confirm_controller_buttons('Ti-confirm-button', 'Ti-confirm-button-collapse')),
         ], form=True),
         dbc.Row([
-            dbc.Col(html.P("period [min]:", id='period-label'), width=6),
+            dbc.Col(html.P("Periodetid [min]", id='period-label'), width=6),
             dbc.Col(dbc.Input(type='number', step=0.1, id='period-input', value=controller.get_period()), width=2),
             dbc.Col(confirm_controller_buttons('period-confirm-button', 'period-confirm-button-collapse')),
         ], form=True, className='mb-5'),
@@ -542,13 +542,13 @@ def get_alarm_settings_inputs(chosen_sløyfe):
     curr_alarm_val = get_alarms(chosen_sløyfe)
     setting_inputs = html.Div([
         dbc.Row([
-            dbc.Col(html.P("Max. temperatur: [°C]"), width=4),
+            dbc.Col(html.P("Max. temperatur [°C]"), width=6),
             dbc.Col(dbc.Input(type='number', step=1, value=curr_alarm_val[1], id='max-temp-input',), width=2)
-        ]),
+        ], form=True),
         dbc.Row([
-            dbc.Col(html.P("Min. temperatur: [°C]"), width=4),
+            dbc.Col(html.P("Min. temperatur [°C]"), width=6),
             dbc.Col(dbc.Input(type='number', step=1, value=curr_alarm_val[0], id='min-temp-input',), width=2)
-        ]),
+        ], form=True),
     ])
     return setting_inputs
 
